@@ -1,0 +1,282 @@
+/* Variables de color para fácil mantenimiento */
+:root {
+  --primary-color: #8b4513; /* Marrón tierra/madera */
+  --accent-color: #ffa500; /* Naranja/Amarillo Ferretería */
+  --dark-text: #2c3e50;
+  --light-bg: #f5f5f5;
+  --white: #ffffff;
+}
+
+/* Contenedor Principal */
+.page-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--light-bg);
+  min-height: 100vh;
+}
+
+/* ----------------------------------- */
+/* Sección Hero (Título) */
+/* ----------------------------------- */
+
+.hero-section {
+  width: 100%;
+  max-width: 1280px; /* max-w-6xl */
+  padding: 4rem 1rem 2rem; /* pt-16 pb-8 px-4 */
+  text-align: center;
+  background-color: var(--white);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-size: 3rem; /* text-5xl */
+  font-weight: 800; /* font-extrabold */
+  color: var(--dark-text);
+  margin-bottom: 1rem;
+  letter-spacing: -0.05em; /* tracking-tight */
+}
+
+.hero-subtitle {
+  font-size: 1.25rem; /* text-xl */
+  color: #6c7a89; /* text-gray-600 */
+  line-height: 1.6; /* leading-relaxed */
+  max-width: 48rem; /* max-w-3xl */
+  margin: 0 auto;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb; /* border-t border-gray-200 */
+}
+
+/* ----------------------------------- */
+/* Misión / Introducción */
+/* ----------------------------------- */
+
+.mission-section {
+  width: 100%;
+  max-width: 80rem; /* max-w-5xl */
+  margin: 2.5rem 0; /* my-10 */
+  padding: 0 1rem; /* px-4 */
+}
+
+.mission-text {
+  background-color: var(--dark-text); /* bg-gray-800 */
+  padding: 2rem;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
+  color: var(--white);
+  font-size: 1.125rem; /* text-lg */
+  line-height: 1.75; /* leading-relaxed */
+  font-style: italic;
+}
+
+.mission-text strong {
+  color: var(--accent-color);
+}
+
+/* ----------------------------------- */
+/* Galería */
+/* ----------------------------------- */
+
+.gallery-section {
+  width: 100%;
+  max-width: 1280px; /* max-w-6xl */
+  margin-top: 2rem; /* mt-8 */
+  display: grid;
+  grid-template-columns: 1fr; /* grid-cols-1 */
+  gap: 2rem; /* gap-8 */
+  padding: 0 1rem; /* px-4 */
+}
+
+/* Responsividad para la galería */
+@media (min-width: 768px) {
+  /* md: */
+  .gallery-section {
+    grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+  }
+}
+
+.gallery-image {
+  width: 100%;
+  height: 18rem; /* h-72 */
+  object-fit: cover;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+  border: 4px solid var(--light-bg); /* border-4 border-gray-100 */
+  transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+.gallery-image:hover {
+  transform: scale(1.02);
+  border-color: #cc8400; /* hover:border-yellow-600 */
+}
+
+/* ----------------------------------- */
+/* Quiénes Somos */
+/* ----------------------------------- */
+
+.about-us-section {
+  width: 100%;
+  max-width: 80rem; /* max-w-5xl */
+  margin-top: 4rem; /* mt-16 */
+  padding: 0 1rem; /* px-4 */
+  text-align: center;
+}
+
+.about-us-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: var(--dark-text);
+  margin-bottom: 1.5rem; /* mb-6 */
+  border-bottom: 3px solid #cc8400; /* border-b-2 border-yellow-600 */
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+.about-us-content {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+}
+
+.about-us-text {
+  color: #4b5563; /* text-gray-700 */
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75; /* leading-relaxed */
+}
+
+.priority-text {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #b45309; /* text-yellow-700 */
+}
+
+/* ----------------------------------- */
+/* Ubicación */
+/* ----------------------------------- */
+
+.location-section {
+  width: 100%;
+  max-width: 80rem; /* max-w-5xl */
+  margin-top: 5rem; /* mt-20 */
+  padding: 0 1rem; /* px-4 */
+  margin-bottom: 5rem; /* mb-20 */
+}
+
+.location-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: var(--dark-text);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.map-container {
+  width: 100%;
+  height: 24rem; /* h-96 */
+  border-radius: 1rem; /* rounded-2xl */
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
+  border: 4px solid #e5e7eb; /* border-4 border-gray-200 */
+}
+
+.map-container iframe {
+  border: 0;
+}
+
+.location-info {
+  text-align: center;
+  margin-top: 1rem;
+  color: #4b5563; /* text-gray-600 */
+  font-size: 1.125rem; /* text-lg */
+}
+/* --- NUEVA SECCIÓN: CONTÁCTANOS --- */
+
+.contact-section {
+  width: 100%;
+  max-width: 80rem; /* max-w-5xl */
+  margin-top: 4rem; /* mt-16 */
+  padding: 0 1rem; /* px-4 */
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.contact-title {
+  /* Reutiliza el estilo del título de Quiénes Somos */
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dark-text);
+  margin-bottom: 0.5rem; /* Ajuste sutil */
+  border-bottom: 3px solid #cc8400;
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+.contact-subtitle {
+  font-size: 1.125rem;
+  color: #6c7a89;
+  margin-bottom: 2rem;
+}
+
+.contact-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem; /* Espacio entre los botones */
+  flex-wrap: wrap; /* Para que se adapten en mobile */
+}
+
+.contact-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: var(--white); /* Texto blanco para ambos botones */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo específico para WhatsApp */
+.whatsapp-button {
+  background-color: #25d366; /* Color de WhatsApp */
+}
+
+.whatsapp-button:hover {
+  background-color: #128c7e; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Estilo específico para Email/Gmail */
+.email-button {
+  background-color: #d9534f; /* Color Rojo/Naranja para contraste (similar a Gmail/Google) */
+}
+
+.email-button:hover {
+  background-color: #c9302c; /* Rojo más oscuro al pasar el mouse */
+}
+
+/* ----------------------------------- */
+/* Ubicación (Para asegurar separación) */
+/* ----------------------------------- */
+
+.location-section {
+  /* Mantiene los estilos existentes, solo asegurando un margen superior */
+  margin-top: 5rem;
+  /* ... otros estilos ... */
+}
+
+/* Asegúrate de mantener todos tus estilos anteriores de Sobrenosotros.css */

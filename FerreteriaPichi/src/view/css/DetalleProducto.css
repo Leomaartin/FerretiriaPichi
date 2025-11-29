@@ -1,0 +1,369 @@
+/* ProductDetail.css */
+
+/* --- Variables de Color de Casa Mario --- */
+:root {
+  --primary-bg-color: #f4f4f4; /* Fondo general de la página (casi blanco) */
+  --card-bg-color: #ffffff; /* Fondo del contenedor del producto */
+  --accent-color-lima: #a3e635; /* Verde Lima brillante (Hex: A3E635) */
+  --dark-color: #000000; /* Negro para texto y elementos principales */
+  --secondary-dark: #343a40; /* Gris oscuro para el footer */
+  --success-color: #a3e635; /* Usamos Lima para "En Stock" */
+  --danger-color: #dc3545; /* Rojo para "Agotado" */
+}
+
+/* ============================================================
+  ESTILOS GENERALES Y LAYOUT
+  ============================================================ */
+.product-detail-page {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--primary-bg-color);
+  color: var(--dark-color);
+}
+
+/* Navbar (Se asume que la navbar ya tiene el fondo oscuro/negro) */
+.product-detail-header {
+  width: 100%;
+}
+
+.product-detail-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: var(--card-bg-color);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+  SECCIÓN DE IMÁGENES
+  ============================================================ */
+.product-images {
+  flex: 1;
+  min-width: 300px;
+  margin-right: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Imagen Principal */
+.main-image {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background-color: var(
+    --card-bg-color
+  ); /* Asegurar fondo blanco para la imagen */
+}
+
+.main-image img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+}
+
+/* Miniaturas (Thumbnail Gallery) */
+.thumbnail-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  max-width: 450px;
+}
+
+.thumbnail-images img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 2px solid #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.thumbnail-images img:hover {
+  border-color: #999;
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* Estado seleccionado (Verde Lima) */
+.thumbnail-images img.selected {
+  border-color: var(--accent-color-lima);
+  box-shadow: 0 0 8px rgba(163, 230, 53, 0.5);
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+  SECCIÓN DE INFORMACIÓN Y ACCIONES
+  ============================================================ */
+.product-info-detail {
+  flex: 1.5;
+  min-width: 300px;
+  padding-left: 20px;
+}
+
+.product-name-detail {
+  font-size: 2.5em;
+  color: var(--dark-color);
+  margin-top: 0;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.product-brand-model {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.product-brand-model span {
+  font-weight: bold;
+  color: var(--dark-color);
+}
+
+.product-price-detail {
+  font-size: 2.8em;
+  font-weight: bold;
+  color: var(--accent-color-lima); /* Precio en Verde Lima */
+  margin-bottom: 30px;
+}
+
+/* -------------------- */
+/* Acciones (Botones) */
+/* -------------------- */
+.product-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.btn-carrito-2, /* Usando la clase exacta de tu JSX */
+.buy-now-btn {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* Botón Añadir al Carrito (Borde Lima, Fondo Transparente) */
+.btn-carrito-2 {
+  background-color: transparent;
+  color: var(--dark-color);
+  border: 2px solid var(--accent-color-lima);
+}
+
+.btn-carrito-2:hover {
+  background-color: var(--accent-color-lima);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(163, 230, 53, 0.4);
+}
+
+/* Botón Comprar Ahora (Fondo Lima) */
+.buy-now-btn {
+  background-color: var(--accent-color-lima);
+  color: #000000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buy-now-btn:hover {
+  background-color: #8cc427; /* Verde más oscuro al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.buy-now-btn:active,
+.btn-carrito-2:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Descripción y Stock */
+.product-description-detail,
+.product-features {
+  margin-bottom: 30px;
+}
+
+.product-description-detail h2,
+.product-features h2 {
+  font-size: 1.8em;
+  color: var(--dark-color);
+  margin-bottom: 15px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.product-description-detail p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #555;
+}
+
+.product-stock-info {
+  font-size: 1.1em;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.in-stock {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.out-of-stock {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+/* ============================================================
+  FOOTER
+  ============================================================ */
+.product-detail-footer {
+  background-color: var(--secondary-dark); /* Gris oscuro/negro */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 50px;
+}
+
+/* ============================================================
+  MEDIA QUERIES (Responsive)
+  ============================================================ */
+@media (max-width: 992px) {
+  .product-detail-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-images {
+    margin-right: 0;
+    margin-bottom: 30px;
+  }
+
+  .product-info-detail {
+    padding-left: 0;
+    text-align: center;
+  }
+
+  .product-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-detail-container {
+    padding: 15px;
+    margin: 20px auto;
+  }
+
+  .product-name-detail {
+    font-size: 2em;
+  }
+  .product-price-detail {
+    font-size: 2.2em;
+  }
+
+  .btn-carrito-2,
+  .buy-now-btn {
+    padding: 12px 15px;
+    font-size: 1em;
+  }
+
+  .main-image {
+    max-width: 100%;
+  }
+
+  .thumbnail-images img {
+    width: 60px;
+    height: 60px;
+  }
+}
+/* -------------------- */
+/* Acciones (Botones Compactos) */
+/* -------------------- */
+.product-actions {
+  display: flex;
+  gap: 10px; /* Reducimos el espacio entre botones */
+  margin-bottom: 20px; /* Reducimos el margen inferior */
+}
+
+.btn-carrito-2,
+.buy-now-btn {
+  /* Reducimos el relleno interno (padding) */
+  padding: 10px 20px;
+  /* Reducimos el tamaño de la fuente */
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px; /* Hacemos los bordes ligeramente más chicos */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* Botón Añadir al Carrito (Borde Lima, Fondo Transparente) */
+.btn-carrito-2 {
+  background-color: transparent;
+  color: var(--dark-color);
+  border: 2px solid var(--accent-color-lima);
+  color: white;
+}
+
+.btn-carrito-2:hover {
+  background-color: var(--accent-color-lima);
+  color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(163, 230, 53, 0.4);
+  color: white;
+}
+
+/* Botón Comprar Ahora (Fondo Lima) */
+.buy-now-btn {
+  background-color: var(--accent-color-lima);
+  color: #000000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra más sutil */
+}
+
+.buy-now-btn:hover {
+  background-color: #8cc427;
+  transform: translateY(-1px); /* Menos movimiento al ser más chicos */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.buy-now-btn:active,
+.btn-carrito-2:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Ajuste Responsive para Móvil --- */
+@media (max-width: 576px) {
+  /* En móvil, los botones ya no necesitan ser reducidos más */
+  .btn-carrito-2,
+  .buy-now-btn {
+    padding: 10px 15px; /* Mantenemos el tamaño ya ajustado */
+    font-size: 0.9em; /* Una pequeña reducción adicional si es necesario */
+  }
+}

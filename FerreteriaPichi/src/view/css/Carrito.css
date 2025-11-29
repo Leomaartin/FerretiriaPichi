@@ -1,0 +1,372 @@
+/* Carrito.css */
+
+/* --- Variables de Color de Casa Mario --- */
+:root {
+  --primary-bg-color: #f4f4f4; /* Fondo general de la página */
+  --card-bg-color: #ffffff; /* Fondo del contenedor principal */
+  --accent-color-lima: #a3e635; /* Verde Lima brillante */
+  --dark-color: #000000; /* Negro para títulos principales y totales */
+  --secondary-text-color: #666; /* GRIS SUTIL para texto secundario (Precio unitario, descripciones) */
+  --secondary-dark: #343a40; /* Gris oscuro para bordes sutiles */
+  --delete-color: #dc3545; /* Rojo para el botón de eliminar */
+}
+
+/* ============================================================
+  ESTILOS GENERALES Y LAYOUT
+  ============================================================ */
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-bg-color);
+  font-family: Arial, sans-serif;
+  color: var(--dark-color);
+}
+
+.cart-container {
+  max-width: 1200px;
+  margin: 80px auto 40px;
+  padding: 20px;
+}
+
+.cart-container h1 {
+  text-align: center;
+  color: var(--dark-color);
+  font-size: 2.5em;
+  margin-bottom: 30px;
+}
+
+.cart-content {
+  display: flex;
+  gap: 30px;
+}
+
+/* ----------------------------------- */
+/* LISTA DE PRODUCTOS (IZQUIERDA) */
+/* ----------------------------------- */
+
+.cart-items-list {
+  flex: 3;
+  min-width: 60%;
+}
+
+.cart-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative; /* Necesario para posicionar el botón eliminar */
+  background-color: var(--card-bg-color);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+  transition: transform 0.2s ease;
+}
+
+.cart-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 15px;
+  border: 1px solid #ddd;
+}
+
+.item-details {
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.item-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: var(--dark-color); /* Título del ítem en NEGRO */
+}
+
+/* PRECIO UNITARIO: AHORA EN GRIS */
+.item-price {
+  font-size: 0.9em;
+  color: var(--secondary-text-color); /* GRIS */
+  margin: 0 0 10px 0;
+}
+
+/* SUB TOTAL POR ITEM: MANTENER EN LIMA */
+.item-subtotal {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--accent-color-lima);
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ----------------------------------- */
+/* CONTROL DE CANTIDAD */
+/* ----------------------------------- */
+
+.item-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 20px;
+  background-color: var(--primary-bg-color);
+  border-radius: 20px;
+  padding: 3px 0;
+}
+
+.quantity-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--dark-color);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  font-weight: bold;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.quantity-btn:hover {
+  background-color: var(--accent-color-lima);
+  color: var(--dark-color);
+}
+
+.item-quantity {
+  padding: 0 5px;
+  font-weight: bold;
+  min-width: 15px;
+  text-align: center;
+  color: var(--secondary-text-color); /* CANTIDAD: GRIS */
+}
+
+/* ----------------------------------- */
+/* BOTÓN ELIMINAR (Papelera) */
+/* ----------------------------------- */
+
+.remove-item-btn {
+  background-color: transparent;
+  color: #666;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.remove-item-btn:hover {
+  color: var(--delete-color);
+  text-decoration: none;
+}
+
+/* ----------------------------------- */
+/* RESUMEN DEL PEDIDO */
+/* ----------------------------------- */
+
+.cart-summary {
+  flex: 1;
+  background-color: var(--card-bg-color);
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  border: 1px solid var(--secondary-dark);
+}
+
+.cart-summary h2 {
+  color: var(--dark-color);
+  font-size: 1.5em;
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent-color-lima);
+  margin-bottom: 15px;
+  font-style: italic; /* Elegante / Cursiva */
+}
+
+/* FILAS DE RESUMEN: AHORA EN GRIS */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 1.1em;
+  color: var(--secondary-text-color); /* GRIS */
+  font-style: italic;
+}
+
+/* FILA DEL TOTAL: MANTENER EN NEGRO */
+.total-row {
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  padding-top: 10px;
+  font-size: 1.2em;
+  color: var(--secondary-text-color); /* NEGRO */
+  font-style: normal;
+}
+
+.total-row strong {
+  color: var(--dark-color);
+}
+
+/* ----------------------------------- */
+/* BOTONES DE COMPRA Y FORMULARIO */
+/* ----------------------------------- */
+
+.checkout-btn,
+.continue-shopping-btn {
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  background-color: var(--accent-color-lima);
+  color: var(--dark-color);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.checkout-btn:hover,
+.continue-shopping-btn:hover {
+  background-color: #8cc427;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* FORMULARIO DE CHECKOUT */
+.checkout-form {
+  margin-top: 15px;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.checkout-form h3 {
+  font-size: 1.2em;
+  margin-bottom: 15px;
+  color: var(--dark-color); /* Título del formulario en NEGRO */
+}
+
+.checkout-form input {
+  width: 93%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: border-color 0.2s;
+  color: var(--dark-color); /* Texto ingresado en negro */
+}
+
+.checkout-form input:focus {
+  outline: none;
+  border-color: var(--accent-color-lima);
+  box-shadow: 0 0 5px rgba(163, 230, 53, 0.4);
+}
+
+/* MENSAJE DE CARRITO VACÍO */
+.empty-cart-message {
+  text-align: center;
+  padding: 50px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  background-color: var(--card-bg-color);
+  margin-top: 30px;
+}
+
+.empty-cart-message p {
+  font-size: 1.2em;
+  color: var(--secondary-text-color); /* Texto vacío en GRIS */
+}
+
+/* ============================================================
+  MEDIA QUERIES (Responsive)
+  ============================================================ */
+
+@media (max-width: 992px) {
+  .cart-content {
+    flex-direction: column;
+  }
+
+  .cart-summary {
+    order: -1;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .cart-item-card {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .remove-item-btn {
+    position: static;
+    margin: 10px auto;
+  }
+
+  .cart-item-image {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+  }
+
+  .item-details {
+    margin-bottom: 10px;
+    min-width: 100%;
+  }
+
+  .item-quantity-control {
+    order: 3;
+    margin: 10px 0 0;
+  }
+
+  .item-subtotal {
+    order: 4;
+    min-width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+.remove-item-btn {
+  background-color: transparent;
+  color: var(--delete-color); /* Color de la 'X' en Rojo */
+  border: none;
+  font-size: 1.5em; /* Tamaño visible de la 'X' */
+  font-weight: bold; /* Para que la 'X' sea más marcada */
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  padding: 5px;
+  position: absolute;
+  right: 15px;
+  top: 10px; /* Un poco más arriba para centrar */
+  opacity: 0.7;
+}
+
+.remove-item-btn:hover {
+  color: var(--delete-color);
+  opacity: 1; /* Resaltar al pasar el ratón */
+  transform: scale(1.1); /* Ligeramente más grande al hover */
+}
+
+/* Ajuste Responsive: Aseguramos que la 'X' fluya en móvil */
+@media (max-width: 576px) {
+  .remove-item-btn {
+    position: static;
+    margin: 0 10px; /* Espacio para que no toque otros elementos */
+    font-size: 1.3em;
+  }
+}

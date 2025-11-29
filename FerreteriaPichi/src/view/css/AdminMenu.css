@@ -1,0 +1,34 @@
+/* AdminMenu.css */
+.admin-menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.admin-menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.admin-menu-buttons button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-menu-buttons button:hover {
+  background-color: #125aa3;
+}
+.admin-menu-container {
+}
+.h1admin {
+  margin-top: 5%;
+}

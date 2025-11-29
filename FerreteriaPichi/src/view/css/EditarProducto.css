@@ -1,0 +1,401 @@
+/* Estilos para AdminProductos, EditarImagenProducto y otros paneles de Superusuario */
+
+/* --- Variables de Color de Casa Mario --- */
+:root {
+  --primary-bg-color: #f4f4f4; /* Fondo general de la página */
+  --card-bg-color: #ffffff; /* Fondo de contenedores y tarjetas */
+  --accent-color-lima: #a3e635; /* Verde Lima brillante (Acción principal, Foco) */
+  --dark-color: #000000; /* Negro para títulos y texto principal */
+  --secondary-text-color: #666; /* Gris sutil para texto secundario */
+  --table-header-bg: #222; /* Negro oscuro para encabezados de tabla */
+  --delete-color: #dc3545; /* Rojo para eliminar */
+  --success-color: #198754; /* Verde estándar para guardar/éxito */
+}
+
+/* ============================================================
+  CONTENEDOR PRINCIPAL
+  ============================================================ */
+
+.superusuario-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background-color: var(--card-bg-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Títulos */
+.superusuario-container h1 {
+  text-align: center;
+  color: var(--dark-color);
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.superusuario-container h2 {
+  color: var(--dark-color);
+  margin-bottom: 1rem;
+  font-size: 1.7rem;
+  border-bottom: 2px solid var(--accent-color-lima);
+  padding-bottom: 5px;
+}
+
+.superusuario-container h3 {
+  color: var(--secondary-text-color);
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+  FORMULARIO (PRODUCTOS/CATEGORÍAS)
+  ============================================================ */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 3rem;
+  padding: 1rem;
+  background-color: var(--primary-bg-color); /* Fondo gris claro */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-container h2 {
+  color: var(--dark-color);
+  border-bottom: 2px solid var(--accent-color-lima);
+  margin-top: 0;
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--dark-color);
+}
+
+.form-container input:focus,
+.form-container textarea:focus,
+.form-container select:focus {
+  outline: none;
+  border-color: var(--accent-color-lima); /* Foco en Lima */
+  box-shadow: 0 0 5px rgba(163, 230, 53, 0.5);
+}
+
+.form-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Botón del formulario (Acción Principal - Lima) */
+.form-container button {
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--accent-color-lima);
+  color: var(--dark-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  font-weight: bold;
+}
+
+.form-container button:hover {
+  background-color: #8cc427; /* Lima oscuro al hover */
+}
+
+/* ============================================================
+  TABLA DE PRODUCTOS/CATEGORÍAS
+  ============================================================ */
+.productos-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.productos-table th,
+.productos-table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+/* Encabezados de Tabla (Negro oscuro) */
+.productos-table th {
+  background-color: var(--table-header-bg);
+  color: var(--card-bg-color); /* Blanco */
+  font-weight: 600;
+}
+
+.productos-table tr:hover {
+  background-color: var(--primary-bg-color); /* Fondo gris claro al hover */
+}
+
+.action-buttons-container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Botones de Acción en Tabla */
+.edit-btn,
+.delete-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+/* Botón Editar (Verde Éxito estándar) */
+
+.edit-btn:hover {
+  background-color: #157347;
+}
+
+/* Botón Eliminar (Rojo) */
+.delete-btn {
+  background-color: var(--delete-color);
+}
+
+.delete-btn:hover {
+  background-color: #bb2d3b;
+}
+
+/* Limitar descripción en la tabla (Estilo mantenido) */
+.productos-table td:nth-child(3) {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+  GALERÍA DE IMÁGENES (EDITAR IMAGEN)
+  ============================================================ */
+
+.imagenes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.preview-nuevas-grid {
+  margin-top: 0.5rem;
+}
+
+/* Tarjeta de cada imagen */
+.imagen-item-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.imagen-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.imagen-preview-lg {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Botones dentro de la tarjeta (Eliminar/Quitar) */
+.delete-img-btn,
+.remove-preview-btn {
+  margin: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--delete-color); /* Rojo */
+  color: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-img-btn:hover,
+.remove-preview-btn:hover {
+  background-color: #bb2d3b;
+}
+
+/* Input de archivo */
+.file-input-modern {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  background-color: var(--primary-bg-color);
+  transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+.file-input-modern:hover {
+  border-color: var(--accent-color-lima);
+  background-color: #e9ecef;
+}
+
+/* Separador */
+.separator {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #ddd;
+}
+
+/* Botones de acción general (Guardar y Volver) */
+.guardar-imagenes-btn,
+.back-btn {
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Botón Guardar (Verde Éxito estándar) */
+.guardar-imagenes-btn {
+  background-color: var(--success-color);
+  color: white;
+  width: 100%;
+}
+
+.guardar-imagenes-btn:hover {
+  background-color: #157347;
+}
+
+.guardar-imagenes-btn:disabled {
+  background-color: #94d3a2;
+  cursor: not-allowed;
+}
+
+/* Botón Volver (Gris) */
+.back-btn {
+  background-color: #6c757d;
+  color: white;
+  width: 100%;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Mensaje de no imágenes */
+.no-images-msg {
+  font-style: italic;
+  color: var(--secondary-text-color);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Buscador */
+.buscador-container {
+  margin: 15px 0;
+}
+
+.buscador-container input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  /* Reutiliza estilos de input del formulario */
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+}
+
+.buscador-container input:focus {
+  outline: none;
+  border-color: var(--accent-color-lima);
+  box-shadow: 0 0 5px rgba(163, 230, 53, 0.5);
+}
+
+/* ============================================================
+  RESPONSIVE
+  ============================================================ */
+
+@media (max-width: 1024px) {
+  .superusuario-container {
+    padding: 1rem;
+  }
+
+  .action-buttons-container {
+    flex-direction: column;
+  }
+
+  .form-container button {
+    width: 100%;
+    align-self: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .imagenes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .imagen-preview-lg {
+    height: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .productos-table th,
+  .productos-table td {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .imagenes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .imagen-preview-lg {
+    height: 100px;
+  }
+
+  .guardar-imagenes-btn,
+  .back-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}

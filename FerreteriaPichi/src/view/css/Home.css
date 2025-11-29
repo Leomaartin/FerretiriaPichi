@@ -1,0 +1,625 @@
+/* Estilos Generales */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400; /* podes cambiar a 700, 500, etc */
+}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+}
+
+/* ---------------------- */
+/* Carousel Principal     */
+/* ---------------------- */
+main {
+  margin-top: 105px;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.carousel-content {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  position: relative;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover; /* Mantiene la proporción y cubre el alto fijo */
+  display: block;
+}
+
+/* Texto encima del banner */
+.carousel-caption {
+  position: absolute;
+  bottom: 20%;
+  left: 5%;
+  color: white;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-caption h3 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: bold;
+}
+
+.carousel-caption p {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* Botones de navegación */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(51, 51, 51, 0.5);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0.2rem 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+
+  /* Estilos adicionales que tenías al final, ajustados para el uso de flex en los botones */
+  /* margin-top: 12%; */ /* Esto es inusual, mejor usar top: 50% y transform */
+}
+
+.carousel-btn:hover {
+  background-color: rgba(51, 51, 51, 0.8);
+}
+
+.carousel-btn.left {
+  left: 10px;
+}
+
+.carousel-btn.right {
+  right: 10px;
+}
+
+/* Indicadores (dots) */
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-indicators .indicator {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.carousel-indicators .indicator.active {
+  background-color: var(--accent-color);
+}
+
+/* ---------------------- */
+/* Ajustes responsive Carousel */
+/* ---------------------- */
+
+@media (max-width: 768px) {
+  .carousel-slide img {
+    height: 250px;
+  }
+
+  .carousel-caption h3 {
+    font-size: 1.4rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1rem;
+  }
+}
+
+/* Header y Navbar */
+header {
+  width: 100%;
+  background-color: #343a40; /* Navbar oscuro */
+  color: white;
+  padding: 10px 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.navbar-brand {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.navbar-links li {
+  margin-left: 25px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: #007bff; /* Color de realce */
+}
+
+/* Banner (distinto al carousel) */
+.banner-section {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background-image: url("https://via.placeholder.com/1500x350/555555/FFFFFF?text=Tu+Imagen+de+Banner+Aqui");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.banner-content h1 {
+  font-size: 3.5em;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px 30px;
+  border-radius: 8px;
+}
+
+/* Categorías */
+.categorias-section {
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.categorias-title {
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.categorias-grid {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.categoria-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.3s ease;
+}
+
+.categoria-item:hover {
+  transform: translateY(-5px);
+}
+
+.categoria-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.categoria-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ajuste para las imágenes de categoría (círculo) */
+  display: block;
+}
+
+.categoria-name {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Productos */
+.productos-section {
+  padding: 50px 20px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.productos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.productos-header h2 {
+  font-size: 2.5em;
+  color: #333;
+  margin: 0;
+}
+
+.ordenar-productos {
+  display: flex;
+  align-items: center;
+}
+
+.ordenar-productos label {
+  margin-right: 10px;
+  font-size: 1.1em;
+  color: #555;
+}
+
+.ordenar-productos select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  background-color: white;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  width: 100%;
+}
+
+.producto-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.producto-image-container {
+  width: 100%;
+  /* ✨ CLAVE: Define la altura del contenedor para que la imagen lo llene */
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 🎨 CORRECCIÓN: Fondo blanco (#ffffff) para evitar el gris */
+  background-color: #ffffff;
+}
+
+.producto-image-container img {
+  width: 100%;
+  height: 100%;
+  /* 🌟 CORRECCIÓN: Usar 'contain' para que la imagen NO se corte y se vea COMPLETA */
+  object-fit: contain;
+  display: block;
+}
+
+.producto-info {
+  padding: 20px;
+  text-align: left;
+}
+
+.producto-info h3 {
+  font-size: 1.5em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #007bff;
+  /* Limita el alto para evitar que títulos largos rompan el diseño */
+  max-height: 2.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.producto-info p.descripcion {
+  font-size: 0.95em;
+  color: #666;
+  margin-bottom: 15px;
+  height: 40px; /* Altura fija para la descripción */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limita a 2 líneas */
+  -webkit-box-orient: vertical;
+}
+
+.producto-info p.precio {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.producto-info p.stock {
+  font-size: 0.9em;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+.btn-comprar {
+  display: inline-block;
+  background-color: #a3e635;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%; /* El botón ocupa todo el ancho */
+  box-sizing: border-box; /* Incluye padding en el width */
+  text-align: center;
+}
+
+.btn-comprar:hover {
+  background-color: #218838;
+}
+
+.btn-comprar {
+  display: inline-block;
+  background-color: #a3e635;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%; /* El botón ocupa todo el ancho */
+  box-sizing: border-box; /* Incluye padding en el width */
+  text-align: center;
+}
+
+.btn-comprar:hover {
+  background-color: #218838;
+}
+
+/* Footer */
+footer {
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 50px;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
+  .navbar-links {
+    margin-top: 15px;
+  }
+  .categorias-grid {
+    justify-content: center;
+  }
+  .productos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ordenar-productos {
+    margin-top: 15px;
+  }
+  .producto-image-container {
+    height: 200px; /* Ajuste la altura para dispositivos más pequeños */
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-content h1 {
+    font-size: 2.5em;
+    padding: 10px 20px;
+  }
+  .categorias-title,
+  .productos-header h2 {
+    font-size: 2em;
+  }
+  .categoria-circle {
+    width: 100px;
+    height: 100px;
+  }
+  .categoria-name {
+    font-size: 1em;
+  }
+  .producto-info h3 {
+    font-size: 1.3em;
+  }
+  .producto-info p.precio {
+    font-size: 1.2em;
+  }
+}
+.btn-carrito {
+  background-color: #a3e635; /* Verde brillante */
+  color: #ffffff; /* Gris oscuro para el texto */
+  font-weight: bold;
+  font-size: 1em;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%; /* ocupa todo el ancho del contenedor */
+  text-align: center;
+}
+
+.btn-carrito:hover {
+  background-color: #84cc16; /* Verde un poco más oscuro al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-carrito:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+/* Encabezado de la sección, contiene el título y los filtros */
+.productos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Para que se ajusten en móvil */
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #333; /* Línea de separación sutil */
+  padding-bottom: 1rem;
+}
+
+.productos-header h2 {
+  color: #000000; /* Puedes cambiar a un color que contraste con el fondo de tu página */
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Contenedor de los elementos de filtro (Buscador y Ordenar) */
+.filtros {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* ----------------------------------- */
+/* Estilos para el Campo de Búsqueda (Input) */
+/* ----------------------------------- */
+
+.buscador-productos {
+  padding: 0.75rem 1rem;
+  border: 2px solid #555;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 250px;
+  transition: all 0.3s ease;
+  background-color: #f8f8f8; /* Fondo claro para el input */
+  color: #333;
+}
+
+.buscador-productos::placeholder {
+  color: #888;
+}
+
+.buscador-productos:focus {
+  outline: none;
+  border-color: #a3e635; /* Borde verde lima al enfocar */
+  box-shadow: 0 0 8px rgba(163, 230, 53, 0.5); /* Sombra suave verde lima */
+  background-color: #ffffff;
+}
+
+/* ----------------------------------- */
+/* Estilos para el Selector de Orden (Select) */
+/* ----------------------------------- */
+
+.ordenar-productos {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.ordenar-productos label {
+  font-weight: 500;
+}
+
+.ordenar-productos select {
+  padding: 0.75rem 1rem;
+  border: 2px solid #555;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #a3e635; /* Fondo Verde Lima */
+  color: #000000; /* Texto Negro para contraste */
+  appearance: none; /* Oculta el estilo nativo del select (flecha) */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23000000" d="M5 6l5 8 5-8z"/></svg>'); /* Flecha negra */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px;
+}
+
+.ordenar-productos select:hover {
+  background-color: #8cc427; /* Verde lima un poco más oscuro al pasar el ratón */
+}
+
+.ordenar-productos select:focus {
+  outline: none;
+  border-color: #000000; /* Borde negro al enfocar */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ----------------------------------- */
+/* Media Queries para Responsive */
+/* ----------------------------------- */
+
+@media (max-width: 768px) {
+  .productos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .filtros {
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .buscador-productos {
+    width: 100%; /* Ocupa todo el ancho en móvil */
+  }
+}
