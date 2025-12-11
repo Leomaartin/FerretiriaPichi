@@ -70,30 +70,37 @@ main {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(51, 51, 51, 0.5);
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
   border: none;
-  color: white;
-  font-size: 2rem;
-  padding: 0.2rem 0.8rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
-  border-radius: 4px;
   z-index: 10;
-  transition: background-color 0.2s ease;
-
-  /* Estilos adicionales que tenías al final, ajustados para el uso de flex en los botones */
-  /* margin-top: 12%; */ /* Esto es inusual, mejor usar top: 50% y transform */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
 }
 
 .carousel-btn:hover {
-  background-color: rgba(51, 51, 51, 0.8);
+  background-color: #a3e635; /* Verde Lima */
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 15px rgba(163, 230, 53, 0.4);
 }
 
 .carousel-btn.left {
-  left: 10px;
+  left: 20px;
 }
 
 .carousel-btn.right {
-  right: 10px;
+  right: 20px;
 }
 
 /* Indicadores (dots) */
@@ -225,6 +232,7 @@ header {
   justify-content: space-around;
   flex-wrap: wrap;
   gap: 30px;
+  position: relative;
 }
 
 .categoria-item {
@@ -251,6 +259,32 @@ header {
   margin-bottom: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  position: relative;
+  border: 4px solid transparent; /* Prepare for border effect */
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+/* Pseudo-element for the filling effect */
+.categoria-circle::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background-color: rgba(163, 230, 53, 0.2); /* Semi-transparent green */
+  transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Slower and smoother */
+  z-index: -1;
+}
+
+.categoria-item:hover .categoria-circle {
+  border-color: #a3e635; /* Green border appears */
+  box-shadow: 0 0 15px rgba(163, 230, 53, 0.5);
+}
+
+.categoria-item:hover .categoria-circle::before {
+  height: 100%; /* Fills up from bottom */
 }
 
 .categoria-circle img {
@@ -264,6 +298,50 @@ header {
   font-size: 1.2em;
   font-weight: bold;
 }
+
+/* Categorias Carousel Smooth Transition */
+.categorias-track-container {
+  overflow: hidden;
+  width: 100%;
+  padding: 20px 0; /* Espacio para sombras y hover effects */
+}
+
+.categorias-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.categoria-item-wrapper {
+  flex: 0 0 25%; /* 4 items visibles por defecto */
+  max-width: 25%;
+  display: flex;
+  justify-content: center;
+  padding: 0 10px; /* Espaciado entre items */
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .categoria-item-wrapper {
+    flex: 0 0 33.33%; /* 3 items */
+    max-width: 33.33%;
+  }
+}
+
+@media (max-width: 768px) {
+  .categoria-item-wrapper {
+    flex: 0 0 50%; /* 2 items */
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoria-item-wrapper {
+    flex: 0 0 100%; /* 1 item */
+    max-width: 100%;
+  }
+}
+
 
 /* Productos */
 .productos-section {
@@ -306,9 +384,27 @@ header {
 
 .productos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 30px;
   width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .productos-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .productos-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .producto-card {
@@ -319,6 +415,7 @@ header {
   text-decoration: none;
   color: #333;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative; /* Necessary for absolute positioning of badge */
 }
 
 .producto-card:hover {
@@ -328,20 +425,20 @@ header {
 
 .producto-image-container {
   width: 100%;
-  /* ✨ CLAVE: Define la altura del contenedor para que la imagen lo llene */
+
   height: 250px;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* 🎨 CORRECCIÓN: Fondo blanco (#ffffff) para evitar el gris */
+
   background-color: #ffffff;
 }
 
 .producto-image-container img {
   width: 100%;
   height: 100%;
-  /* 🌟 CORRECCIÓN: Usar 'contain' para que la imagen NO se corte y se vea COMPLETA */
+
   object-fit: contain;
   display: block;
 }
@@ -355,8 +452,7 @@ header {
   font-size: 1.5em;
   margin-top: 0;
   margin-bottom: 10px;
-  color: #007bff;
-  /* Limita el alto para evitar que títulos largos rompan el diseño */
+  color: #000000;
   max-height: 2.5em;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -367,19 +463,12 @@ header {
   font-size: 0.95em;
   color: #666;
   margin-bottom: 15px;
-  height: 40px; /* Altura fija para la descripción */
+  height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limita a 2 líneas */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.producto-info p.precio {
-  font-size: 1.4em;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
 }
 
 .producto-info p.stock {
@@ -426,6 +515,75 @@ header {
 
 .btn-comprar:hover {
   background-color: #218838;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
+  .navbar-links {
+    margin-top: 15px;
+  }
+  .categorias-grid {
+    justify-content: center;
+  }
+  .productos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ordenar-productos {
+    margin-top: 15px;
+  }
+  .producto-image-container {
+    height: 200px; /* Ajuste la altura para dispositivos más pequeños */
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-content h1 {
+    font-size: 2.5em;
+    padding: 10px 20px;
+  }
+  .categorias-title,
+  .productos-header h2 {
+    font-size: 2em;
+  }
+  .categoria-circle {
+    width: 100px;
+    height: 100px;
+  }
+  .categoria-name {
+    font-size: 1em;
+  }
+  .producto-info h3 {
+    font-size: 1.3em;
+  }
+}
+.btn-carrito {
+  background-color: #a3e635; /* Verde brillante */
+  color: #ffffff; /* Gris oscuro para el texto */
+  font-weight: bold;
+  font-size: 1em;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%; /* ocupa todo el ancho del contenedor */
+  text-align: center;
+}
+
+.btn-carrito:hover {
+  background-color: #84cc16; /* Verde un poco más oscuro al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-carrito:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Footer */
@@ -479,9 +637,6 @@ footer {
   .producto-info h3 {
     font-size: 1.3em;
   }
-  .producto-info p.precio {
-    font-size: 1.2em;
-  }
 }
 .btn-carrito {
   background-color: #a3e635; /* Verde brillante */
@@ -513,20 +668,19 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Para que se ajusten en móvil */
+  flex-wrap: wrap;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #333; /* Línea de separación sutil */
+  border-bottom: 2px solid #d8d8d8;
   padding-bottom: 1rem;
 }
 
 .productos-header h2 {
-  color: #000000; /* Puedes cambiar a un color que contraste con el fondo de tu página */
+  color: #b6b6b6;
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
 }
 
-/* Contenedor de los elementos de filtro (Buscador y Ordenar) */
 .filtros {
   display: flex;
   gap: 1.5rem;
@@ -539,7 +693,7 @@ footer {
 
 .buscador-productos {
   padding: 0.75rem 1rem;
-  border: 2px solid #555;
+  border: 2px solid #d8d8d8;
   border-radius: 8px;
   font-size: 1rem;
   width: 250px;
@@ -549,7 +703,7 @@ footer {
 }
 
 .buscador-productos::placeholder {
-  color: #888;
+  color: #d8d8d8;
 }
 
 .buscador-productos:focus {
@@ -577,13 +731,13 @@ footer {
 
 .ordenar-productos select {
   padding: 0.75rem 1rem;
-  border: 2px solid #555;
+
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  background-color: #a3e635; /* Fondo Verde Lima */
-  color: #000000; /* Texto Negro para contraste */
-  appearance: none; /* Oculta el estilo nativo del select (flecha) */
+  background-color: white;
+  color: #696868;
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23000000" d="M5 6l5 8 5-8z"/></svg>'); /* Flecha negra */
@@ -593,13 +747,13 @@ footer {
 }
 
 .ordenar-productos select:hover {
-  background-color: #8cc427; /* Verde lima un poco más oscuro al pasar el ratón */
+  background-color: #f0f0f0;
 }
 
 .ordenar-productos select:focus {
   outline: none;
-  border-color: #000000; /* Borde negro al enfocar */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border-color: #d8d8d8;
+  box-shadow: 0 0 5px rgba(199, 199, 199, 0.3);
 }
 
 /* ----------------------------------- */
@@ -622,4 +776,57 @@ footer {
   .buscador-productos {
     width: 100%; /* Ocupa todo el ancho en móvil */
   }
+}
+
+
+
+
+
+.badge-oferta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px; 
+  height: auto;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.nuestros-productos {
+  color: #f4f4f4;
+}
+
+.precio-normal {
+  font-size: 1.5rem;
+}
+
+
+/* Flexbox para alinear botones al fondo */
+.producto-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.producto-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.btn-carrito {
+  margin-top: auto; /* Empuja el botón al fondo */
+}
+.precio-tachado {
+
+  font-size: 1.5rem !important;
+}
+
+.precio-oferta {
+  color: #ff2020 !important;
+  font-size: 2.0rem !important;
+  font-weight: bold !important;
 }

@@ -17,14 +17,27 @@ const Carrito: React.FC = () => {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [gmail, setGmail] = useState("");
+  const [direccion, setDireccion] = useState(""); // ⭐ NUEVO
 
+  // Cargar carrito desde localStorage
   useEffect(() => {
-    const storedCart = localStorage.getItem("carrito");
-    if (storedCart) {
-      setItems(JSON.parse(storedCart));
+    const stored = localStorage.getItem("carrito");
+    if (stored) setItems(JSON.parse(stored));
+  }, []);
+
+  // Rellenar Gmail si el usuario está logueado
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      if (user.email) {
+        setGmail(user.email); // ⭐ Rellena Gmail automáticamente
+        setNombre(user.nombre || "");
+      }
     }
   }, []);
 
+  // Guardar carrito cuando cambien los items
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(items));
   }, [items]);
@@ -37,7 +50,7 @@ const Carrito: React.FC = () => {
             ? { ...item, cantidad: Math.max(1, item.cantidad + delta) }
             : item
         )
-        .filter((item) => item.cantidad > 0)
+        .filter((i) => i.cantidad > 0)
     );
   };
 
@@ -46,6 +59,7 @@ const Carrito: React.FC = () => {
   };
 
   const calcularSubtotal = (item: CarritoItem) => item.precio * item.cantidad;
+
   const total = items.reduce((acc, item) => acc + calcularSubtotal(item), 0);
 
   const handleFinalizar = () => {
@@ -53,47 +67,41 @@ const Carrito: React.FC = () => {
   };
 
   const handleIrAPagar = async () => {
-    console.log("📤 [FRONT] Mandando carrito al backend...");
-
     try {
       const response = await fetch("http://localhost:3334/api/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items,
           nombre,
           telefono,
           gmail,
+          direccion, // ⭐ ENVIADO AL BACKEND
         }),
       });
 
       const data = await response.json();
 
-      console.log("📥 [FRONT] Respuesta del backend:", data);
-
       if (data.init_point) {
-        console.log("🔗 Redirigiendo a Mercado Pago:", data.init_point);
         window.location.href = data.init_point;
       } else {
         alert("Error iniciando el pago.");
       }
     } catch (error) {
-      console.error("🔥 Error al procesar pago:", error);
+      console.error("Error al procesar pago:", error);
     }
   };
 
   return (
     <main>
       <Navbar />
+
       <div className="cart-container">
-        <h1>Tu Carrito de Compras</h1>
+        <h1 style={{ marginTop: "10%" }}>Tu Carrito de Compras</h1>
 
         {items.length === 0 ? (
           <div className="empty-cart-message">
             <p>Tu carrito está vacío. ¡Añade algunos productos!</p>
-
             <button
               className="continue-shopping-btn"
               onClick={() => (window.location.href = "/")}
@@ -103,7 +111,6 @@ const Carrito: React.FC = () => {
           </div>
         ) : (
           <div className="cart-content">
-            {/* LISTA DE PRODUCTOS */}
             <div className="cart-items-list">
               {items.map((item) => (
                 <div key={item.id} className="cart-item-card">
@@ -115,11 +122,11 @@ const Carrito: React.FC = () => {
 
                   <div className="item-details">
                     <h3 className="item-name">{item.nombre}</h3>
+
                     <p className="item-price">
                       Precio unitario: ${item.precio.toFixed(2)}
                     </p>
 
-                    {/* BOTÓN ELIMINAR AHORA ES UN ICONO DE PAPELERA */}
                     <button
                       className="remove-item-btn"
                       onClick={() => removeItem(item.id)}
@@ -154,7 +161,6 @@ const Carrito: React.FC = () => {
               ))}
             </div>
 
-            {/* RESUMEN */}
             <div className="cart-summary">
               <h2>Resumen del Pedido</h2>
 
@@ -200,6 +206,14 @@ const Carrito: React.FC = () => {
                     placeholder="Correo Gmail"
                     value={gmail}
                     onChange={(e) => setGmail(e.target.value)}
+                  />
+
+                  {/* ⭐ NUEVO INPUT DE DIRECCIÓN */}
+                  <input
+                    type="text"
+                    placeholder="Dirección"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
                   />
 
                   <button className="checkout-btn" onClick={handleIrAPagar}>

@@ -1,6 +1,6 @@
 import "./css/Home.css";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
@@ -11,7 +11,9 @@ interface Producto {
   descripcion: string;
   precio: number;
   stock: number;
+  mostrar: number;
   imagenes?: string[];
+  precioenoferta?: number | string;
 }
 
 interface Categoria {
@@ -25,15 +27,40 @@ function Home() {
   const [productosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
   const [categoria, setCategoria] = useState<Categoria[]>([]);
   const [categoriaStart, setCategoriaStart] = useState(0);
-  const [orden, setOrden] = useState("az");
-  const [busqueda, setBusqueda] = useState(""); // <-- NUEVO ESTADO
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 768) {
+        setItemsPerPage(2);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(3);
+      } else {
+        setItemsPerPage(4);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const navigate = useNavigate();
 
   // ============================================
-  // AGREGAR AL CARRITO (localStorage)
+  // AGREGAR AL CARRITO
   // ============================================
   const handleSubmitCarrito = (producto: Producto) => {
     try {
+      const precioFinal =
+        Number(producto.precioenoferta) > 0
+          ? Number(producto.precioenoferta)
+          : Number(producto.precio);
+
       const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
       const index = carrito.findIndex((item: any) => item.id === producto.id);
 
@@ -43,7 +70,7 @@ function Home() {
         carrito.push({
           id: producto.id,
           nombre: producto.nombre,
-          precio: Number(producto.precio),
+          precio: precioFinal,
           cantidad: 1,
           imagen: producto.imagenes?.[0] ?? "default.png",
         });
@@ -56,15 +83,17 @@ function Home() {
     }
   };
 
-  // ============================================
-  // TRAER PRODUCTOS
-  // ============================================
   useEffect(() => {
     const fetchProductos = async () => {
       try {
         const res = await axios.get("http://localhost:3334/api/productos");
-        setProductos(res.data);
-        setProductosFiltrados(res.data);
+
+        const visibles = res.data.filter((p: Producto) => p.mostrar === 1);
+
+        console.log(res.data);
+
+        setProductos(visibles);
+        setProductosFiltrados(visibles);
       } catch (error) {
         console.error("Error al cargar productos:", error);
       }
@@ -72,9 +101,6 @@ function Home() {
     fetchProductos();
   }, []);
 
-  // ============================================
-  // TRAER CATEGORÍAS
-  // ============================================
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -87,41 +113,36 @@ function Home() {
     fetchCategorias();
   }, []);
 
-  // ============================================
-  // ORDENAMIENTO + FILTRO DE BÚSQUEDA
-  // ============================================
+  // Auto-scroll logic for categories
+  const resetTimeout = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
   useEffect(() => {
-    let temp = [...productos];
+    resetTimeout();
+    timeoutRef.current = setTimeout(() => {
+      nextCategory();
+    }, 4000);
 
-    // Filtrado por texto
-    if (busqueda.trim() !== "") {
-      temp = temp.filter((p) =>
-        p.nombre.toLowerCase().includes(busqueda.toLowerCase())
-      );
-    }
+    return () => {
+      resetTimeout();
+    };
+  }, [categoriaStart, categoria]);
 
-    // Ordenamiento
-    switch (orden) {
-      case "az":
-        temp.sort((a, b) => a.nombre.localeCompare(b.nombre));
-        break;
-      case "za":
-        temp.sort((a, b) => b.nombre.localeCompare(a.nombre));
-        break;
-      case "precio-asc":
-        temp.sort((a, b) => a.precio - b.precio);
-        break;
-      case "precio-desc":
-        temp.sort((a, b) => b.precio - a.precio);
-        break;
-    }
+  const nextCategory = () => {
+    setCategoriaStart((prev) =>
+      prev + 1 + itemsPerPage <= categoria.length ? prev + 1 : 0
+    );
+  };
 
-    setProductosFiltrados(temp);
-  }, [orden, productos, busqueda]);
+  const prevCategory = () => {
+    setCategoriaStart((prev) =>
+      prev - 1 >= 0 ? prev - 1 : Math.max(categoria.length - itemsPerPage, 0)
+    );
+  };
 
-  // ============================================
-  // CARRUSEL SIMPLE
-  // ============================================
   const CAROUSEL_ITEMS = [
     {
       src: "./backend/uploads/img/banner1.jpg",
@@ -169,12 +190,7 @@ function Home() {
             </div>
           ))}
         </div>
-        <button className="carousel-btn left" onClick={goToPrev}>
-          {"<"}
-        </button>
-        <button className="carousel-btn right" onClick={goToNext}>
-          {">"}
-        </button>
+
         <div className="carousel-indicators">
           {CAROUSEL_ITEMS.map((_, index) => (
             <div
@@ -208,83 +224,59 @@ function Home() {
         >
           Explora Nuestras Categorías
         </h2>
+
         <div className="categorias-grid">
-          <button
-            className="carousel-btn left"
-            style={{ marginTop: "17%", marginLeft: "15%" }}
-            onClick={() =>
-              setCategoriaStart((prev) =>
-                prev - 1 >= 0 ? prev - 1 : Math.max(categoria.length - 4, 0)
-              )
-            }
-          >
-            {"<"}
-          </button>
-          {categoria
-            .slice(categoriaStart, categoriaStart + 4)
-            .map((cat, index) => (
-              <Link
-                key={index}
-                to={`/categorias/${cat.id}`}
-                className="categoria-item"
-              >
-                <div className="categoria-circle">
-                  <img
-                    src={`./backend/uploads/${cat.imagen}`}
-                    alt={cat.nombre}
-                  />
+          {categoria.length > itemsPerPage && (
+            <button className="carousel-btn left" onClick={prevCategory}>
+              {"<"}
+            </button>
+          )}
+
+          <div className="categorias-track-container">
+            <div
+              className="categorias-track"
+              style={{
+                transform: `translateX(-${
+                  categoriaStart * (100 / itemsPerPage)
+                }%)`,
+              }}
+            >
+              {categoria.map((cat, index) => (
+                <div key={index} className="categoria-item-wrapper">
+                  <Link to={`/categorias/${cat.id}`} className="categoria-item">
+                    <div className="categoria-circle">
+                      <img
+                        src={`./backend/uploads/${cat.imagen}`}
+                        alt={cat.nombre}
+                      />
+                    </div>
+                    <span className="categoria-name">{cat.nombre}</span>
+                  </Link>
                 </div>
-                <span className="categoria-name">{cat.nombre}</span>
-              </Link>
-            ))}
-          <button
-            className="carousel-btn right"
-            style={{ marginTop: "17%", marginRight: "15%" }}
-            onClick={() =>
-              setCategoriaStart((prev) =>
-                prev + 1 + 4 <= categoria.length ? prev + 1 : 0
-              )
-            }
-          >
-            {">"}
-          </button>
+              ))}
+            </div>
+          </div>
+
+          {categoria.length > itemsPerPage && (
+            <button className="carousel-btn right" onClick={nextCategory}>
+              {">"}
+            </button>
+          )}
         </div>
       </section>
 
       {/* PRODUCTOS */}
       <section className="productos-section">
         <div className="productos-header">
-          <h2 style={{ fontFamily: "Montserrat, sans-serif" }}>
-            Nuestros Productos
+          <h2
+            style={{ fontFamily: "Montserrat, sans-serif" }}
+            className="nuestros-productos"
+          >
+            Productos mas vendidos
           </h2>
-
-          <div className="filtros">
-            {/* Buscador */}
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="buscador-productos"
-            />
-
-            {/* Orden */}
-            <div className="ordenar-productos">
-              <label htmlFor="ordenar">Ordenar por:</label>
-              <select
-                id="ordenar"
-                value={orden}
-                onChange={(e) => setOrden(e.target.value)}
-              >
-                <option value="az">A-Z</option>
-                <option value="za">Z-A</option>
-                <option value="precio-asc">Precio Asc.</option>
-                <option value="precio-desc">Precio Desc.</option>
-              </select>
-            </div>
-          </div>
         </div>
 
+        {/* PRODUCTOS VISIBLES */}
         <div className="productos-grid">
           {productosFiltrados.map((producto) => (
             <Link
@@ -305,9 +297,22 @@ function Home() {
 
               <div className="producto-info">
                 <h3>{producto.nombre}</h3>
-                <p className="descripcion">{producto.descripcion}</p>
-                <p className="precio">${producto.precio}</p>
-                <p className="stock">Stock: {producto.stock}</p>
+
+                {Number(producto.precioenoferta) > 0 ? (
+                  <>
+                    <span className="precio-tachado">${producto.precio}</span>
+                    <img
+                      src="./backend/uploads/oferta1.png"
+                      className="badge-oferta"
+                      alt="Oferta"
+                    />
+                    <span className="precio-oferta">
+                      ${Number(producto.precioenoferta)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="precio-normal">${producto.precio}</span>
+                )}
 
                 <button
                   className="btn-carrito"

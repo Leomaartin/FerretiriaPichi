@@ -1,11 +1,108 @@
 /* Variables de color para fácil mantenimiento */
 :root {
   --primary-color: #8b4513; /* Marrón tierra/madera */
-  --accent-color: #ffa500; /* Naranja/Amarillo Ferretería */
+  --accent-color: #a3e635; /* Verde Lima (Brand Color) */
+  --accent-color-hover: #84cc16; /* Verde más oscuro */
   --dark-text: #2c3e50;
   --light-bg: #f5f5f5;
   --white: #ffffff;
 }
+
+/* ... (rest of the file until .mission-text strong) ... */
+
+.mission-text strong {
+  color: var(--accent-color);
+}
+
+/* ... */
+
+.gallery-image:hover {
+  transform: scale(1.02);
+  border-color: var(--accent-color-hover); /* hover:border-green-600 */
+}
+
+/* ... */
+
+.about-us-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: var(--dark-text);
+  margin-bottom: 1.5rem; /* mb-6 */
+  border-bottom: 3px solid var(--accent-color); /* border-b-2 border-green-600 */
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+/* ... */
+
+.priority-text {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #4d7c0f; /* text-green-700 (Darker green for text) */
+}
+
+/* ... */
+
+.location-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: var(--dark-text);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+/* ... */
+
+.contact-title {
+  /* Reutiliza el estilo del título de Quiénes Somos */
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dark-text);
+  margin-bottom: 0.5rem; /* Ajuste sutil */
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+/* ... */
+
+.reviews-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dark-text);
+  margin-bottom: 2rem;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  text-align: center; /* Explicitly center text */
+}
+
+/* ... */
+
+.carousel-control:hover {
+  background-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* ... */
+
+.botones-exportar button {
+  padding: 8px 16px;
+  border: none;
+  background: var(--accent-color); /* Use brand green */
+  color: #1f2937; /* Dark text for contrast on lime */
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 
 /* Contenedor Principal */
 .page-container {
@@ -13,8 +110,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--light-bg);
+  background-color: white;
   min-height: 100vh;
+  margin-top: 0 !important; /* Override potential global styles */
+  padding-top: 100px; /* Space for fixed navbar */
 }
 
 /* ----------------------------------- */
@@ -112,7 +211,7 @@
 
 .gallery-image:hover {
   transform: scale(1.02);
-  border-color: #cc8400; /* hover:border-yellow-600 */
+  border-color: var(--accent-color); /* hover:border-green-600 */
 }
 
 /* ----------------------------------- */
@@ -132,7 +231,7 @@
   font-weight: 700; /* font-bold */
   color: var(--dark-text);
   margin-bottom: 1.5rem; /* mb-6 */
-  border-bottom: 3px solid #cc8400; /* border-b-2 border-yellow-600 */
+  border-bottom: 3px solid var(--accent-color); /* border-b-2 border-green-600 */
   display: inline-block;
   padding-bottom: 0.25rem;
 }
@@ -155,7 +254,7 @@
   display: block;
   margin-top: 1rem;
   font-weight: 600;
-  color: #b45309; /* text-yellow-700 */
+  color: var(--accent-color); /* text-green-700 (Darker green for text) */
 }
 
 /* ----------------------------------- */
@@ -168,6 +267,7 @@
   margin-top: 5rem; /* mt-20 */
   padding: 0 1rem; /* px-4 */
   margin-bottom: 5rem; /* mb-20 */
+  text-align: center;
 }
 
 .location-title {
@@ -176,6 +276,16 @@
   color: var(--dark-text);
   margin-bottom: 1.5rem;
   text-align: center;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0.25rem;
+}
+
+.reviews-section {
+  text-align: center;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .map-container {
@@ -215,7 +325,7 @@
   font-weight: 700;
   color: var(--dark-text);
   margin-bottom: 0.5rem; /* Ajuste sutil */
-  border-bottom: 3px solid #cc8400;
+  border-bottom: 3px solid var(--accent-color);
   display: inline-block;
   padding-bottom: 0.25rem;
 }
@@ -280,3 +390,251 @@
 }
 
 /* Asegúrate de mantener todos tus estilos anteriores de Sobrenosotros.css */
+
+/* ----------------------------------- */
+/* Sección de Reseñas (Carousel) - Google Style */
+/* ----------------------------------- */
+
+.reviews-carousel-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.reviews-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dark-text);
+  margin-bottom: 2rem;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  text-align: center; /* Explicitly center text */
+}
+
+.reviews-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 1rem;
+}
+
+.reviews-track-container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.reviews-track {
+  display: flex;
+  transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother, more natural easing */
+  width: 100%;
+}
+
+/* Wrapper for spacing */
+.review-card-wrapper {
+  padding: 15px; /* Increased gap */
+  box-sizing: border-box;
+}
+
+/* Google Review Card Style - Enhanced */
+.review-card.google-style {
+  background-color: var(--white);
+  border-radius: 20px; /* Even more rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Soft, modern shadow */
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  border: 1px solid rgba(0,0,0,0.03);
+  height: 100%;
+  min-height: 240px;
+  font-family: 'Roboto', sans-serif;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.review-card.google-style:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  width: 100%;
+  position: relative;
+}
+
+.review-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #6200ea, #9d46ff); /* Gradient background */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-right: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(98, 0, 234, 0.3);
+}
+
+.review-avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 16px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.review-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.review-user {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: #202124;
+  letter-spacing: -0.3px;
+}
+
+.review-meta {
+  font-size: 0.85rem;
+  color: #70757a;
+  margin-top: 4px;
+}
+
+.google-icon {
+  display: none; /* Ensure it's hidden if markup remains */
+}
+
+.review-rating-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  background: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-flex; /* Wrap content */
+}
+
+.review-stars {
+  display: flex;
+  align-items: center;
+}
+
+.star.filled {
+  color: #ffc107; /* Brighter yellow */
+  font-size: 1.1rem;
+  margin-right: 2px;
+  filter: drop-shadow(0 1px 2px rgba(255, 193, 7, 0.3));
+}
+
+.star {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  margin-right: 2px;
+}
+
+.review-text {
+  font-size: 1rem;
+  color: #4a4a4a;
+  line-height: 1.7;
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 4;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Controles del Carousel */
+.carousel-control {
+  background-color: var(--white);
+  border: none;
+  color: #333;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 10;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.carousel-control:hover {
+  background-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .reviews-carousel-container {
+    padding: 0 0.5rem;
+  }
+  
+  .review-card-wrapper {
+    padding: 8px;
+  }
+  
+  .review-card.google-style {
+    padding: 20px;
+    min-height: 200px;
+  }
+}
+.contenedor-reseñas {
+  padding: 20px;
+}
+
+.botones-exportar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.botones-exportar button {
+  padding: 8px 16px;
+  border: none;
+  background: #0077ff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.botones-exportar button:hover {
+  opacity: 0.8;
+}
+
+.lista-reseñas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 15px;
+}
+
+.tarjeta-reseña {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

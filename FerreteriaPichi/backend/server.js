@@ -6,8 +6,7 @@ import cron from "node-cron";
 import { conexion } from "./database/conexion.js";
 import path from "path";
 
-// Ruta del controlador de Google Login
-import authRoutes from "./database/GoogleAuth.js";
+
 
 dotenv.config();
 const app = express();
@@ -42,10 +41,6 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 // ========================
 registrarEndpoints(app);
 
-// ========================
-//    GOOGLE LOGIN ROUTE
-// ========================
-app.use("/api/auth", authRoutes);
 
 // ========================
 //       RUTA ROOT

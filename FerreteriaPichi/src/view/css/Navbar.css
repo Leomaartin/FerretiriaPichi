@@ -15,7 +15,7 @@
 .navbar-container {
   width: 100%;
   background-color: black;
-  padding: 0 1rem; /* Padding horizontal */
+  padding: 0 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   height: 100px;
 }
@@ -130,17 +130,56 @@
   color: var(--text-color);
 }
 
-.navbar-logout-btn,
+.navbar-logout-btn {
+  background-color: #a3e635; /* verde siempre */
+  border: none;
+  padding: 0.5rem 1rem;
+  color: #000000; /* texto negro */
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
 .navbar-login-btn {
   background-color: #a3e635;
   border: none;
   padding: 0.5rem 1rem;
-  color: #A3E635 /* Texto oscuro en botón lima */
+  color: #A3E635; /* Texto oscuro en botón lima */
   font-weight: bold;
   cursor: pointer;
   border-radius: 4px;
   text-decoration: none; /* Para el link de login */
   transition: background-color 0.2s ease;
+}
+
+/* Cart link */
+.navbar-cart-link {
+  margin-left: 0.5rem;
+  text-decoration: none;
+}
+
+.navbar-cart-link .cart-icon {
+  color: #a3e635;
+  font-size: 2rem; /* icon larger */
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.navbar-cart-link .cart-icon:hover {
+  transform: scale(1.2);
+  color: #8cc427; /* slightly darker on hover */
+}
+
+/* Cart link */
+.navbar-cart-link {
+  margin-left: 0.5rem;
+  text-decoration: none;
+}
+
+.navbar-cart-link .cart-icon {
+  color: #a3e635; /* Verde lima */
+  font-size: 1.2rem;
 }
 
 .navbar-logout-btn:hover,

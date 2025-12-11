@@ -1,17 +1,23 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import "./css/Sobrenosotros.css"; // Enlaza el archivo CSS
+import "./css/Sobrenosotros.css";
+import ReviewsComponent from "./Reseñas"
+
+
 
 export default function SobreNosotros() {
   // --- CONFIGURACIÓN DE CONTACTO ---
   const whatsappNumber = "5491100000000"; // Reemplaza con el número real (ej: 5491112345678)
   const contactEmail = "ferreteria.mario@gmail.com"; // Reemplaza con tu email
 
+
+
+
   return (
     <main className="page-container">
-      <header>
+   
         <Navbar />
-      </header>
+  
       {/* Hero Section / Título Principal (MANTENIDO) */}
       <section className="hero-section">
         <h1 className="hero-title"> Sobre Ferretería Casa Mario</h1>
@@ -52,7 +58,7 @@ export default function SobreNosotros() {
       </section>
       {/* Quiénes Somos (MANTENIDO) */}
       <section className="about-us-section">
-        <h2 className="about-us-title">🤝 Nuestra Historia y Valores</h2>
+        <h2 className="about-us-title"> Nuestra Historia y Valores</h2>
         <div className="about-us-content">
           <p className="about-us-text">
             Somos una ferretería familiar que esta desde <strong>1979</strong>{" "}
@@ -66,7 +72,8 @@ export default function SobreNosotros() {
           </p>
         </div>
       </section>
-      --- {/* 📞 NUEVA SECCIÓN: CONTÁCTANOS */}
+      
+      {/* 📞 NUEVA SECCIÓN: CONTÁCTANOS */}
       <section className="contact-section" id="contactanos">
         <h2 className="contact-title">Contáctanos</h2>
         <p className="contact-subtitle">
@@ -91,7 +98,8 @@ export default function SobreNosotros() {
           </a>
         </div>
       </section>
-      -{/* Ubicación con Mapa (MANTENIDO) */}
+      
+      {/* Ubicación con Mapa (MANTENIDO) */}
       <section className="location-section">
         <h2 className="location-title">Visítanos</h2>
         <div className="map-container">
@@ -112,6 +120,15 @@ export default function SobreNosotros() {
           Te esperamos en Av. Gallesio 590, Zárate.
         </p>
       </section>
+
+ {/* Sección de Reseñas */}
+<section className="reviews-section">
+  <h2 className="reviews-title">Reseñas de Nuestros Clientes</h2>
+
+  <ReviewsComponent />
+</section>
+   
+  
     </main>
   );
 }

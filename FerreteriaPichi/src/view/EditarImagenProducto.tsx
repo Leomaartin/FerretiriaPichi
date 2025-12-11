@@ -80,10 +80,10 @@ const EditarImagenesProducto: React.FC = () => {
   };
 
   return (
-    <main>
-      <header>
+    <main style={{marginTop:"8%"}}>
+
         <Navbar />
-      </header>
+    
       <div className="superusuario-container">
         <h1>Gestión de Imágenes del Producto #{id}</h1>
 
@@ -103,6 +103,7 @@ const EditarImagenesProducto: React.FC = () => {
                   />
                   <button
                     className="delete-img-btn"
+                    style={{ backgroundColor: "#f30c0cff", color: "white" }}
                     onClick={() => handleEliminarImagen(img)}
                   >
                     Eliminar
@@ -144,6 +145,7 @@ const EditarImagenesProducto: React.FC = () => {
                     />
                     <button
                       className="remove-preview-btn"
+                      style={{ backgroundColor: "#f30c0cff", color: "white" }}
                       onClick={() => handleRemoveNewImage(idx)}
                     >
                       Remover
@@ -156,6 +158,7 @@ const EditarImagenesProducto: React.FC = () => {
 
           <button
             onClick={handleGuardar}
+            style={{ backgroundColor: "#a3e635", color: "white" }}
             className="guardar-imagenes-btn"
             disabled={nuevasImagenes.length === 0}
           >
@@ -165,6 +168,7 @@ const EditarImagenesProducto: React.FC = () => {
 
           <button
             onClick={() => navigate("/adminproductos")}
+            style={{ backgroundColor: "#a3e635", color: "white" }}
             className="back-btn"
           >
             Volver a Productos

@@ -3,39 +3,61 @@ import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast, { Toaster } from "react-hot-toast";
-import jwt_decode from "jwt-decode"; // ✅ Import ESM
+import jwt_decode from "jwt-decode";
 
 interface GoogleUser {
   name: string;
   email: string;
   picture: string;
 }
+const handleSubmitGoogle = async (googleUser: GoogleUser) => {
+  try {
+    const response = await fetch("http://localhost:3334/api/guardarusuario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        google_id: googleUser.email, // o decoded.sub si lo tenés
+        nombre: googleUser.name,
+        email: googleUser.email,
+        foto: googleUser.picture
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Usuario guardado/recuperado:", data);
+  } catch (error) {
+    console.error("Error al guardar info del usuario:", error);
+  }
+};
 
 function Login() {
   const navigate = useNavigate();
 
-  const onGoogleSuccess = (response: any) => {
-    try {
-      if (!response.credential) throw new Error("No se recibió credential");
+  const onGoogleSuccess = async (response: any) => {
+  try {
+    if (!response.credential) throw new Error("No se recibió credential");
 
-      const decoded: any = jwt_decode(response.credential);
+    const decoded: any = jwt_decode(response.credential);
 
-      const user: GoogleUser = {
-        name: decoded.name || "Usuario",
-        email: decoded.email || "sin-email@example.com",
-        picture: decoded.picture || "/default-user.png",
-      };
+    const user: GoogleUser = {
+      name: decoded.name || "Usuario",
+      email: decoded.email || "sin-email@example.com",
+      picture: decoded.picture || "/default-user.png",
+    };
 
-      localStorage.setItem("user", JSON.stringify(user));
+    // Guardar en localStorage
+    localStorage.setItem("user", JSON.stringify(user));
 
-      toast.success("¡Login con Google exitoso!");
-      navigate("/"); // Redirige al home
-    } catch (error) {
-      console.error("Error decodificando JWT:", error);
-      toast.error("Error procesando los datos de Google");
-    }
-  };
+    // Guardar o verificar en backend
+    await handleSubmitGoogle(user);
 
+    toast.success("¡Login con Google exitoso!");
+    navigate("/");
+  } catch (error) {
+    console.error("Error decodificando JWT:", error);
+    toast.error("Error procesando los datos de Google");
+  }
+};
   const onGoogleError = () => {
     console.log("Algo salió mal con Google");
     toast.error("Error en login con Google");

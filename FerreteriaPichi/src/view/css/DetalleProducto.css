@@ -216,6 +216,12 @@
   font-size: 1.1em;
   line-height: 1.6;
   color: #555;
+
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .product-stock-info {
@@ -366,4 +372,34 @@
     padding: 10px 15px; /* Mantenemos el tamaño ya ajustado */
     font-size: 0.9em; /* Una pequeña reducción adicional si es necesario */
   }
+}
+/* Contenedor general del precio */
+.precio-container-detalle {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+/* Imagen oferta arriba a la izquierda */
+.oferta-detalle-img {
+  position: absolute;
+  top: -20px;
+  left: -15px;
+  width: 80px;
+  height: auto;
+  z-index: 10;
+}
+
+/* Precio original tachado */
+.precio-tachado {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1.4rem;
+  margin-right: 10px;
+}
+
+/* Precio con oferta */
+.precio-oferta {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #d32f2f;
 }

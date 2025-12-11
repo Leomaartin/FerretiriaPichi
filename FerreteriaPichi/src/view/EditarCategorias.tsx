@@ -91,13 +91,11 @@ const SuperUsuarioCategorias: React.FC = () => {
 
   return (
     <main
-      style={{
-        marginTop: "-1%",
-      }}
+      style={{marginTop:"8%"}}
     >
-      <header>
+   
         <Navbar />
-      </header>
+     
       <div className="superusuario-container">
         <h1>Gestión de Categorías</h1>
 
@@ -112,59 +110,69 @@ const SuperUsuarioCategorias: React.FC = () => {
             onChange={handleChange}
           />
           <input type="file" name="imagen" onChange={handleChange} />
-          <button onClick={handleSubmit}>
+          <button
+            onClick={handleSubmit}
+            style={{ backgroundColor: "#a3e635", color: "white" }}
+          >
             {editingId ? "Actualizar" : "Agregar"}
           </button>
         </div>
+      </div>
 
-        {/* Tabla */}
-        <table className="categorias-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Imagen</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categorias.length > 0 ? (
-              categorias.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.id}</td>
-                  <td>{c.nombre}</td>
-                  <td>
-                    {c.imagen && (
-                      <img
-                        src={`http://localhost:3334/uploads/${c.imagen}`}
-                        alt={c.nombre}
-                        className="categoria-img"
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <button className="edit-btn" onClick={() => handleEdit(c)}>
-                      Cambiar
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(c.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} style={{ textAlign: "center" }}>
-                  No hay categorías
+      {/* Tabla */}
+      <table
+        className="categorias-table"
+        style={{ width: "50%", marginLeft: "25%" }}
+      >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categorias.length > 0 ? (
+            categorias.map((c) => (
+              <tr key={c.id}>
+                <td>{c.id}</td>
+                <td>{c.nombre}</td>
+                <td>
+                  {c.imagen && (
+                    <img
+                      src={`http://localhost:3334/uploads/${c.imagen}`}
+                      alt={c.nombre}
+                      className="categoria-img"
+                    />
+                  )}
+                </td>
+                <td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEdit(c)}
+                    style={{ backgroundColor: "#a3e635", color: "white" }}
+                  >
+                    Cambiar
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(c.id)}
+                  >
+                    Eliminar
+                  </button>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} style={{ textAlign: "center" }}>
+                No hay categorías
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </main>
   );
 };

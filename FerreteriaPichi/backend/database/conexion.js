@@ -2,13 +2,13 @@ import mysql from "mysql2";
 import dotenv from "dotenv";
 import { upload } from "./middleware/upload.js";
 import express from "express";
-import googleAuthRouter from "./GoogleAuth.js";
-import mercadopago from "mercadopago";
+
+import { MercadoPagoConfig, Preference, Payment } from "mercadopago";
 dotenv.config();
 
-// Configurar Mercado Pago clásico
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN,
+// Configurar Mercado Pago
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN,
 });
 
 // 🔥 Creamos el pool
@@ -37,6 +37,125 @@ conexion.getConnection((err, connection) => {
 //   REGISTRO DE TODOS LOS ENDPOINTS
 // ========================================
 export default function registrarEndpoints(app) {
+  app.post("/api/checkout", async (req, res) => {
+    console.log("💡 Entró al endpoint /api/checkout");
+
+    try {
+      const { items, nombre, telefono, gmail } = req.body;
+
+      if (!items || items.length === 0) {
+        return res.status(400).json({ error: "Carrito vacío" });
+      }
+
+      const phoneNumber = Number(telefono) || 11111111;
+
+      // ===============================
+      // Crear Preferencia v2
+      // ===============================
+      const preference = new Preference(client);
+
+      const body = {
+        items: items.map((p) => ({
+          id: p.id,
+          title: p.nombre,
+          quantity: Number(p.cantidad),
+          unit_price: Number(p.precio),
+          currency_id: "ARS",
+        })),
+
+        payer: {
+          name: nombre,
+          email: gmail,
+          phone: {
+            area_code: "11",
+            number: phoneNumber,
+          },
+        },
+
+        back_urls: {
+          success:
+            "https://interbranchial-momentously-helga.ngrok-free.dev/success",
+          failure:
+            "https://interbranchial-momentously-helga.ngrok-free.dev/failure",
+          pending:
+            "https://interbranchial-momentously-helga.ngrok-free.dev/pending",
+        },
+
+        auto_return: "approved",
+
+        notification_url:
+          "https://interbranchial-momentously-helga.ngrok-free.dev/api/webhook-mp",
+
+        binary_mode: true,
+      };
+
+      const response = await preference.create({ body });
+
+      console.log("✅ Preferencia creada con éxito");
+
+      return res.json({
+        init_point: response.init_point,
+        sandbox_init_point: response.sandbox_init_point,
+      });
+    } catch (error) {
+      console.error("🔥 ERROR en /api/checkout:", error);
+      res.status(500).json({ error: "Error creando preferencia" });
+    }
+  });
+  // ===============================================
+  //   ✔️ WEBHOOK MERCADO PAGO (SDK NUEVO v2)
+  // ===============================================
+
+  app.post("/api/webhook-mp", async (req, res) => {
+    console.log("📩 Webhook recibido:", req.body);
+
+    try {
+      const { type, data } = req.body;
+
+      if (type === "payment") {
+        const paymentId = data.id;
+
+        const paymentClient = new Payment(client);
+
+        const payment = await paymentClient.get({ id: paymentId });
+
+        console.log("💰 Pago consultado:", payment);
+
+        if (payment.status === "approved") {
+          const items = payment.additional_info.items;
+
+          for (const item of items) {
+            const productId = item.id;
+            const quantity = item.quantity;
+
+            await db.query(
+              "UPDATE productos SET stock = stock - ? WHERE id = ?",
+              [quantity, productId]
+            );
+          }
+
+          console.log("📦 Stock actualizado correctamente");
+        }
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("🔥 Error en webhook:", error);
+      res.sendStatus(500);
+    }
+  });
+
+  app.get("/success", (req, res) => {
+    res.send("🎉 Pago aprobado! Gracias por tu compra.");
+  });
+
+  app.get("/failure", (req, res) => {
+    res.send("❌ Hubo un error con el pago.");
+  });
+
+  app.get("/pending", (req, res) => {
+    res.send("⏳ Tu pago está pendiente.");
+  });
   // ---------------------------------------
   // GET PRODUCTOS
   // ---------------------------------------
@@ -49,6 +168,8 @@ export default function registrarEndpoints(app) {
         p.precio, 
         p.id_categoria, 
         p.stock,
+        p.mostrar,
+        p.precioenoferta,
         GROUP_CONCAT(i.imagen) AS imagenes
       FROM productos p
       LEFT JOIN imagenes i ON p.id = i.producto_id
@@ -159,16 +280,17 @@ export default function registrarEndpoints(app) {
   // ---------------------------------------
   // ACTUALIZAR PRODUCTO
   // ---------------------------------------
-  app.put("/api/productos/:id", upload.single("imagen"), async (req, res) => {
+  app.put("/api/productos/:id", async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, precio, id_categoria, stock } = req.body;
-    const imagen = req.file ? req.file.filename : req.body.imagen;
+    const { nombre, descripcion, precio, id_categoria, stock, precioenoferta } =
+      req.body;
 
     try {
       await db.query(
-        "UPDATE productos SET nombre=?, descripcion=?, precio=?, id_categoria=?, imagen=?, stock=? WHERE id=?",
-        [nombre, descripcion, precio, id_categoria, imagen, stock, id]
+        "UPDATE productos SET nombre=?, descripcion=?, precio=?, id_categoria=?, stock=?, precioenoferta=? WHERE id=?",
+        [nombre, descripcion, precio, id_categoria, stock, precioenoferta, id]
       );
+
       res.json({ message: "Producto actualizado" });
     } catch (err) {
       res.status(500).json({ error: "Error en el servidor" });
@@ -290,125 +412,121 @@ export default function registrarEndpoints(app) {
     }
   });
 
-  // ========================================
-  // ✔️ CHECKOUT MERCADOPAGO (SDK NUEVA)
-  // ========================================
+  app.post("/api/mostrarproductohome", (req, res) => {
+    const { mostrar, id } = req.body;
+    const SQL_QUERY = `
+      UPDATE
+       mostrar=?
+  WHERE id = ?
+    `;
 
-  app.post("/api/checkout", async (req, res) => {
-    console.log("💡 Entró al endpoint /checkout");
+    conexion.query(SQL_QUERY, [mostarar, id], (err, result) => {
+      if (err) return res.status(500).json({ error: "Error en el servidor" });
+    });
+  });
+  app.put("/api/productos/:id/mostrar", (req, res) => {
+    const { id } = req.params;
+    const { mostrar } = req.body;
 
-    try {
-      const { items, nombre, telefono, gmail } = req.body; // recibimos carrito + datos del comprador
+    const SQL = "UPDATE productos SET mostrar = ? WHERE id = ?";
+    conexion.query(SQL, [mostrar, id], (err, result) => {
+      if (err) return res.status(500).json({ error: "Error al actualizar" });
 
-      console.log("📥 Items recibidos del frontend:", items);
+      res.json({ success: true, mostrar });
+    });
+  });
+  app.post("/api/guardarusuario", (req, res) => {
+    const { google_id, nombre, email, foto } = req.body;
 
-      if (!items || items.length === 0) {
-        return res.status(400).json({ error: "Carrito vacío" });
+    console.log("📩 [REQ] Datos recibidos desde el frontend:");
+    console.log({ google_id, nombre, email, foto });
+
+    if (!google_id || !email) {
+      console.log("❌ Datos incompletos, falta google_id o email");
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    const SQL_CHECK = `
+    SELECT * FROM usuarios WHERE google_id = ? OR email = ?
+  `;
+
+    console.log("🔍 Consultando si el usuario ya existe en la BD...");
+
+    conexion.query(SQL_CHECK, [google_id, email], (err, resultados) => {
+      if (err) {
+        console.log("❌ Error al consultar usuario:", err);
+        return res.status(500).json({ error: "Error consultando usuario" });
       }
 
-      // Convertimos teléfono a número si viene como string
-      const phoneNumber = Number(telefono) || 11111111;
+      // Si ya existe
+      if (resultados.length > 0) {
+        console.log("✔ Usuario encontrado en BD, no se crea nuevo:");
+        console.log(resultados[0]);
 
-      // Creamos la preferencia con los items
-      const preference = {
-        items: items.map((p) => ({
-          id: p.id, // AGREGAR ESTO PARA SABER LUEGO QUÉ PRODUCTO ES
-          title: p.nombre,
-          unit_price: Number(p.precio),
-          quantity: Number(p.cantidad),
-          currency_id: "ARS",
-        })),
-        payer: {
-          name: nombre,
-          email: gmail,
-          phone: {
-            area_code: "11",
-            number: phoneNumber,
-          },
-        },
-        back_urls: {
-          success:
-            "https://interbranchial-momentously-helga.ngrok-free.dev/success",
-          failure:
-            "https://interbranchial-momentously-helga.ngrok-free.dev/failure",
-          pending:
-            "https://interbranchial-momentously-helga.ngrok-free.dev/pending",
-        },
-        auto_return: "approved",
+        return res.status(200).json({
+          message: "Usuario ya registrado",
+          user: resultados[0],
+        });
+      }
 
-        // 🔔 IMPORTANTE: webhook para validar el pago
-        notification_url:
-          "https://interbranchial-momentously-helga.ngrok-free.dev/api/webhook-mp",
+      // Si no existe → crear
+      console.log("🆕 Usuario NO existe, creando uno nuevo...");
 
-        binary_mode: true,
-      };
+      const SQL_INSERT = `
+      INSERT INTO usuarios (google_id, nombre, email, foto)
+      VALUES (?, ?, ?, ?)
+    `;
 
-      console.log("⚙️ Preferencia a enviar a Mercado Pago:", preference);
-
-      // Creamos la preferencia en Mercado Pago
-      const response = await mercadopago.preferences.create(preference);
-
-      console.log("✅ Preferencia creada:", response.response);
-
-      // Devolvemos URLs de pago al frontend
-      res.json({
-        init_point: response.response.init_point,
-        sandbox_init_point: response.response.sandbox_init_point,
-      });
-    } catch (error) {
-      console.error("🔥 ERROR creando la preferencia:", error);
-      res.status(500).send("Error creando la preferencia");
-    }
-  });
-  app.post("/api/webhook", async (req, res) => {
-    try {
-      const { type, data } = req.body;
-
-      // Solo nos interesa cuando entra un pago
-      if (type === "payment") {
-        const paymentId = data.id;
-
-        // Consultamos el pago con Mercado Pago
-        const payment = await mercadopago.payment.findById(paymentId);
-
-        if (payment.body.status === "approved") {
-          const items = payment.body.additional_info.items;
-
-          for (const item of items) {
-            const productId = item.id;
-            const quantitySold = item.quantity;
-
-            // 🔥 Actualizar stock en tu base
-            await db.query(
-              "UPDATE productos SET stock = stock - ? WHERE id = ?",
-              [quantitySold, productId]
-            );
+      conexion.query(
+        SQL_INSERT,
+        [google_id, nombre, email, foto],
+        (err, result) => {
+          if (err) {
+            console.log("❌ Error insertando usuario:", err);
+            return res.status(500).json({ error: "Error insertando usuario" });
           }
+
+          console.log(
+            "🎉 Usuario creado correctamente en la BD. ID:",
+            result.insertId
+          );
+
+          return res.status(201).json({
+            message: "Usuario creado",
+            user: { google_id, nombre, email, foto },
+          });
         }
+      );
+    });
+  });
+  app.post("/api/mostrarusuario", (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email requerido" });
+    }
+
+    const SQL =
+      "SELECT nombre, email, foto FROM usuarios WHERE email = ? LIMIT 1";
+
+    conexion.query(SQL, [email], (err, resultados) => {
+      if (err) {
+        console.error("Error consultando usuario:", err);
+        return res.status(500).json({ error: "Error consultando BD" });
       }
 
-      res.sendStatus(200);
-    } catch (err) {
-      console.error("Error en webhook:", err);
-      res.sendStatus(500);
-    }
+      if (resultados.length === 0) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+
+      const user = resultados[0];
+
+      return res.json({
+        message: "Usuario obtenido",
+        user,
+      });
+    });
   });
 
-  app.get("/success", (req, res) => {
-    console.log("🎉 PAGO EXITOSO:", req.query);
-    res.send("Pago aprobado! Gracias por comprar!");
-  });
 
-  app.get("/failure", (req, res) => {
-    console.log("❌ PAGO FALLIDO:", req.query);
-    res.send("Hubo un error con tu pago.");
-  });
-
-  app.get("/pending", (req, res) => {
-    console.log("⏳ PAGO PENDIENTE:", req.query);
-    res.send("Tu pago está pendiente.");
-  });
-
-  // GOOGLE AUTH
-  app.use("/api/auth", googleAuthRouter);
 }
