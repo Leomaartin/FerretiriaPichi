@@ -1,0 +1,211 @@
+.mis-compras-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding-bottom: 50px;
+}
+
+.mis-compras-container {
+  max-width: 900px;
+  margin: 110px auto 40px;
+  padding: 0 20px;
+}
+
+.mis-compras-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+.compras-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.compras-empty-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.compras-empty-card h3 {
+  color: #1e293b;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.compras-empty-card p {
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.btn-ir-tienda,
+.btn-ir-login {
+  display: inline-block;
+  background-color: #A3E635;
+  color: #0f172a;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn-ir-tienda:hover,
+.btn-ir-login:hover {
+  background-color: #84cc16;
+  transform: translateY(-2px);
+  color: #0f172a;
+}
+
+.compras-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pedido-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pedido-header {
+  background-color: #f1f5f9;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pedido-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pedido-id {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.pedido-fecha {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.pedido-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pedido-total {
+  font-weight: 700;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-pending {
+  background-color: #fef9c3;
+  color: #a16207;
+}
+
+.badge-rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge-default {
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+.pedido-shipping {
+  padding: 10px 20px;
+  background-color: #fafaf9;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #44403c;
+}
+
+.pedido-items-container {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pedido-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pedido-item-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pedido-item-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.pedido-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pedido-item-nombre {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.pedido-item-qty {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.pedido-item-subtotal {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.no-items-text {
+  color: #94a3b8;
+  font-size: 14px;
+}

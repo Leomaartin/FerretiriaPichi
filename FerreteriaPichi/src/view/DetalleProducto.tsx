@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const buildImageUrl = (imageName) => `../backend/uploads/${imageName}`;
 
@@ -61,6 +61,7 @@ function DetalleProducto() {
         });
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Producto agregado al carrito correctamente");
     } catch (error) {
       console.error("Error al agregar al carrito:", error);
@@ -88,6 +89,7 @@ function DetalleProducto() {
         });
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
+      window.dispatchEvent(new Event("cartUpdated"));
       navigate("/carrito");
     } catch (error) {
       console.error("Error en compra ahora:", error);
@@ -100,7 +102,6 @@ function DetalleProducto() {
     <main className="product-detail-page" >
       <header className="product-detail-header">
         <Navbar />
-        <Toaster />
       </header>
 
       <section

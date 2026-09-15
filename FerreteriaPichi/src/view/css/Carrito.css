@@ -2,14 +2,21 @@
 
 /* --- Variables de Color de Casa Mario --- */
 :root {
-  --primary-bg-color: #f8f9fa; /* Fondo más claro y limpio */
+  --primary-bg-color: #f8f9fa;
+  /* Fondo más claro y limpio */
   --card-bg-color: #ffffff;
-  --accent-color-lima: #a3e635; /* Verde Lima brillante */
-  --accent-color-hover: #84cc16; /* Verde un poco más oscuro */
-  --dark-color: #1f2937; /* Gris muy oscuro para textos principales */
-  --secondary-text-color: #6b7280; /* Gris medio para secundarios */
-  --border-color: #e5e7eb; /* Bordes sutiles */
-  --delete-color: #ef4444; /* Rojo vibrante */
+  --accent-color-lima: #a3e635;
+  /* Verde Lima brillante */
+  --accent-color-hover: #84cc16;
+  /* Verde un poco más oscuro */
+  --dark-color: #1f2937;
+  /* Gris muy oscuro para textos principales */
+  --secondary-text-color: #6b7280;
+  /* Gris medio para secundarios */
+  --border-color: #e5e7eb;
+  /* Bordes sutiles */
+  --delete-color: #ef4444;
+  /* Rojo vibrante */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --radius-lg: 16px;
@@ -24,18 +31,21 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--primary-bg-color);
-  font-family: 'Montserrat', sans-serif; /* Usar Montserrat */
+  font-family: 'Montserrat', sans-serif;
+  /* Usar Montserrat */
   color: var(--dark-color);
 }
 
 .cart-container {
   max-width: 1200px;
-  margin: 100px auto 60px; /* Más espacio arriba */
+  margin: 100px auto 60px;
+  /* Más espacio arriba */
   padding: 0 20px;
 }
 
 .cart-container h1 {
-  text-align: left; /* Alineado a la izquierda para más modernidad */
+  text-align: left;
+  /* Alineado a la izquierda para más modernidad */
   color: var(--dark-color);
   font-size: 2rem;
   font-weight: 700;
@@ -48,7 +58,8 @@ body {
 .cart-content {
   display: flex;
   gap: 40px;
-  align-items: flex-start; /* Para que el resumen no se estire */
+  align-items: flex-start;
+  /* Para que el resumen no se estire */
 }
 
 /* ----------------------------------- */
@@ -83,10 +94,12 @@ body {
 .cart-item-image {
   width: 100px;
   height: 100px;
-  object-fit: contain; /* Contain para ver todo el producto */
+  object-fit: contain;
+  /* Contain para ver todo el producto */
   border-radius: var(--radius-md);
   margin-right: 20px;
-  background-color: #f9fafb; /* Fondo sutil para la imagen */
+  background-color: #f9fafb;
+  /* Fondo sutil para la imagen */
   padding: 5px;
   border: 1px solid var(--border-color);
 }
@@ -132,7 +145,8 @@ body {
   gap: 10px;
   margin: 0 30px;
   background-color: #f3f4f6;
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
+  /* Pill shape */
   padding: 5px 10px;
 }
 
@@ -151,7 +165,8 @@ body {
   align-items: center;
   justify-content: center;
   line-height: 0;
-  padding-bottom: 4px; /* Ajuste visual */
+  padding-bottom: 4px;
+  /* Ajuste visual */
 }
 
 .quantity-btn:hover {
@@ -173,10 +188,12 @@ body {
 /* ----------------------------------- */
 
 .remove-item-btn {
-  background-color: #fee2e2; /* Fondo rojo muy suave */
+  background-color: #fee2e2;
+  /* Fondo rojo muy suave */
   color: var(--delete-color);
   border: none;
-  width: 32px; /* Slightly smaller */
+  width: 32px;
+  /* Slightly smaller */
   height: 32px;
   border-radius: 50%;
   display: flex;
@@ -184,12 +201,13 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   /* Position absolute top-right */
   position: absolute;
   top: 10px;
   right: 10px;
-  margin: 0; /* Reset margin */
+  margin: 0;
+  /* Reset margin */
   z-index: 10;
 }
 
@@ -215,7 +233,8 @@ body {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
   position: sticky;
-  top: 100px; /* Sticky sidebar */
+  top: 100px;
+  /* Sticky sidebar */
 }
 
 .cart-summary h2 {
@@ -243,7 +262,7 @@ body {
   font-size: 1.3rem;
   color: var(--dark-color);
   align-items: center;
-  
+
   /* Force single line */
   display: flex;
   justify-content: space-between;
@@ -252,9 +271,11 @@ body {
 }
 
 .total-row strong:last-child {
-  color: var(--accent-color-lima); /* Precio total en verde */
+  color: var(--accent-color-lima);
+  /* Precio total en verde */
   font-size: 1.5rem;
-  margin-left: 10px; /* Space between label and price */
+  margin-left: 10px;
+  /* Space between label and price */
 }
 
 /* ----------------------------------- */
@@ -310,8 +331,15 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .checkout-form h3 {
@@ -377,7 +405,8 @@ body {
 
   .cart-summary {
     width: 100%;
-    position: static; /* Remove sticky on mobile */
+    position: static;
+    /* Remove sticky on mobile */
     box-sizing: border-box;
   }
 }

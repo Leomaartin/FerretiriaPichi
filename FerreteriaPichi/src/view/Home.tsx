@@ -3,7 +3,8 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
+
 
 interface Producto {
   id: number;
@@ -11,10 +12,14 @@ interface Producto {
   descripcion: string;
   precio: number;
   stock: number;
-  mostrar: number;
+  mostrar: boolean | number;
+  mostrar_inicio: boolean | number;
   imagenes?: string[];
   precioenoferta?: number | string;
 }
+
+const isChecked = (val: any): boolean =>
+  val === true || val === 1 || val === "true" || val === "1";
 
 interface Categoria {
   id: number;
@@ -77,6 +82,7 @@ function Home() {
       }
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Producto agregado al carrito correctamente");
     } catch (error) {
       console.error("Error al agregar al carrito:", error);
@@ -88,7 +94,10 @@ function Home() {
       try {
         const res = await axios.get("http://localhost:3334/api/productos");
 
-        const visibles = res.data.filter((p: Producto) => p.mostrar === 1);
+        // Solo mostrar en Home los productos con check de inicio activo
+        const visibles = res.data.filter((p: Producto) =>
+          isChecked(p.mostrar_inicio)
+        );
 
         console.log(res.data);
 
@@ -214,7 +223,6 @@ function Home() {
       <section className="banner-section">
         <SimpleCarousel />
       </section>
-      <Toaster />
 
       {/* CATEGORÍAS */}
       <section className="categorias-section" style={{ marginTop: "5%" }}>

@@ -13,9 +13,13 @@ interface Producto {
   id_categoria: number;
   imagen: string | null;
   stock: number;
-  mostrar: number;
+  mostrar: boolean | number;
+  mostrar_inicio: boolean | number;
   precioenoferta: number;
 }
+
+const isChecked = (val: any): boolean =>
+  val === true || val === 1 || val === "true" || val === "1";
 
 interface Categoria {
   id: number;
@@ -29,10 +33,12 @@ const SuperUsuarioProductos: React.FC = () => {
 
   const [form, setForm] = useState<Partial<Producto> & { imagenFile?: File }>({
     mostrar: 0,
+    mostrar_inicio: 0,
     precioenoferta: "",
   });
 
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Traer productos
@@ -96,7 +102,8 @@ const SuperUsuarioProductos: React.FC = () => {
         precio: Number(form.precio),
         id_categoria: form.id_categoria,
         stock: form.stock ?? 0,
-        mostrar: form.mostrar ?? 0,
+        mostrar: isChecked(form.mostrar),
+        mostrar_inicio: isChecked(form.mostrar_inicio) ? 1 : 0,
         precioenoferta: form.precioenoferta ? Number(form.precioenoferta) : 0,
       };
 
@@ -119,8 +126,9 @@ const SuperUsuarioProductos: React.FC = () => {
       }
 
       toast.success("Producto guardado correctamente");
-      setForm({ mostrar: 0, precioenoferta: "" });
+      setForm({ mostrar: false, mostrar_inicio: 0, precioenoferta: "" });
       setEditingId(null);
+      setIsModalOpen(false);
       fetchProductos();
     } catch (error) {
       console.error("Error al guardar producto:", error);
@@ -130,16 +138,45 @@ const SuperUsuarioProductos: React.FC = () => {
 
   // Actualizar mostrar
   const actualizarMostrar = async (id: number, value: boolean) => {
+    // Actualización inmediata del estado (optimista)
+    setProductos((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, mostrar: value } : p))
+    );
+
     try {
       await axios.put(`http://localhost:3334/api/productos/${id}/mostrar`, {
-        mostrar: value ? 1 : 0,
+        mostrar: value,
       });
-
-      setProductos((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, mostrar: value ? 1 : 0 } : p))
-      );
+      toast.success(value ? "Producto visible en la web" : "Producto oculto de la web");
     } catch (error) {
       console.error("Error al actualizar mostrar", error);
+      toast.error("Error al actualizar estado");
+      // Revertir si falló
+      setProductos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, mostrar: !value } : p))
+      );
+    }
+  };
+
+  // Actualizar mostrar_inicio
+  const actualizarMostrarInicio = async (id: number, value: boolean) => {
+    // Actualización inmediata del estado (optimista)
+    setProductos((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, mostrar_inicio: value ? 1 : 0 } : p))
+    );
+
+    try {
+      await axios.put(`http://localhost:3334/api/productos/${id}/mostrar-inicio`, {
+        mostrar_inicio: value ? 1 : 0,
+      });
+      toast.success(value ? "Producto visible en el Home" : "Producto oculto del Home");
+    } catch (error) {
+      console.error("Error al actualizar mostrar_inicio", error);
+      toast.error("Error al actualizar estado en el Home");
+      // Revertir si falló
+      setProductos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, mostrar_inicio: !value ? 1 : 0 } : p))
+      );
     }
   };
 
@@ -151,12 +188,13 @@ const SuperUsuarioProductos: React.FC = () => {
       precio: p.precio,
       id_categoria: p.id_categoria,
       stock: p.stock,
-      mostrar: p.mostrar,
+      mostrar: isChecked(p.mostrar),
+      mostrar_inicio: isChecked(p.mostrar_inicio) ? 1 : 0,
       precioenoferta: p.precioenoferta ? p.precioenoferta.toString() : "",
     });
 
     setEditingId(p.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsModalOpen(true);
   };
 
   // Eliminar
@@ -165,9 +203,11 @@ const SuperUsuarioProductos: React.FC = () => {
 
     try {
       await axios.delete(`http://localhost:3334/api/productos/${id}`);
+      toast.success("Producto eliminado correctamente");
       fetchProductos();
     } catch (error) {
       console.error("Error al eliminar:", error);
+      toast.error("Error al eliminar el producto");
     }
   };
 
@@ -182,80 +222,117 @@ const SuperUsuarioProductos: React.FC = () => {
      
 
       <div className="superusuario-container" >
-        <h1>Gestión de Productos</h1>
-
-        {/* Formulario */}
-        <div className="form-container">
-          <h2>{editingId ? "Editar Producto" : "Agregar Producto"}</h2>
-
-          <h3>Nombre</h3>
-          <input
-            type="text"
-            name="nombre"
-            value={form.nombre || ""}
-            onChange={handleChange}
-          />
-
-          <h3>Descripción</h3>
-          <textarea
-            name="descripcion"
-            value={form.descripcion || ""}
-            onChange={handleChange}
-          />
-
-          <h3>Precio</h3>
-          <input
-            type="text"
-            name="precio"
-            value={form.precio || ""}
-            onChange={handleChange}
-          />
-
-          <h3>Precio Oferta</h3>
-          <input
-            type="number"
-            name="precioenoferta"
-            value={form.precioenoferta || ""}
-            onChange={handleChange}
-          />
-
-          <h3>Categoría</h3>
-          <select
-            name="id_categoria"
-            value={form.id_categoria || ""}
-            onChange={handleChange}
+        <div className="header-admin">
+          <h1>Gestión de Productos</h1>
+          <button 
+            className="btn-nuevo"
+            onClick={() => {
+              setForm({ mostrar: false, mostrar_inicio: 0, precioenoferta: "" });
+              setEditingId(null);
+              setIsModalOpen(true);
+            }}
           >
-            <option value="">Seleccione categoría</option>
-            {categorias.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre}
-              </option>
-            ))}
-          </select>
-
-          <h3>Stock</h3>
-          <input
-            type="number"
-            name="stock"
-            value={form.stock ?? 0}
-            onChange={handleChange}
-          />
-
-          <h3>Mostrar en inicio</h3>
-          <input
-            type="checkbox"
-            name="mostrar"
-            checked={(form.mostrar ?? 0) === 1}
-            onChange={handleChange}
-          />
-
-          <button
-            onClick={handleSubmit}
-            style={{ backgroundColor: "#a3e635", color: "white" }}
-          >
-            {editingId ? "Actualizar" : "Agregar"}
+            + Nuevo Producto
           </button>
         </div>
+
+        {/* Formulario Modal */}
+        {isModalOpen && (
+          <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+            <div className="modal-content fadeIn" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>{editingId ? "Editar Producto" : "Agregar Producto"}</h2>
+                <button className="close-btn" onClick={() => setIsModalOpen(false)}>✖</button>
+              </div>
+
+              <div className="form-container modal-body">
+                <h3>Nombre</h3>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={form.nombre || ""}
+                  onChange={handleChange}
+                />
+
+                <h3>Descripción</h3>
+                <textarea
+                  name="descripcion"
+                  value={form.descripcion || ""}
+                  onChange={handleChange}
+                />
+
+                <h3>Precio</h3>
+                <input
+                  type="text"
+                  name="precio"
+                  value={form.precio || ""}
+                  onChange={handleChange}
+                />
+
+                <h3>Precio Oferta</h3>
+                <input
+                  type="number"
+                  name="precioenoferta"
+                  value={form.precioenoferta || ""}
+                  onChange={handleChange}
+                />
+
+                <h3>Categoría</h3>
+                <select
+                  name="id_categoria"
+                  value={form.id_categoria || ""}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccione categoría</option>
+                  {categorias.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre}
+                    </option>
+                  ))}
+                </select>
+
+                <h3>Stock</h3>
+                <input
+                  type="number"
+                  name="stock"
+                  value={form.stock ?? 0}
+                  onChange={handleChange}
+                />
+
+                <div className="checkbox-container">
+                  <h3 style={{margin:0, marginRight: '10px'}}>Mostrar en la web / categorías</h3>
+                  <input
+                    type="checkbox"
+                    name="mostrar"
+                    checked={isChecked(form.mostrar)}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="checkbox-container">
+                  <h3 style={{margin:0, marginRight: '10px'}}>Mostrar al Inicio (Home)</h3>
+                  <input
+                    type="checkbox"
+                    name="mostrar_inicio"
+                    checked={isChecked(form.mostrar_inicio)}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                  <button
+                    onClick={handleSubmit}
+                    className="btn-save"
+                    style={{ backgroundColor: "#a3e635", color: "white" }}
+                  >
+                    {editingId ? "Actualizar" : "Agregar"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Buscador */}
@@ -286,6 +363,7 @@ const SuperUsuarioProductos: React.FC = () => {
               "Categoría",
               "Stock",
               "Mostrar",
+              "Mostrar al Inicio",
               "Oferta",
               "Acciones",
             ].map((t) => (
@@ -312,9 +390,18 @@ const SuperUsuarioProductos: React.FC = () => {
               <td>
                 <input
                   type="checkbox"
-                  style={{ cursor: "pointer" }}
-                  checked={p.mostrar === 1}
+                  style={{ cursor: "pointer", width: "18px", height: "18px" }}
+                  checked={isChecked(p.mostrar)}
                   onChange={(e) => actualizarMostrar(p.id, e.target.checked)}
+                />
+              </td>
+
+              <td>
+                <input
+                  type="checkbox"
+                  style={{ cursor: "pointer", width: "18px", height: "18px" }}
+                  checked={isChecked(p.mostrar_inicio)}
+                  onChange={(e) => actualizarMostrarInicio(p.id, e.target.checked)}
                 />
               </td>
 

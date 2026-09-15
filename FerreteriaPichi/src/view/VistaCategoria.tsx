@@ -2,8 +2,9 @@
 import "./css/Home.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Toaster, toast } from "react-hot-toast";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+
 import Navbar from "../components/Navbar";
 
 interface Producto {
@@ -12,8 +13,14 @@ interface Producto {
   descripcion: string;
   precio: number;
   stock: number;
+  mostrar: boolean | number;
+  mostrar_inicio?: boolean | number;
+  precioenoferta?: number | string;
   imagenes?: string[];
 }
+
+const isChecked = (val: any): boolean =>
+  val === true || val === 1 || val === "true" || val === "1";
 
 interface Categoria {
   id: number;
@@ -23,6 +30,7 @@ interface Categoria {
 
 function VistaCategoria() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [productos, setProductos] = useState<Producto[]>([]);
   const [productosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
   const [categoria, setCategoria] = useState<Categoria[]>([]);
@@ -56,6 +64,7 @@ function VistaCategoria() {
       }
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Producto agregado al carrito correctamente");
     } catch (error) {
       console.error("Error al agregar al carrito:", error);
@@ -70,8 +79,10 @@ function VistaCategoria() {
         const res = await axios.post(
           `http://localhost:3334/api/categorias/${id}`
         );
-        setProductos(res.data);
-        setProductosFiltrados(res.data);
+        // Solo mostrar productos con el check de mostrar activo
+        const visibles = res.data.filter((p: Producto) => isChecked(p.mostrar));
+        setProductos(visibles);
+        setProductosFiltrados(visibles);
         console.log(res.data);
       } catch (error) {
         console.error("Error al cargar productos:", error);
@@ -127,10 +138,39 @@ function VistaCategoria() {
       <header>
         <Navbar />
       </header>
-        <Toaster />
 
       <section className="categorias-section">
         <h2 className="categorias-title">Explora Nuestras Categorías</h2>
+
+        {/* Botón volver */}
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            background: "none",
+            border: "2px solid #a3e635",
+            color: "#a3e635",
+            borderRadius: "8px",
+            padding: "8px 18px",
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: "0.95rem",
+            marginBottom: "16px",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.background = "#a3e635";
+            (e.currentTarget as HTMLButtonElement).style.color = "white";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.background = "none";
+            (e.currentTarget as HTMLButtonElement).style.color = "#a3e635";
+          }}
+        >
+          ← Volver
+        </button>
         <div className="categorias-grid">
           {categoria.map((cat, index) => (
             <Link

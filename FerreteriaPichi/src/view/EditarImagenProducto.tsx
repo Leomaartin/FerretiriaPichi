@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import "./css/EditarProducto.css"; // Usamos el mismo CSS
 
@@ -57,7 +58,7 @@ const EditarImagenesProducto: React.FC = () => {
 
   const handleGuardar = async () => {
     if (nuevasImagenes.length === 0) {
-      alert("No hay nuevas imágenes para subir.");
+      toast.error("No hay nuevas imágenes para subir.");
       return;
     }
 
@@ -70,12 +71,12 @@ const EditarImagenesProducto: React.FC = () => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert("Imágenes subidas correctamente.");
+      toast.success("Imágenes subidas correctamente.");
       setNuevasImagenes([]); // Limpiar previews
       fetchImagenes(); // Recargar imágenes actuales
     } catch (error) {
       console.error("Error al subir imágenes:", error);
-      alert("Error al subir imágenes.");
+      toast.error("Error al subir imágenes.");
     }
   };
 

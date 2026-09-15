@@ -1,6 +1,7 @@
 import "./css/Carrito.css";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import toast from "react-hot-toast";
 
 interface CarritoItem {
   id: number;
@@ -40,6 +41,7 @@ const Carrito: React.FC = () => {
   // Guardar carrito cuando cambien los items
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(items));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [items]);
 
   const updateQuantity = (id: number, delta: number) => {
@@ -67,16 +69,36 @@ const Carrito: React.FC = () => {
   };
 
   const handleIrAPagar = async () => {
+    if (!nombre.trim()) {
+      toast.error("El nombre completo es obligatorio.");
+      return;
+    }
+
+    if (!telefono.trim()) {
+      toast.error("El número de teléfono es obligatorio.");
+      return;
+    }
+
+    if (!gmail.trim()) {
+      toast.error("El correo electrónico es obligatorio.");
+      return;
+    }
+
+    if (!direccion.trim()) {
+      toast.error("La dirección de entrega es obligatoria.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3334/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items,
-          nombre,
-          telefono,
-          gmail,
-          direccion, // ⭐ ENVIADO AL BACKEND
+          nombre: nombre.trim(),
+          telefono: telefono.trim(),
+          gmail: gmail.trim(),
+          direccion: direccion.trim(),
         }),
       });
 
@@ -85,10 +107,11 @@ const Carrito: React.FC = () => {
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
-        alert("Error iniciando el pago.");
+        toast.error(data.error || "Error iniciando el pago. Intenta nuevamente.");
       }
     } catch (error) {
       console.error("Error al procesar pago:", error);
+      toast.error("Error al conectar con el servidor.");
     }
   };
 
@@ -185,36 +208,47 @@ const Carrito: React.FC = () => {
 
               {showCheckoutForm && (
                 <div className="checkout-form">
-                  <h3>Datos para finalizar la compra</h3>
+                  <h3>Datos para la entrega y facturación</h3>
 
-                  <input
-                    type="text"
-                    placeholder="Nombre completo"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                  />
+                  <div className="form-group" style={{ marginBottom: "10px" }}>
+                    <input
+                      type="text"
+                      placeholder="Nombre completo *"
+                      value={nombre}
+                      required
+                      onChange={(e) => setNombre(e.target.value)}
+                    />
+                  </div>
 
-                  <input
-                    type="text"
-                    placeholder="Número de teléfono"
-                    value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                  />
+                  <div className="form-group" style={{ marginBottom: "10px" }}>
+                    <input
+                      type="tel"
+                      placeholder="Número de teléfono (Obligatorio) *"
+                      value={telefono}
+                      required
+                      onChange={(e) => setTelefono(e.target.value)}
+                    />
+                  </div>
 
-                  <input
-                    type="email"
-                    placeholder="Correo Gmail"
-                    value={gmail}
-                    onChange={(e) => setGmail(e.target.value)}
-                  />
+                  <div className="form-group" style={{ marginBottom: "10px" }}>
+                    <input
+                      type="email"
+                      placeholder="Correo Gmail *"
+                      value={gmail}
+                      required
+                      onChange={(e) => setGmail(e.target.value)}
+                    />
+                  </div>
 
-                  {/* ⭐ NUEVO INPUT DE DIRECCIÓN */}
-                  <input
-                    type="text"
-                    placeholder="Dirección"
-                    value={direccion}
-                    onChange={(e) => setDireccion(e.target.value)}
-                  />
+                  <div className="form-group" style={{ marginBottom: "14px" }}>
+                    <input
+                      type="text"
+                      placeholder="Dirección de entrega (Obligatorio) *"
+                      value={direccion}
+                      required
+                      onChange={(e) => setDireccion(e.target.value)}
+                    />
+                  </div>
 
                   <button className="checkout-btn" onClick={handleIrAPagar}>
                     Ir a Pagar

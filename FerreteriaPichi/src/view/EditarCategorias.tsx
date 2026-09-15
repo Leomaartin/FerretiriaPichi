@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/EditarCategoria.css";
 import Navbar from "../components/Navbar";
+import { toast } from "react-hot-toast";
 
 interface Categoria {
   id: number;
@@ -15,6 +16,7 @@ const SuperUsuarioCategorias: React.FC = () => {
     {}
   );
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Traer categorías
   const fetchCategorias = async () => {
@@ -42,7 +44,7 @@ const SuperUsuarioCategorias: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!form.nombre) {
-      alert("El nombre es obligatorio");
+      toast.error("El nombre es obligatorio");
       return;
     }
 
@@ -68,24 +70,30 @@ const SuperUsuarioCategorias: React.FC = () => {
 
       setForm({});
       setEditingId(null);
+      setIsModalOpen(false);
+      toast.success("Categoría guardada correctamente");
       fetchCategorias();
     } catch (error) {
       console.error("Error al guardar categoría:", error);
+      toast.error("Error al guardar la categoría");
     }
   };
 
   const handleEdit = (categoria: Categoria) => {
     setForm(categoria);
     setEditingId(categoria.id);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("¿Estás seguro de eliminar esta categoría?")) return;
     try {
       await axios.delete(`http://localhost:3334/api/categoria/${id}`);
+      toast.success("Categoría eliminada correctamente");
       fetchCategorias();
     } catch (error) {
       console.error("Error al eliminar categoría:", error);
+      toast.error("Error al eliminar la categoría");
     }
   };
 
@@ -97,26 +105,56 @@ const SuperUsuarioCategorias: React.FC = () => {
         <Navbar />
      
       <div className="superusuario-container">
-        <h1>Gestión de Categorías</h1>
-
-        {/* Formulario */}
-        <div className="form-container">
-          <h2>{editingId ? "Editar Categoría" : "Agregar Categoría"}</h2>
-          <input
-            type="text"
-            name="nombre"
-            placeholder="Nombre"
-            value={form.nombre || ""}
-            onChange={handleChange}
-          />
-          <input type="file" name="imagen" onChange={handleChange} />
-          <button
-            onClick={handleSubmit}
-            style={{ backgroundColor: "#a3e635", color: "white" }}
+        <div className="header-admin">
+          <h1>Gestión de Categorías</h1>
+          <button 
+            className="btn-nuevo"
+            onClick={() => {
+              setForm({});
+              setEditingId(null);
+              setIsModalOpen(true);
+            }}
           >
-            {editingId ? "Actualizar" : "Agregar"}
+            + Nueva Categoría
           </button>
         </div>
+
+        {/* Formulario Modal */}
+        {isModalOpen && (
+          <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+            <div className="modal-content fadeIn" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>{editingId ? "Editar Categoría" : "Agregar Categoría"}</h2>
+                <button className="close-btn" onClick={() => setIsModalOpen(false)}>✖</button>
+              </div>
+
+              <div className="form-container modal-body">
+                <h3>Nombre</h3>
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Nombre de la categoría"
+                  value={form.nombre || ""}
+                  onChange={handleChange}
+                />
+                
+                <h3>Imagen de la Categoría</h3>
+                <input className="file-input-modern" type="file" name="imagen" onChange={handleChange} />
+
+                <div className="modal-actions">
+                  <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                  <button
+                    onClick={handleSubmit}
+                    className="btn-save"
+                    style={{ backgroundColor: "#a3e635", color: "white" }}
+                  >
+                    {editingId ? "Actualizar" : "Agregar"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tabla */}

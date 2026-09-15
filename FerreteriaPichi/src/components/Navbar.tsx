@@ -1,9 +1,46 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "../view/css/Navbar.css";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [cartCount, setCartCount] = useState<number>(0);
+  const location = useLocation();
+
+  const updateCartCount = () => {
+    try {
+      const storedCart = localStorage.getItem("carrito");
+      if (!storedCart) {
+        setCartCount(0);
+        return;
+      }
+      const cart = JSON.parse(storedCart);
+      if (Array.isArray(cart)) {
+        const total = cart.reduce(
+          (acc: number, item: any) => acc + (Number(item.cantidad) || 1),
+          0
+        );
+        setCartCount(total);
+      } else {
+        setCartCount(0);
+      }
+    } catch {
+      setCartCount(0);
+    }
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    window.addEventListener("cartUpdated", updateCartCount);
+    window.addEventListener("storage", updateCartCount);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCartCount);
+      window.removeEventListener("storage", updateCartCount);
+    };
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -73,6 +110,9 @@ return (
         </div>
       </div>
 
+
+
+
       {/* BOTÓN MOBILE */}
       <button
         className="menu-toggle"
@@ -111,19 +151,38 @@ return (
               <span className="navbar-username">{user.nombre}</span>
             </div>
 
+            {/* Link Mis Compras */}
+            <a
+              href="/miscompras"
+              className="navbar-miscompras-btn"
+              style={{
+                marginLeft: "8px",
+                padding: "6px 12px",
+                background: "#f1f5f9",
+                color: "#1e293b",
+                borderRadius: "6px",
+                fontWeight: "600",
+                textDecoration: "none",
+                fontSize: "14px",
+              }}
+            >
+              Mis Compras
+            </a>
+
             {/* BOTÓN ADMIN SOLO PARA VOS */}
             {user.email === "leomartin9808@gmail.com" && (
               <a
                 href="/adminvista"
                 className="navbar-admin-btn"
                 style={{
-                  marginLeft: "10px",
+                  marginLeft: "6px",
                   padding: "6px 12px",
                   background: "#2563eb",
                   color: "white",
                   borderRadius: "6px",
                   fontWeight: "600",
-                  textDecoration: "none"
+                  textDecoration: "none",
+                  fontSize: "14px",
                 }}
               >
                 Admin
@@ -138,6 +197,7 @@ return (
             {/* Ícono Carrito */}
             <a href="/carrito" className="navbar-cart-link" title="Carrito">
               <i className="fa-solid fa-cart-shopping cart-icon"></i>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </a>
           </div>
         ) : (
@@ -153,6 +213,7 @@ return (
             {/* Carrito visible incluso sin login */}
             <a href="/carrito" className="navbar-cart-link" title="Carrito">
               <i className="fa-solid fa-cart-shopping cart-icon"></i>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </a>
           </div>
         )}

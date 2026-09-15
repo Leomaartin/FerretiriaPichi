@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import jwt_decode from "jwt-decode";
 
 interface GoogleUser {
@@ -65,7 +65,6 @@ function Login() {
 
   return (
     <main className="bg-light min-vh-100" style={{ marginTop: "-1%" }}>
-      <Toaster position="top-right" />
       <header>
         <Navbar />
       </header>

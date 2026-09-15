@@ -11,8 +11,11 @@ import Carrito from "./view/Carrito.tsx";
 import Login from "./view/Login/Login.tsx";
 import Admin from "./view/AdministradorPichci.tsx";
 import SobreNosotros from "./view/SobreNosotros.tsx";
+import MisCompras from "./view/MisCompras.tsx";
+import PagoResultado from "./view/PagoResultado.tsx";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 // ⬇️ AGREGAMOS
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -24,6 +27,7 @@ const GOOGLE_CLIENT_ID =
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <Toaster position="bottom-right" reverseOrder={false} />
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -38,6 +42,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={<EditarImagenesProducto />}
         />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path="/miscompras" element={<MisCompras />} />
+        <Route path="/pago" element={<PagoResultado />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/sobrenosotros" element={<SobreNosotros />} />
