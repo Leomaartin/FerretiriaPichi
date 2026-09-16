@@ -1,13 +1,13 @@
 {
-  "name": "nombre-proyecto",
+  "name": "ferreteria-pichi-frontend",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "vite preview --port $PORT --host"
+    "start": "serve -s dist -l 3000"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",
@@ -17,15 +17,11 @@
     "@react-oauth/google": "^0.12.2",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.8",
-    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
     "firebase": "^12.6.0",
     "gapi-script": "^1.2.0",
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.9.4",
-    "pg": "^8.23.0",
     "react": "^18.2.0",
     "react-calendar": "^6.0.0",
     "react-datepicker": "^8.7.0",
@@ -33,6 +29,7 @@
     "react-hot-toast": "^2.6.0",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.8.2",
+    "serve": "^14.2.4",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -41,7 +38,6 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "baseline-browser-mapping": "^2.11.21",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",

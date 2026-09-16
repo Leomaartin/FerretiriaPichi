@@ -1,4 +1,4 @@
-// src/views/VistaCategoria.jsx
+﻿// src/views/VistaCategoria.jsx
 import "./css/Home.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -77,7 +77,7 @@ function VistaCategoria() {
     const fetchProductos = async () => {
       try {
         const res = await axios.post(
-          `http://localhost:3334/api/categorias/${id}`
+          `${API_URL}/api/categorias/${id}`
         );
         // Solo mostrar productos con el check de mostrar activo
         const visibles = res.data.filter((p: Producto) => isChecked(p.mostrar));
@@ -123,7 +123,7 @@ function VistaCategoria() {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const res = await axios.get("http://localhost:3334/api/categoria");
+        const res = await axios.get(`${API_URL}/api/categoria`);
         setCategoria(res.data);
         console.log(res.data);
       } catch (error) {
@@ -232,8 +232,8 @@ function VistaCategoria() {
                <img
                   src={
                     producto.imagenes && producto.imagenes.length > 0
-                      ? `http://localhost:3334/uploads/${producto.imagenes[0]}`
-                      : "http://localhost:3334/uploads/default.png"
+                      ? `${API_URL}/uploads/${producto.imagenes[0]}`
+                      : `${API_URL}/uploads/default.png`
                   }
                   alt={producto.nombre}
                 />

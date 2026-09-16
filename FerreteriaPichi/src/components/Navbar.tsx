@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "../view/css/Navbar.css";
 import { toast } from "react-hot-toast";
+import API_URL from "../config/api";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,8 +67,8 @@ const Navbar: React.FC = () => {
       if (!parsed || typeof parsed !== "object") return;
 
       const fixedLocalFoto = parsed.foto
-        ? (parsed.foto.startsWith("http") ? parsed.foto : `http://localhost:3334/${parsed.foto}`)
-        : "http://localhost:3334/uploads/default.png";
+        ? (parsed.foto.startsWith("http") ? parsed.foto : `${API_URL}/${parsed.foto}`)
+        : `${API_URL}/uploads/default.png`;
 
       setUser({
         ...parsed,
@@ -75,7 +76,7 @@ const Navbar: React.FC = () => {
       });
 
       if (parsed.email) {
-        fetch("http://localhost:3334/api/mostrarusuario", {
+        fetch(`${API_URL}/api/mostrarusuario`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: parsed.email })
@@ -84,8 +85,8 @@ const Navbar: React.FC = () => {
           .then((data) => {
             if (data && data.user) {
               const backendFoto = data.user.foto
-                ? (data.user.foto.startsWith("http") ? data.user.foto : `http://localhost:3334/${data.user.foto}`)
-                : "http://localhost:3334/uploads/default.png";
+                ? (data.user.foto.startsWith("http") ? data.user.foto : `${API_URL}/${data.user.foto}`)
+                : `${API_URL}/uploads/default.png`;
 
               const fixedUser = {
                 nombre: data.user.nombre,
@@ -106,7 +107,7 @@ const Navbar: React.FC = () => {
 
   // Cargar productos para búsqueda en vivo
   useEffect(() => {
-    fetch("http://localhost:3334/api/productos")
+    fetch(`${API_URL}/api/productos`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setAllProducts(data);
@@ -190,7 +191,7 @@ const Navbar: React.FC = () => {
         <div className="navbar-logo-container">
           <div className="navbar-logo">
             <img
-              src="http://localhost:3334/uploads/logo.png"
+              src={`${API_URL}/uploads/logo.png`}
               className="logo-redondo"
               alt="Casa Mario"
             />
@@ -245,8 +246,8 @@ const Navbar: React.FC = () => {
                     <img
                       src={
                         prod.imagenes?.[0]
-                          ? `http://localhost:3334/uploads/${prod.imagenes[0]}`
-                          : "http://localhost:3334/uploads/default.png"
+                          ? `${API_URL}/uploads/${prod.imagenes[0]}`
+                          : `${API_URL}/uploads/default.png`
                       }
                       alt={prod.nombre}
                       className="search-item-img"

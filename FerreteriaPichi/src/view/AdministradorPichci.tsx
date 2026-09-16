@@ -1,10 +1,11 @@
-// AdminMenu.tsx
+﻿// AdminMenu.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/AdminMenu.css";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
+import API_URL from "../config/api";
 
 interface PedidoItem {
   id: number;
@@ -41,8 +42,8 @@ const AdminMenu: React.FC = () => {
     try {
       const url =
         filtroEstado === "todos"
-          ? "http://localhost:3334/api/admin/pedidos"
-          : `http://localhost:3334/api/admin/pedidos?status=${filtroEstado}`;
+          ? `${API_URL}/api/admin/pedidos`
+          : `${API_URL}/api/admin/pedidos?status=${filtroEstado}`;
       const res = await fetch(url);
       const data = await res.json();
       if (Array.isArray(data)) {
@@ -63,7 +64,7 @@ const AdminMenu: React.FC = () => {
   const handleCambiarEstado = async (id: number, nuevoEstado: string) => {
     try {
       const res = await fetch(
-        `http://localhost:3334/api/admin/pedidos/${id}/status`,
+        `${API_URL}/api/admin/pedidos/${id}/status`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -95,7 +96,7 @@ const AdminMenu: React.FC = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:3334/api/admin/pedidos/${id}`,
+        `${API_URL}/api/admin/pedidos/${id}`,
         { method: "DELETE" }
       );
       if (res.ok) {
@@ -346,7 +347,7 @@ const AdminMenu: React.FC = () => {
                                       <td>
                                         {primeraImagen ? (
                                           <img
-                                            src={`http://localhost:3334/uploads/${primeraImagen}`}
+                                            src={`${API_URL}/uploads/${primeraImagen}`}
                                             alt={item.nombre}
                                             className="admin-item-thumb"
                                           />

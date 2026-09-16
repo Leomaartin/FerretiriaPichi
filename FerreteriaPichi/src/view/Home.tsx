@@ -1,9 +1,10 @@
-import "./css/Home.css";
+﻿import "./css/Home.css";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import API_URL from "../config/api";
 
 
 interface Producto {
@@ -29,17 +30,17 @@ interface Categoria {
 
 const CAROUSEL_ITEMS = [
   {
-    src: "http://localhost:3334/uploads/img/banner1.jpg",
+    src: `${API_URL}/uploads/img/banner1.jpg`,
     title: "Las herramientas más fiables",
     subtitle: "Rápido y sin complicaciones.",
   },
   {
-    src: "http://localhost:3334/uploads/img/banner2.webp",
+    src: `${API_URL}/uploads/img/banner2.webp`,
     title: "Más que una ferretería",
     subtitle: "Elegí entre los mejores precios.",
   },
   {
-    src: "http://localhost:3334/uploads/img/banner4.webp",
+    src: `${API_URL}/uploads/img/banner4.webp`,
     title: "",
     subtitle: "",
   },
@@ -157,7 +158,7 @@ function Home() {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const res = await axios.get("http://localhost:3334/api/productos");
+        const res = await axios.get(`${API_URL}/api/productos`);
 
         // Solo mostrar en Home los productos con check de inicio activo
         const visibles = res.data.filter((p: Producto) =>
@@ -178,7 +179,7 @@ function Home() {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const res = await axios.get("http://localhost:3334/api/categoria");
+        const res = await axios.get(`${API_URL}/api/categoria`);
         setCategoria(res.data);
       } catch (error) {
         console.error("Error al cargar categorías:", error);
@@ -225,129 +226,129 @@ function Home() {
       </header>
       <main>
 
-      {/* BANNER */}
-      <section className="banner-section">
-        <SimpleCarousel />
-      </section>
+        {/* BANNER */}
+        <section className="banner-section">
+          <SimpleCarousel />
+        </section>
 
-      {/* CATEGORÍAS */}
-      <section className="categorias-section" style={{ marginTop: "5%" }}>
-        <h2
-          className="categorias-title"
-          style={{ fontFamily: "Montserrat, sans-serif" }}
-        >
-          Explora Nuestras Categorías
-        </h2>
+        {/* CATEGORÍAS */}
+        <section className="categorias-section" style={{ marginTop: "5%" }}>
+          <h2
+            className="categorias-title"
+            style={{ fontFamily: "Montserrat, sans-serif" }}
+          >
+            Explora Nuestras Categorías
+          </h2>
 
-        <div className="categorias-grid">
-          {categoria.length > itemsPerPage && (
-            <button className="carousel-btn left" onClick={prevCategory}>
-              {"<"}
-            </button>
-          )}
+          <div className="categorias-grid">
+            {categoria.length > itemsPerPage && (
+              <button className="carousel-btn left" onClick={prevCategory}>
+                {"<"}
+              </button>
+            )}
 
-          <div className="categorias-track-container">
-            <div
-              className="categorias-track"
-              style={{
-                transform: `translateX(-${categoriaStart * (100 / itemsPerPage)
-                  }%)`,
-              }}
-            >
-              {categoria.map((cat, index) => (
-                <div key={index} className="categoria-item-wrapper">
-                  <Link to={`/categorias/${cat.id}`} className="categoria-item">
-                    <div className="categoria-circle">
-                      <img
-                        src={cat.imagen ? `http://localhost:3334/uploads/${cat.imagen}` : "http://localhost:3334/uploads/default.png"}
-                        alt={cat.nombre}
-                      />
-                    </div>
-                    <span className="categoria-name">{cat.nombre}</span>
-                  </Link>
-                </div>
-              ))}
+            <div className="categorias-track-container">
+              <div
+                className="categorias-track"
+                style={{
+                  transform: `translateX(-${categoriaStart * (100 / itemsPerPage)
+                    }%)`,
+                }}
+              >
+                {categoria.map((cat, index) => (
+                  <div key={index} className="categoria-item-wrapper">
+                    <Link to={`/categorias/${cat.id}`} className="categoria-item">
+                      <div className="categoria-circle">
+                        <img
+                          src={cat.imagen ? `${API_URL}/uploads/${cat.imagen}` : `${API_URL}/uploads/default.png`}
+                          alt={cat.nombre}
+                        />
+                      </div>
+                      <span className="categoria-name">{cat.nombre}</span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {categoria.length > itemsPerPage && (
+              <button className="carousel-btn right" onClick={nextCategory}>
+                {">"}
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* PRODUCTOS */}
+        <section className="productos-section">
+          <div className="productos-header">
+            <h2
+              style={{ fontFamily: "Montserrat, sans-serif" }}
+              className="nuestros-productos"
+            >
+              Productos mas vendidos
+            </h2>
           </div>
 
-          {categoria.length > itemsPerPage && (
-            <button className="carousel-btn right" onClick={nextCategory}>
-              {">"}
-            </button>
-          )}
-        </div>
-      </section>
+          {/* PRODUCTOS VISIBLES */}
+          <div className="productos-grid">
+            {productosFiltrados.map((producto) => (
+              <Link
+                to={`/detalleproducto/${producto.id}`}
+                className="producto-card"
+                key={producto.id}
+              >
+                <div className="producto-image-container">
+                  <img
+                    src={
+                      producto.imagenes?.[0]
+                        ? `${API_URL}/uploads/${producto.imagenes[0]}`
+                        : `${API_URL}/uploads/default.png`
+                    }
+                    alt={producto.nombre}
+                  />
+                </div>
 
-      {/* PRODUCTOS */}
-      <section className="productos-section">
-        <div className="productos-header">
-          <h2
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-            className="nuestros-productos"
-          >
-            Productos mas vendidos
-          </h2>
-        </div>
+                <div className="producto-info">
+                  <h3>{producto.nombre}</h3>
 
-        {/* PRODUCTOS VISIBLES */}
-        <div className="productos-grid">
-          {productosFiltrados.map((producto) => (
-            <Link
-              to={`/detalleproducto/${producto.id}`}
-              className="producto-card"
-              key={producto.id}
-            >
-              <div className="producto-image-container">
-                <img
-                  src={
-                    producto.imagenes?.[0]
-                      ? `http://localhost:3334/uploads/${producto.imagenes[0]}`
-                      : "http://localhost:3334/uploads/default.png"
-                  }
-                  alt={producto.nombre}
-                />
-              </div>
+                  {Number(producto.precioenoferta) > 0 ? (
+                    <>
+                      <span className="precio-tachado">${producto.precio}</span>
+                      <img
+                        src={`${API_URL}/uploads/oferta1.png`}
+                        className="badge-oferta"
+                        alt="Oferta"
+                      />
+                      <span className="precio-oferta">
+                        ${Number(producto.precioenoferta)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="precio-normal">${producto.precio}</span>
+                  )}
 
-              <div className="producto-info">
-                <h3>{producto.nombre}</h3>
+                  <button
+                    className="btn-carrito"
+                    style={{ fontFamily: "Montserrat, sans-serif" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSubmitCarrito(producto);
+                    }}
+                  >
+                    Agregar al Carrito
+                  </button>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
 
-                {Number(producto.precioenoferta) > 0 ? (
-                  <>
-                    <span className="precio-tachado">${producto.precio}</span>
-                    <img
-                      src="http://localhost:3334/uploads/oferta1.png"
-                      className="badge-oferta"
-                      alt="Oferta"
-                    />
-                    <span className="precio-oferta">
-                      ${Number(producto.precioenoferta)}
-                    </span>
-                  </>
-                ) : (
-                  <span className="precio-normal">${producto.precio}</span>
-                )}
-
-                <button
-                  className="btn-carrito"
-                  style={{ fontFamily: "Montserrat, sans-serif" }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleSubmitCarrito(producto);
-                  }}
-                >
-                  Agregar al Carrito
-                </button>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <footer>
-        <p>&copy; 2023 Ferretería Casa Mario. Todos los derechos reservados.</p>
-      </footer>
-    </main>
+        <footer>
+          <p>&copy; 2023 Ferretería Casa Mario. Todos los derechos reservados.</p>
+        </footer>
+      </main>
     </>
   );
 }

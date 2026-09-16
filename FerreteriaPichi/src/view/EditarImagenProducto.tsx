@@ -1,4 +1,4 @@
-// EditarImagenesProducto.tsx
+﻿// EditarImagenesProducto.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,7 +19,7 @@ const EditarImagenesProducto: React.FC = () => {
   const fetchImagenes = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3334/api/detalleproducto/${id}`
+        `${API_URL}/api/detalleproducto/${id}`
       );
       const prod = res.data[0];
       // Asegurarse de manejar la imagen individual (si existe) y el array de imágenes
@@ -60,7 +60,7 @@ const EditarImagenesProducto: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3334/api/imagenes/${id}/${imagen}`);
+      await axios.delete(`${API_URL}/api/imagenes/${id}/${imagen}`);
       setImagenes(imagenes.filter((img) => img !== imagen));
       notify.imageDeleted();
     } catch (error) {
@@ -80,7 +80,7 @@ const EditarImagenesProducto: React.FC = () => {
 
     try {
       await axios.post(
-        `http://localhost:3334/api/productos/${id}/imagenes`,
+        `${API_URL}/api/productos/${id}/imagenes`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -111,7 +111,7 @@ const EditarImagenesProducto: React.FC = () => {
               {imagenes.map((img) => (
                 <div key={img} className="imagen-item-card">
                   <img
-                    src={`http://localhost:3334/uploads/${img}`}
+                    src={`${API_URL}/uploads/${img}`}
                     alt={img}
                     className="imagen-preview-lg"
                   />

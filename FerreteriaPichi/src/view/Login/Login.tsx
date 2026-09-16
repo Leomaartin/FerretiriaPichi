@@ -1,9 +1,10 @@
-import React from "react";
+﻿import React from "react";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import jwt_decode from "jwt-decode";
+import API_URL from "../../config/api";
 
 interface GoogleUser {
   name: string;
@@ -12,7 +13,7 @@ interface GoogleUser {
 }
 const handleSubmitGoogle = async (googleUser: GoogleUser) => {
   try {
-    const response = await fetch("http://localhost:3334/api/guardarusuario", {
+    const response = await fetch(`${API_URL}/api/guardarusuario`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

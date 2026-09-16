@@ -1,7 +1,8 @@
-import "./css/Carrito.css";
+﻿import "./css/Carrito.css";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
+import API_URL from "../config/api";
 
 interface CarritoItem {
   id: number;
@@ -92,7 +93,7 @@ const Carrito: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3334/api/checkout", {
+      const response = await fetch(`${API_URL}/api/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -144,7 +145,7 @@ const Carrito: React.FC = () => {
               {items.map((item) => (
                 <div key={item.id} className="cart-item-card">
                   <img
-                    src={`http://localhost:3334/uploads/${item.imagen}`}
+                    src={`${API_URL}/uploads/${item.imagen}`}
                     alt={item.nombre}
                     className="cart-item-image"
                   />

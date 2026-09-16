@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/EditarCategoria.css";
 import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
 import notify from "../utils/toastNotifier";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
+import API_URL from "../config/api";
 
 interface Categoria {
   id: number;
@@ -24,7 +25,7 @@ const SuperUsuarioCategorias: React.FC = () => {
   // Traer categorías
   const fetchCategorias = async () => {
     try {
-      const res = await axios.get("http://localhost:3334/api/categoria");
+      const res = await axios.get(`${API_URL}/api/categoria`);
       setCategorias(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error al cargar categorías:", error);
@@ -71,7 +72,7 @@ const SuperUsuarioCategorias: React.FC = () => {
         if (!confirmed) return;
 
         await axios.put(
-          `http://localhost:3334/api/categoria/${editingId}`,
+          `${API_URL}/api/categoria/${editingId}`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -79,7 +80,7 @@ const SuperUsuarioCategorias: React.FC = () => {
         );
         notify.categoryUpdated(nombreCat);
       } else {
-        await axios.post("http://localhost:3334/api/categoria", formData, {
+        await axios.post(`${API_URL}/api/categoria`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         notify.categoryCreated(nombreCat);
@@ -117,7 +118,7 @@ const SuperUsuarioCategorias: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3334/api/categoria/${id}`);
+      await axios.delete(`${API_URL}/api/categoria/${id}`);
       notify.categoryDeleted(nombreCat);
       fetchCategorias();
     } catch (error) {
@@ -208,7 +209,7 @@ const SuperUsuarioCategorias: React.FC = () => {
                 <td>
                   {c.imagen && (
                     <img
-                      src={`http://localhost:3334/uploads/${c.imagen}`}
+                      src={`${API_URL}/uploads/${c.imagen}`}
                       alt={c.nombre}
                       className="categoria-img"
                     />

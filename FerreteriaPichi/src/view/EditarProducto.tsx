@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/EditarProducto.css";
 import Navbar from "../components/Navbar";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import notify from "../utils/toastNotifier";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
+import API_URL from "../config/api";
 
 interface Producto {
   id: number;
@@ -47,7 +48,7 @@ const SuperUsuarioProductos: React.FC = () => {
   // Traer productos
   const fetchProductos = async () => {
     try {
-      const res = await axios.get("http://localhost:3334/api/productos");
+      const res = await axios.get(`${API_URL}/api/productos`);
       setProductos(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error al cargar productos:", error);
@@ -58,7 +59,7 @@ const SuperUsuarioProductos: React.FC = () => {
   // Traer categorías
   const fetchCategorias = async () => {
     try {
-      const res = await axios.get("http://localhost:3334/api/categoria");
+      const res = await axios.get(`${API_URL}/api/categoria`);
       setCategorias(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error al cargar categorías:", error);
@@ -124,7 +125,7 @@ const SuperUsuarioProductos: React.FC = () => {
         if (!confirmed) return;
 
         await axios.put(
-          `http://localhost:3334/api/productos/${editingId}`,
+          `${API_URL}/api/productos/${editingId}`,
           dataToSend,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -136,7 +137,7 @@ const SuperUsuarioProductos: React.FC = () => {
         );
         if (form.imagenFile) formData.append("imagen", form.imagenFile);
 
-        await axios.post("http://localhost:3334/api/productos", formData, {
+        await axios.post(`${API_URL}/api/productos`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         notify.productCreated(nombreProducto);
@@ -160,7 +161,7 @@ const SuperUsuarioProductos: React.FC = () => {
     );
 
     try {
-      await axios.put(`http://localhost:3334/api/productos/${id}/mostrar`, {
+      await axios.put(`${API_URL}/api/productos/${id}/mostrar`, {
         mostrar: value,
       });
       notify.statusChanged(
@@ -185,7 +186,7 @@ const SuperUsuarioProductos: React.FC = () => {
     );
 
     try {
-      await axios.put(`http://localhost:3334/api/productos/${id}/mostrar-inicio`, {
+      await axios.put(`${API_URL}/api/productos/${id}/mostrar-inicio`, {
         mostrar_inicio: value ? 1 : 0,
       });
       notify.statusChanged(
@@ -236,7 +237,7 @@ const SuperUsuarioProductos: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3334/api/productos/${id}`);
+      await axios.delete(`${API_URL}/api/productos/${id}`);
       notify.productDeleted(nombreProd);
       fetchProductos();
     } catch (error) {

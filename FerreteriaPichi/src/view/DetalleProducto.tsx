@@ -1,9 +1,10 @@
-import "./css/DetalleProducto.css";
+﻿import "./css/DetalleProducto.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
+import API_URL from "../config/api";
 
 const buildImageUrl = (imageName) => `../backend/uploads/${imageName}`;
 
@@ -17,7 +18,7 @@ function DetalleProducto() {
     const fetchProducto = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3334/api/detalleproducto/${id}`
+          `${API_URL}/api/detalleproducto/${id}`
         );
         const prod = res.data[0];
 

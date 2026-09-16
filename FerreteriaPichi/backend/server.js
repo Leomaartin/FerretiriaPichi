@@ -15,12 +15,14 @@ const PORT = process.env.PORT || 3334;
 // ========================
 //    CONFIGURAR CORS
 // ========================
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONT_URL, // URL del frontend en producción (EasyPanel)
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://TU-NGROK.ngrok-free.dev", // ← reemplazar!
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import "./css/MisCompras.css";
+import API_URL from "../config/api";
 
 interface PedidoItem {
   id: number;
@@ -39,7 +40,7 @@ const MisCompras: React.FC = () => {
     setUser(userData);
 
     if (userData.email) {
-      fetch(`http://localhost:3334/api/historial/${userData.email}`)
+      fetch(`${API_URL}/api/historial/${userData.email}`)
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) {
@@ -154,7 +155,7 @@ const MisCompras: React.FC = () => {
                         <div key={item.id} className="pedido-item-row">
                           {primeraImagen && (
                             <img
-                              src={`http://localhost:3334/uploads/${primeraImagen}`}
+                              src={`${API_URL}/uploads/${primeraImagen}`}
                               alt={item.nombre}
                               className="pedido-item-img"
                             />
