@@ -27,6 +27,71 @@ interface Categoria {
   imagen?: string;
 }
 
+const CAROUSEL_ITEMS = [
+  {
+    src: "http://localhost:3334/uploads/img/banner1.jpg",
+    title: "Las herramientas más fiables",
+    subtitle: "Rápido y sin complicaciones.",
+  },
+  {
+    src: "http://localhost:3334/uploads/img/banner2.webp",
+    title: "Más que una ferretería",
+    subtitle: "Elegí entre los mejores precios.",
+  },
+  {
+    src: "http://localhost:3334/uploads/img/banner4.webp",
+    title: "",
+    subtitle: "",
+  },
+];
+
+function SimpleCarousel() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const goToNext = () =>
+    setActiveIndex((prev) => (prev + 1) % CAROUSEL_ITEMS.length);
+  const goToPrev = () =>
+    setActiveIndex(
+      (prev) => (prev - 1 + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length
+    );
+  const goToSlide = (index: number) => setActiveIndex(index);
+
+  useEffect(() => {
+    const interval = setInterval(goToNext, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="carousel-container">
+      <div
+        className="carousel-content"
+        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+      >
+        {CAROUSEL_ITEMS.map((item, index) => (
+          <div key={index} className="carousel-slide">
+            <img src={item.src} alt={`Slide ${index + 1}`} />
+            {(item.title || item.subtitle) && (
+              <div className="carousel-caption">
+                {item.title && <h3>{item.title}</h3>}
+                {item.subtitle && <p>{item.subtitle}</p>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="carousel-indicators">
+        {CAROUSEL_ITEMS.map((_, index) => (
+          <div
+            key={index}
+            className={`indicator ${index === activeIndex ? "active" : ""}`}
+            onClick={() => goToSlide(index)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [productosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
@@ -152,72 +217,13 @@ function Home() {
     );
   };
 
-  const CAROUSEL_ITEMS = [
-    {
-      src: "./backend/uploads/img/banner1.jpg",
-      title: "Las herramientas más fiables",
-      subtitle: "Rápido y sin complicaciones.",
-    },
-    {
-      src: "./backend/uploads/img/banner2.webp",
-      title: "Más que una ferretería",
-      subtitle: "Elegí entre los mejores precios.",
-    },
-    {
-      src: "./backend/uploads/img/banner4.webp",
-    },
-  ];
-
-  function SimpleCarousel() {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const goToNext = () =>
-      setActiveIndex((prev) => (prev + 1) % CAROUSEL_ITEMS.length);
-    const goToPrev = () =>
-      setActiveIndex(
-        (prev) => (prev - 1 + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length
-      );
-    const goToSlide = (index: number) => setActiveIndex(index);
-
-    useEffect(() => {
-      const interval = setInterval(goToNext, 5000);
-      return () => clearInterval(interval);
-    }, []);
-
-    return (
-      <div className="carousel-container">
-        <div
-          className="carousel-content"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-        >
-          {CAROUSEL_ITEMS.map((item, index) => (
-            <div key={index} className="carousel-slide">
-              <img src={item.src} alt={`Slide ${index + 1}`} />
-              <div className="carousel-caption">
-                <h3>{item.title}</h3>
-                <p>{item.subtitle}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="carousel-indicators">
-          {CAROUSEL_ITEMS.map((_, index) => (
-            <div
-              key={index}
-              className={`indicator ${index === activeIndex ? "active" : ""}`}
-              onClick={() => goToSlide(index)}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <main>
+    <>
       <header>
         <Navbar />
       </header>
+      <main>
 
       {/* BANNER */}
       <section className="banner-section">
@@ -244,9 +250,8 @@ function Home() {
             <div
               className="categorias-track"
               style={{
-                transform: `translateX(-${
-                  categoriaStart * (100 / itemsPerPage)
-                }%)`,
+                transform: `translateX(-${categoriaStart * (100 / itemsPerPage)
+                  }%)`,
               }}
             >
               {categoria.map((cat, index) => (
@@ -254,7 +259,7 @@ function Home() {
                   <Link to={`/categorias/${cat.id}`} className="categoria-item">
                     <div className="categoria-circle">
                       <img
-                        src={`./backend/uploads/${cat.imagen}`}
+                        src={cat.imagen ? `http://localhost:3334/uploads/${cat.imagen}` : "http://localhost:3334/uploads/default.png"}
                         alt={cat.nombre}
                       />
                     </div>
@@ -296,8 +301,8 @@ function Home() {
                 <img
                   src={
                     producto.imagenes?.[0]
-                      ? `./backend/uploads/${producto.imagenes[0]}`
-                      : "./backend/uploads/default.png"
+                      ? `http://localhost:3334/uploads/${producto.imagenes[0]}`
+                      : "http://localhost:3334/uploads/default.png"
                   }
                   alt={producto.nombre}
                 />
@@ -310,7 +315,7 @@ function Home() {
                   <>
                     <span className="precio-tachado">${producto.precio}</span>
                     <img
-                      src="./backend/uploads/oferta1.png"
+                      src="http://localhost:3334/uploads/oferta1.png"
                       className="badge-oferta"
                       alt="Oferta"
                     />
@@ -343,6 +348,7 @@ function Home() {
         <p>&copy; 2023 Ferretería Casa Mario. Todos los derechos reservados.</p>
       </footer>
     </main>
+    </>
   );
 }
 

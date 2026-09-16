@@ -47,15 +47,23 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
     )
     .join("");
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (acc, i) => acc + Number(i.precio_unitario) * Number(i.cantidad),
     0
   );
+  const metodoEntrega = pedidoBD?.metodo_entrega || "envio";
+  const esRetiro = metodoEntrega === "retiro";
+  const totalBD = Number(pedidoBD?.total);
+  const total = !isNaN(totalBD) && totalBD > 0 ? totalBD : (esRetiro ? subtotal : subtotal * 1.21);
+  const costoEnvio = total - subtotal > 0.01 ? total - subtotal : 0;
 
   const clienteNombre = pedidoBD?.usuario_nombre || `${pago.payer?.first_name || ""} ${pago.payer?.last_name || ""}`.trim() || "Cliente";
   const clienteEmail = pedidoBD?.usuario_email || pago.payer?.email || "-";
   const clienteTel = pedidoBD?.telefono || pago.payer?.phone?.number || "-";
-  const direccionEntrega = pedidoBD?.direccion || "Retiro en sucursal / A coordinar";
+  const metodoTexto = esRetiro ? "Retiro en el local" : "Envío a domicilio";
+  const direccionEntrega = esRetiro
+    ? (pedidoBD?.direccion || "Retiro en sucursal (Ferretería Casa Mario / Pichi)")
+    : (pedidoBD?.direccion || "A coordinar");
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #eaeaea;">
@@ -65,6 +73,19 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
       </div>
       <div style="padding:24px;">
         <h2 style="color:#333;margin-top:0;font-size:18px;">Detalle del Pedido #${pedidoId}</h2>
+
+        <!-- BLOQUE DE MÉTODO DE ENTREGA -->
+        <div style="background:${esRetiro ? '#e0f2fe' : '#ecfdf5'};border-left:5px solid ${esRetiro ? '#0284c7' : '#10b981'};padding:14px 16px;border-radius:8px;margin:16px 0;">
+          <p style="margin:0 0 6px;font-size:15px;font-weight:bold;color:${esRetiro ? '#0369a1' : '#047857'};">
+            ${esRetiro ? '🏪 MÉTODO: RETIRO EN EL LOCAL' : '🚚 MÉTODO: ENVÍO A DOMICILIO'}
+          </p>
+          <p style="margin:0;font-size:14px;color:#334155;line-height:1.4;">
+            ${esRetiro
+              ? 'El cliente retirará personalmente este pedido en la sucursal de la ferretería.'
+              : `<strong>Dirección de destino:</strong> ${direccionEntrega}`}
+          </p>
+        </div>
+
         <table style="width:100%;border-collapse:collapse;margin-top:12px;">
           <thead>
             <tr style="background:#f4f4f5;color:#333;">
@@ -75,15 +96,22 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
           </thead>
           <tbody>${itemsHtml}</tbody>
         </table>
-        <p style="text-align:right;font-size:20px;font-weight:bold;color:#1a1a2e;margin-top:16px;">
-          Total Pagado: $${total.toLocaleString("es-AR")}
-        </p>
+        <div style="text-align:right;margin-top:16px;">
+          <p style="margin:2px 0;font-size:14px;color:#555;">Subtotal: $${subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          ${costoEnvio > 0 
+            ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` 
+            : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
+          <p style="margin:6px 0 0;font-size:20px;font-weight:bold;color:#1a1a2e;">
+            Total Pagado: $${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+        </div>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0;"/>
         <h3 style="color:#1a1a2e;margin-bottom:10px;font-size:16px;">👤 Datos del Comprador</h3>
         <p style="margin:4px 0;color:#555;"><strong>Nombre:</strong> ${clienteNombre}</p>
         <p style="margin:4px 0;color:#555;"><strong>Email:</strong> ${clienteEmail}</p>
         <p style="margin:4px 0;color:#555;"><strong>Teléfono:</strong> ${clienteTel}</p>
-        <p style="margin:4px 0;color:#555;"><strong>Dirección de entrega:</strong> ${direccionEntrega}</p>
+        <p style="margin:4px 0;color:#555;"><strong>Tipo de entrega:</strong> <span style="font-weight:bold;color:${esRetiro ? '#0284c7' : '#16a34a'};">${metodoTexto}</span></p>
+        ${!esRetiro ? `<p style="margin:4px 0;color:#555;"><strong>Dirección de entrega:</strong> ${direccionEntrega}</p>` : ''}
         <p style="margin:4px 0;color:#555;"><strong>ID de Pago MP:</strong> ${pago.id}</p>
         <p style="margin:4px 0;color:#555;"><strong>Estado del Pago:</strong> <span style="color:#16a34a;font-weight:bold;">✅ ${pago.status}</span></p>
       </div>
@@ -102,7 +130,7 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
   await mailTransporter.sendMail({
     from: `"Ferretería Casa Mario 🔧" <${process.env.NOTIFY_EMAIL_USER}>`,
     to: process.env.NOTIFY_EMAIL_OWNER || process.env.NOTIFY_EMAIL_USER,
-    subject: `✅ Nuevo pedido #${pedidoId} pagado — $${total.toLocaleString("es-AR")}`,
+    subject: `✅ Nuevo pedido #${pedidoId} pagado [${metodoTexto}] — $${total.toLocaleString("es-AR")}`,
     html,
   });
 
@@ -125,12 +153,19 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
     )
     .join("");
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (acc, i) => acc + Number(i.precio_unitario) * Number(i.cantidad),
     0
   );
-
-  const direccionEntrega = pedidoBD?.direccion || "No especificada";
+  const metodoEntrega = pedidoBD?.metodo_entrega || "envio";
+  const esRetiro = metodoEntrega === "retiro";
+  const totalBD = Number(pedidoBD?.total);
+  const total = !isNaN(totalBD) && totalBD > 0 ? totalBD : (esRetiro ? subtotal : subtotal * 1.21);
+  const costoEnvio = total - subtotal > 0.01 ? total - subtotal : 0;
+  const metodoTexto = esRetiro ? "Retiro en el local" : "Envío a domicilio";
+  const direccionEntrega = esRetiro
+    ? (pedidoBD?.direccion || "Retiro en sucursal (Ferretería Casa Mario / Pichi)")
+    : (pedidoBD?.direccion || "No especificada");
   const telefonoCliente = pedidoBD?.telefono || "-";
 
   const html = `
@@ -142,6 +177,19 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
       <div style="padding:24px;">
         <p style="color:#333;font-size:16px;">Hola <strong>${nombreCliente}</strong>, ¡muchas gracias por tu compra! 🙌</p>
         <h2 style="color:#333;font-size:18px;">Resumen del pedido #${pedidoId}</h2>
+
+        <!-- BLOQUE DE MÉTODO DE ENTREGA -->
+        <div style="background:${esRetiro ? '#e0f2fe' : '#ecfdf5'};border-left:5px solid ${esRetiro ? '#0284c7' : '#10b981'};padding:14px 16px;border-radius:8px;margin:16px 0;">
+          <p style="margin:0 0 6px;font-size:15px;font-weight:bold;color:${esRetiro ? '#0369a1' : '#047857'};">
+            ${esRetiro ? '🏪 Forma de entrega: Retiro en el local' : '🚚 Forma de entrega: Envío a domicilio'}
+          </p>
+          <p style="margin:0;font-size:14px;color:#334155;line-height:1.5;">
+            ${esRetiro
+              ? `Podés retirar tu pedido en nuestro local comercial una vez preparado. Presentate con tu DNI y tu número de pedido: <strong>#${pedidoId}</strong>.`
+              : `Estaremos despachando tu paquete a la brevedad a la siguiente dirección:<br/><strong>${direccionEntrega}</strong>`}
+          </p>
+        </div>
+
         <table style="width:100%;border-collapse:collapse;margin-top:12px;">
           <thead>
             <tr style="background:#f4f4f5;color:#333;">
@@ -152,13 +200,20 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
           </thead>
           <tbody>${itemsHtml}</tbody>
         </table>
-        <p style="text-align:right;font-size:20px;font-weight:bold;color:#1a1a2e;margin-top:16px;">
-          Total: $${total.toLocaleString("es-AR")}
-        </p>
+        <div style="text-align:right;margin-top:16px;">
+          <p style="margin:2px 0;font-size:14px;color:#555;">Subtotal: $${subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          ${costoEnvio > 0 
+            ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` 
+            : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
+          <p style="margin:6px 0 0;font-size:20px;font-weight:bold;color:#1a1a2e;">
+            Total: $${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+        </div>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0;"/>
-        <h3 style="color:#1a1a2e;margin-bottom:10px;font-size:16px;">Datos de Entrega</h3>
-        <p style="margin:4px 0;color:#555;"><strong>Dirección:</strong> ${direccionEntrega}</p>
-        <p style="margin:4px 0;color:#555;"><strong>Teléfono:</strong> ${telefonoCliente}</p>
+        <h3 style="color:#1a1a2e;margin-bottom:10px;font-size:16px;">Datos de Contacto y Entrega</h3>
+        <p style="margin:4px 0;color:#555;"><strong>Modalidad:</strong> ${metodoTexto}</p>
+        ${!esRetiro ? `<p style="margin:4px 0;color:#555;"><strong>Dirección de entrega:</strong> ${direccionEntrega}</p>` : ''}
+        <p style="margin:4px 0;color:#555;"><strong>Teléfono de contacto:</strong> ${telefonoCliente}</p>
         <p style="color:#666;font-size:14px;margin-top:16px;">
           Podés ver el estado y el historial de tus pedidos ingresando a tu cuenta en la sección <strong>Mis Compras</strong>.
         </p>
@@ -179,7 +234,7 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
   await mailTransporter.sendMail({
     from: `"Ferretería Casa Mario" <${process.env.NOTIFY_EMAIL_USER}>`,
     to: emailDestino,
-    subject: `Tu pedido #${pedidoId} fue confirmado — Ferretería Casa Mario`,
+    subject: `Tu pedido #${pedidoId} fue confirmado [${metodoTexto}] — Ferretería Casa Mario`,
     html,
   });
 
@@ -307,7 +362,7 @@ export default function registrarMercadoPago(app, db) {
     console.log("💡 Entró al endpoint /api/checkout");
 
     try {
-      const { items, nombre, telefono, gmail, direccion } = req.body;
+      const { items, nombre, telefono, gmail, direccion, metodo_entrega } = req.body;
 
       if (!items || items.length === 0) {
         return res.status(400).json({ error: "El carrito está vacío." });
@@ -325,8 +380,17 @@ export default function registrarMercadoPago(app, db) {
         return res.status(400).json({ error: "El correo electrónico es obligatorio." });
       }
 
-      if (!direccion || !direccion.trim()) {
-        return res.status(400).json({ error: "La dirección de entrega es obligatoria." });
+      const tipoMetodo = metodo_entrega === "retiro" ? "retiro" : "envio";
+
+      let direccionFinal = direccion ? direccion.trim() : "";
+      if (tipoMetodo === "envio") {
+        if (!direccionFinal) {
+          return res.status(400).json({ error: "La dirección de entrega es obligatoria para envío a domicilio." });
+        }
+      } else {
+        if (!direccionFinal) {
+          direccionFinal = "Retiro en sucursal (Ferretería Casa Mario / Pichi)";
+        }
       }
 
       const baseUrl = process.env.BASE_URL || "http://localhost:3334";
@@ -336,15 +400,18 @@ export default function registrarMercadoPago(app, db) {
       // Guardar pedido como PENDIENTE en la BD
       // --------------------------------------------------
 
-      const total = items.reduce(
+      const subtotal = items.reduce(
         (acc, p) => acc + Number(p.precio) * Number(p.cantidad),
         0
       );
 
+      const costoEnvio = tipoMetodo === "envio" ? Number((subtotal * 0.21).toFixed(2)) : 0;
+      const totalCalculado = Number((subtotal + costoEnvio).toFixed(2));
+
       const pedidoRes = await db.query(
-        `INSERT INTO pedidos (usuario_email, usuario_nombre, telefono, direccion, mp_status, total)
-         VALUES ($1, $2, $3, $4, 'pending', $5) RETURNING id`,
-        [gmail || null, nombre || null, telefono || null, direccion || null, total]
+        `INSERT INTO pedidos (usuario_email, usuario_nombre, telefono, direccion, mp_status, total, metodo_entrega)
+         VALUES ($1, $2, $3, $4, 'pending', $5, $6) RETURNING id`,
+        [gmail || null, nombre || null, telefono || null, direccionFinal, totalCalculado, tipoMetodo]
       );
       const pedidoId = pedidoRes.rows[0].id;
 
@@ -364,14 +431,26 @@ export default function registrarMercadoPago(app, db) {
 
       const notificationUrl = `${baseUrl}/api/webhook-mp`;
 
-      const body = {
-        items: items.map((p) => ({
-          id: String(p.id),
-          title: p.nombre,
-          quantity: Number(p.cantidad),
-          unit_price: Number(p.precio),
+      const mpItems = items.map((p) => ({
+        id: String(p.id),
+        title: p.nombre,
+        quantity: Number(p.cantidad),
+        unit_price: Number(p.precio),
+        currency_id: "ARS",
+      }));
+
+      if (tipoMetodo === "envio" && costoEnvio > 0) {
+        mpItems.push({
+          id: "costo_envio",
+          title: "Costo de envío a domicilio (21%)",
+          quantity: 1,
+          unit_price: costoEnvio,
           currency_id: "ARS",
-        })),
+        });
+      }
+
+      const body = {
+        items: mpItems,
 
         payer: {
           name: nombre || "",

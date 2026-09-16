@@ -3,12 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import notify from "../utils/toastNotifier";
+import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import Navbar from "../components/Navbar";
 import "./css/EditarProducto.css"; // Usamos el mismo CSS
 
 const EditarImagenesProducto: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { confirm } = useConfirm();
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [nuevasImagenes, setNuevasImagenes] = useState<File[]>([]);
 
@@ -47,18 +50,28 @@ const EditarImagenesProducto: React.FC = () => {
   };
 
   const handleEliminarImagen = async (imagen: string) => {
-    if (!window.confirm("¿Estás seguro de eliminar esta imagen?")) return;
+    const confirmed = await confirm({
+      title: "¿Eliminar Imagen?",
+      message: "¿Estás seguro de que querés eliminar esta imagen de la galería del producto?",
+      confirmText: "Sí, eliminar",
+      cancelText: "Cancelar",
+      type: "danger",
+    });
+    if (!confirmed) return;
+
     try {
       await axios.delete(`http://localhost:3334/api/imagenes/${id}/${imagen}`);
       setImagenes(imagenes.filter((img) => img !== imagen));
+      notify.imageDeleted();
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
+      notify.error("Error al eliminar", "No se pudo eliminar la imagen.");
     }
   };
 
   const handleGuardar = async () => {
     if (nuevasImagenes.length === 0) {
-      toast.error("No hay nuevas imágenes para subir.");
+      notify.error("Sin archivos", "Seleccioná al menos una imagen para subir.");
       return;
     }
 
@@ -71,12 +84,12 @@ const EditarImagenesProducto: React.FC = () => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      toast.success("Imágenes subidas correctamente.");
+      notify.imageUploaded(nuevasImagenes.length);
       setNuevasImagenes([]); // Limpiar previews
       fetchImagenes(); // Recargar imágenes actuales
     } catch (error) {
       console.error("Error al subir imágenes:", error);
-      toast.error("Error al subir imágenes.");
+      notify.error("Error al subir imágenes", "No se pudieron subir las imágenes.");
     }
   };
 

@@ -1,192 +1,459 @@
-/* Navbar.css */
+/* ============================================================
+   ESTILOS GENERALES Y ESTRUCTURA DEL NAVBAR CON PERFIL Y BUSCADOR
+   ============================================================ */
 
-/* --- Variables de Estilo Globales (para consistencia) --- */
 :root {
   --primary-color: #000000;
-  /* Fondo Negro (como el del screenshot) */
   --accent-color: #a3e635;
-  /* Verde Lima (como el del logo) */
   --text-color: #ffffff;
-  /* Texto Blanco */
-  --mobile-menu-bg: #1a1a1a;
-  /* Fondo del menú desplegable móvil (Negro un poco más claro) */
+  --mobile-menu-bg: #111827;
 }
-
-/* ----------------------------------- */
-/* Contenedor Principal y Posición Fija */
-/* ----------------------------------- */
 
 .navbar-container {
   width: 100%;
-  background-color: black;
-  padding: 0 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  height: 100px;
+  background-color: #000000 !important;
+  color: #ffffff;
+  padding: 8px 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  min-height: 76px;
+  display: flex;
+  align-items: center;
 }
 
 .fixed-navbar {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  right: 0;
+  z-index: 10000;
 }
 
-/* Contenido de la navegación */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  height: 60px;
-  /* Altura más compacta */
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  /* Centrar el contenido */
+  gap: 1.2rem;
 }
 
 /* ----------------------------------- */
-/* Logo y Título */
+/* SECCIÓN IZQUIERDA: Logo */
 /* ----------------------------------- */
+
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
 
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  text-decoration: none;
+  text-decoration: none !important;
+}
+
+.logo-redondo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #a3e635;
+  background: #000;
 }
 
 .navbar-title-container {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
-  /* Reducir espacio entre líneas */
 }
 
-.navbar-logo h1.navbar-title {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: var(--accent-color);
-  /* Verde Lima */
+.navbar-title {
   margin: 0;
-  padding: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #a3e635 !important;
 }
 
 .navbar-subtitle {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: var(--text-color);
-  /* Blanco para el subtítulo */
+  color: #cbd5e1 !important;
+  font-style: italic;
   margin: 0;
-  padding: 0;
 }
 
 /* ----------------------------------- */
-/* Links de Navegación */
+/* SECCIÓN CENTRO: BUSCADOR DE PRODUCTOS (PROMINENTE) */
 /* ----------------------------------- */
 
-.navbar-links-container {
+.navbar-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 520px;
+  min-width: 220px;
+  margin: 0 0.5rem;
+}
+
+.navbar-search-box {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 2rem;
-  transition: max-height 0.3s ease;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 22px;
+  padding: 4px 14px;
+  transition: all 0.2s ease;
+}
+
+.navbar-search-box:focus-within {
+  border-color: #a3e635;
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.2);
+  background: #0f172a;
+}
+
+.navbar-search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff !important;
+  font-size: 0.9rem;
+  padding: 6px 0;
+}
+
+.navbar-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.search-input-icon {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+.navbar-search-clear {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.navbar-search-clear:hover {
+  color: #a3e635;
+}
+
+/* DROPDOWN DE BÚSQUEDA EN VIVO */
+.navbar-search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.navbar-search-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.navbar-search-item:hover {
+  background: #1e293b;
+}
+
+.search-item-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background: #000;
+}
+
+.search-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.search-item-name {
+  color: #f8fafc !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-item-price {
+  color: #a3e635 !important;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.search-item-add-btn {
+  background: rgba(163, 230, 53, 0.15);
+  color: #a3e635 !important;
+  border: 1px solid #a3e635;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-item-add-btn:hover {
+  background: #a3e635 !important;
+  color: #000000 !important;
+}
+
+.navbar-search-empty {
+  padding: 16px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+/* ----------------------------------- */
+/* SECCIÓN DERECHA: Navigation Links + Perfil Dropdown + Carrito */
+/* ----------------------------------- */
+
+.navbar-right-section {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-shrink: 0;
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 1rem;
   margin: 0;
   padding: 0;
 }
 
 .navbar-links li a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-weight: 500;
-  font-size: 1.05rem;
+  text-decoration: none !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.92rem;
   transition: color 0.2s ease;
 }
 
 .navbar-links li a:hover {
-  color: #a3e635;
-  /* Resaltado Verde Lima */
+  color: #a3e635 !important;
 }
 
-/* ----------------------------------- */
-/* Sesión de Usuario (Botones/Perfil) */
-/* ----------------------------------- */
-
-.navbar-session {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* MENÚ DESPLEGABLE DE PERFIL DE USUARIO */
+.navbar-user-dropdown-container {
+  position: relative;
 }
 
-.navbar-user {
+.navbar-user-trigger {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.navbar-user-trigger:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #a3e635;
 }
 
 .navbar-user-pic {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #A3E635;
+  border: 2px solid #a3e635;
 }
 
 .navbar-username {
-  font-weight: bold;
-  color: var(--text-color);
+  font-weight: 700;
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.navbar-logout-btn {
-  background-color: #a3e635;
-  /* verde siempre */
+.dropdown-arrow {
+  font-size: 0.65rem;
+  color: #a3e635;
+  transition: transform 0.2s ease;
+  margin-left: 2px;
+}
+
+.dropdown-arrow.active {
+  transform: rotate(180deg);
+}
+
+.navbar-user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.85);
+  min-width: 210px;
+  z-index: 10000;
+  overflow: hidden;
+  padding: 6px 0;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-user-header {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dropdown-user-header strong {
+  color: #f8fafc !important;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.dropdown-user-header small {
+  color: #94a3b8 !important;
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #1e293b;
+  margin: 4px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  color: #e2e8f0 !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none !important;
   border: none;
-  padding: 0.5rem 1rem;
-  color: #000000;
-  /* texto negro */
-  font-weight: bold;
+  background: transparent;
+  width: 100%;
+  text-align: left;
   cursor: pointer;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: all 0.15s ease;
+}
+
+.dropdown-icon {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  width: 18px;
+  text-align: center;
+  transition: color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background: #1e293b !important;
+  color: #a3e635 !important;
+}
+
+.dropdown-item:hover .dropdown-icon {
+  color: #a3e635 !important;
+}
+
+.dropdown-item.admin-item:hover {
+  color: #60a5fa !important;
+}
+
+.dropdown-item.admin-item:hover .dropdown-icon {
+  color: #60a5fa !important;
+}
+
+.dropdown-item.logout-item:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #f87171 !important;
+}
+
+.dropdown-item.logout-item:hover .dropdown-icon {
+  color: #f87171 !important;
 }
 
 .navbar-login-btn {
-  background-color: #a3e635;
+  background-color: #a3e635 !important;
   border: none;
-  padding: 0.5rem 1rem;
-  color: #A3E635;
-  /* Texto oscuro en botón lima */
-  font-weight: bold;
+  padding: 0.45rem 0.95rem;
+  color: #000000 !important;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 4px;
-  text-decoration: none;
-  /* Para el link de login */
+  border-radius: 6px;
+  text-decoration: none !important;
+  font-size: 0.85rem;
   transition: background-color 0.2s ease;
 }
 
-/* Cart link & Badge */
+.navbar-login-btn:hover {
+  background-color: #8cc427 !important;
+}
+
+/* ÍCONO DE CARRITO */
 .navbar-cart-link {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 0.8rem;
-  text-decoration: none;
+  margin-left: 0.4rem;
+  text-decoration: none !important;
 }
 
 .navbar-cart-link .cart-icon {
-  color: #a3e635;
-  font-size: 1.5rem;
-  transition: transform 0.2s ease, color 0.2s ease;
+  color: #a3e635 !important;
+  font-size: 1.4rem;
+  transition: transform 0.2s ease;
 }
 
 .navbar-cart-link:hover .cart-icon {
   transform: scale(1.15);
-  color: #8cc427;
 }
 
 .cart-badge {
@@ -199,154 +466,53 @@
   font-weight: 800;
   min-width: 19px;
   height: 19px;
-  border-radius: 9999px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid #000000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  animation: cartBadgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes cartBadgePop {
-  0% {
-    transform: scale(0.4);
-    opacity: 0;
-  }
-
-  60% {
-    transform: scale(1.25);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.navbar-logout-btn:hover,
-.navbar-login-btn:hover {
-  background-color: #8cc427;
-  /* Tono más oscuro de lima */
-}
-
-/* ----------------------------------- */
 /* Responsive Mobile */
-/* ----------------------------------- */
-
-/* Botón menú mobile */
 .menu-toggle {
   display: none;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   background: none;
   border: none;
-  color: var(--text-color);
+  color: #ffffff;
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .menu-toggle {
     display: block;
   }
 
-  .navbar-logo {
-    /* Asegura que el logo no sea demasiado grande en móvil */
-    gap: 0.5rem;
-  }
-
-  .navbar-logo h1.navbar-title {
-    font-size: 1.2rem;
-  }
-
-  .navbar-subtitle {
-    font-size: 0.8rem;
-  }
-
-  .navbar-links-container {
+  .navbar-right-section {
     position: absolute;
-    top: 60px;
-    /* Debajo de la navbar compacta */
+    top: 76px;
     left: 0;
     width: 100%;
-    background-color: var(--mobile-menu-bg);
+    background-color: #111827;
     max-height: 0;
-    /* Cerrado por defecto */
     overflow: hidden;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transition: max-height 0.3s ease;
   }
 
-  .navbar-links-container.open {
-    max-height: 400px;
-    /* Abierto */
+  .navbar-right-section.open {
+    max-height: 380px;
     padding: 1rem 0;
   }
 
   .navbar-links {
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
-  .navbar-session {
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+  .navbar-search-wrapper {
+    max-width: 240px;
   }
-}
-
-.navbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-redondo {
-  width: 75px;
-  /* tamaño más chico */
-  height: 75px;
-  border-radius: 50%;
-  /* lo vuelve circular */
-  object-fit: cover;
-  /* evita deformaciones */
-  background: none;
-}
-
-.navbar-title-container {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.navbar-title {
-  margin: 0;
-  font-size: 18px;
-  color: #00b800;
-}
-
-/* ----------------------------------- */
-/* Botón Volver */
-/* ----------------------------------- */
-
-.navbar-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 2px solid #a3e635;
-  color: #a3e635;
-  border-radius: 8px;
-  padding: 6px 16px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-
-.navbar-back-btn:hover {
-  background: #a3e635;
-  color: #000;
 }

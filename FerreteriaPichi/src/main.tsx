@@ -19,6 +19,7 @@ import { Toaster } from "react-hot-toast";
 
 // ⬇️ AGREGAMOS
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ConfirmProvider } from "./components/ConfirmModal/ConfirmContext";
 
 const GOOGLE_CLIENT_ID =
   "466240667276-6tsh08tln35u4i5c80fted614ad0sdb2.apps.googleusercontent.com";
@@ -27,27 +28,40 @@ const GOOGLE_CLIENT_ID =
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-    <Toaster position="bottom-right" reverseOrder={false} />
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
+    <ConfirmProvider>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        containerStyle={{
+          zIndex: 99999,
+          top: 24,
+          right: 24,
+        }}
+        toastOptions={{
+          duration: 3800,
+        }}
+      />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/detalleproducto/:id" element={<DetalleProducto />} />
-        <Route path="/categorias/:id" element={<VistaCategoria />} />
-        <Route path="/adminproductos" element={<AdminProductos />} />
-        <Route path="/admincategorias" element={<AdminCategorias />} />
-        <Route path="/adminvista" element={<Admin />} />
-        <Route
-          path="/editar-imagenes/:id"
-          element={<EditarImagenesProducto />}
-        />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/miscompras" element={<MisCompras />} />
-        <Route path="/pago" element={<PagoResultado />} />
+          <Route path="/detalleproducto/:id" element={<DetalleProducto />} />
+          <Route path="/categorias/:id" element={<VistaCategoria />} />
+          <Route path="/adminproductos" element={<AdminProductos />} />
+          <Route path="/admincategorias" element={<AdminCategorias />} />
+          <Route path="/adminvista" element={<Admin />} />
+          <Route
+            path="/editar-imagenes/:id"
+            element={<EditarImagenesProducto />}
+          />
+          <Route path="/carrito" element={<Carrito />} />
+          <Route path="/miscompras" element={<MisCompras />} />
+          <Route path="/pago" element={<PagoResultado />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/sobrenosotros" element={<SobreNosotros />} />
-      </Routes>
-    </Router>
+          <Route path="/login" element={<Login />} />
+          <Route path="/sobrenosotros" element={<SobreNosotros />} />
+        </Routes>
+      </Router>
+    </ConfirmProvider>
   </GoogleOAuthProvider>
 );

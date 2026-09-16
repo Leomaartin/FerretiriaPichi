@@ -19,15 +19,16 @@ body {
 /* Carousel Principal     */
 /* ---------------------- */
 main {
-  margin-top: 105px;
+  margin-top: 76px;
+  padding-top: 0;
 }
 
 .carousel-container {
   position: relative;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .carousel-content {

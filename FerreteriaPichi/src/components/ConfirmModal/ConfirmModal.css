@@ -1,0 +1,188 @@
+/* ============================================================
+   ESTILOS MODERNOS PARA MODAL DE CONFIRMACIÓN
+   ============================================================ */
+
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000; /* Siempre por encima de otros modales y toasts */
+  padding: 16px;
+  animation: confirmFadeIn 0.2s ease-out forwards;
+}
+
+.confirm-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+              0 0 0 1px rgba(0, 0, 0, 0.06);
+  padding: 26px 24px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: confirmScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@keyframes confirmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes confirmScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Icono Superior Animado */
+.confirm-modal-icon-wrapper {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  transition: transform 0.2s ease;
+}
+
+.confirm-modal-icon-wrapper svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Tipos de Iconos */
+.confirm-type-danger .confirm-modal-icon-wrapper {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 4px solid #fef2f2;
+}
+
+.confirm-type-info .confirm-modal-icon-wrapper {
+  background-color: #dbeafe;
+  color: #2563eb;
+  border: 4px solid #eff6ff;
+}
+
+.confirm-type-warning .confirm-modal-icon-wrapper {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 4px solid #fffbeb;
+}
+
+/* Título */
+.confirm-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+/* Mensaje y Detalle */
+.confirm-modal-message {
+  font-size: 0.95rem;
+  color: #475569;
+  margin: 0 0 16px 0;
+  line-height: 1.45;
+}
+
+.confirm-modal-highlight {
+  display: inline-block;
+  font-weight: 600;
+  color: #1e293b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 6px;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Contenedor de Botones */
+.confirm-modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+/* Botón Cancelar */
+.confirm-btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.confirm-btn-cancel:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Botón Confirmar Peligro (Eliminar) */
+.confirm-btn-danger {
+  background-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.confirm-btn-danger:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.45);
+}
+
+/* Botón Confirmar Edición / Info */
+.confirm-btn-info {
+  background-color: #a3e635;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(163, 230, 53, 0.35);
+}
+
+.confirm-btn-info:hover {
+  background-color: #8cc427;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(163, 230, 53, 0.45);
+}
+
+/* Botón Confirmar Advertencia */
+.confirm-btn-warning {
+  background-color: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+.confirm-btn-warning:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./css/AdminMenu.css";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
+import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 
 interface PedidoItem {
   id: number;
@@ -28,6 +29,7 @@ interface Pedido {
 
 const AdminMenu: React.FC = () => {
   const navigate = useNavigate();
+  const { confirm } = useConfirm();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<string>("pending");
@@ -82,7 +84,14 @@ const AdminMenu: React.FC = () => {
   };
 
   const handleEliminarPedido = async (id: number) => {
-    if (!window.confirm(`¿Seguro que deseas eliminar el pedido #${id}?`)) return;
+    const confirmed = await confirm({
+      title: "¿Eliminar Pedido?",
+      message: `¿Estás seguro de que deseás eliminar el pedido #${id}?`,
+      confirmText: "Sí, eliminar",
+      cancelText: "Cancelar",
+      type: "danger",
+    });
+    if (!confirmed) return;
 
     try {
       const res = await fetch(

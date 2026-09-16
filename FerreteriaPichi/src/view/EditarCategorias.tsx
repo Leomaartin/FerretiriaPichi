@@ -3,6 +3,8 @@ import axios from "axios";
 import "./css/EditarCategoria.css";
 import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
+import notify from "../utils/toastNotifier";
+import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 
 interface Categoria {
   id: number;
@@ -17,6 +19,7 @@ const SuperUsuarioCategorias: React.FC = () => {
   );
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { confirm } = useConfirm();
 
   // Traer categorías
   const fetchCategorias = async () => {
@@ -43,18 +46,30 @@ const SuperUsuarioCategorias: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!form.nombre) {
-      toast.error("El nombre es obligatorio");
+    if (!form.nombre || !form.nombre.trim()) {
+      notify.error("Campo requerido", "El nombre de la categoría es obligatorio.");
       return;
     }
 
+    const nombreCat = form.nombre.trim();
+
     try {
       const formData = new FormData();
-      formData.append("nombre", form.nombre);
+      formData.append("nombre", nombreCat);
       if (form.imagenFile) formData.append("imagen", form.imagenFile);
       else if (form.imagen) formData.append("imagen", form.imagen);
 
       if (editingId) {
+        const confirmed = await confirm({
+          title: "¿Guardar modificaciones?",
+          message: "¿Estás seguro de que querés actualizar esta categoría con los nuevos datos?",
+          itemName: nombreCat,
+          confirmText: "Sí, actualizar",
+          cancelText: "Cancelar",
+          type: "info",
+        });
+        if (!confirmed) return;
+
         await axios.put(
           `http://localhost:3334/api/categoria/${editingId}`,
           formData,
@@ -62,20 +77,21 @@ const SuperUsuarioCategorias: React.FC = () => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
+        notify.categoryUpdated(nombreCat);
       } else {
         await axios.post("http://localhost:3334/api/categoria", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+        notify.categoryCreated(nombreCat);
       }
 
       setForm({});
       setEditingId(null);
       setIsModalOpen(false);
-      toast.success("Categoría guardada correctamente");
       fetchCategorias();
     } catch (error) {
       console.error("Error al guardar categoría:", error);
-      toast.error("Error al guardar la categoría");
+      notify.error("Error al guardar", "No se pudo guardar la categoría.");
     }
   };
 
@@ -86,14 +102,27 @@ const SuperUsuarioCategorias: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("¿Estás seguro de eliminar esta categoría?")) return;
+    const cat = categorias.find((c) => c.id === id);
+    const nombreCat = cat ? cat.nombre : `Categoría #${id}`;
+
+    const confirmed = await confirm({
+      title: "¿Eliminar Categoría?",
+      message: "¿Estás seguro de que querés eliminar esta categoría? Esta acción no se puede deshacer.",
+      itemName: nombreCat,
+      confirmText: "Sí, eliminar",
+      cancelText: "Cancelar",
+      type: "danger",
+    });
+
+    if (!confirmed) return;
+
     try {
       await axios.delete(`http://localhost:3334/api/categoria/${id}`);
-      toast.success("Categoría eliminada correctamente");
+      notify.categoryDeleted(nombreCat);
       fetchCategorias();
     } catch (error) {
       console.error("Error al eliminar categoría:", error);
-      toast.error("Error al eliminar la categoría");
+      notify.error("Error al eliminar", "No se pudo eliminar la categoría.");
     }
   };
 

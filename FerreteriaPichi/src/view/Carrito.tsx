@@ -18,7 +18,8 @@ const Carrito: React.FC = () => {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [gmail, setGmail] = useState("");
-  const [direccion, setDireccion] = useState(""); // ⭐ NUEVO
+  const [direccion, setDireccion] = useState("");
+  const [metodoEntrega, setMetodoEntrega] = useState<"envio" | "retiro">("envio");
 
   // Cargar carrito desde localStorage
   useEffect(() => {
@@ -61,8 +62,9 @@ const Carrito: React.FC = () => {
   };
 
   const calcularSubtotal = (item: CarritoItem) => item.precio * item.cantidad;
-
-  const total = items.reduce((acc, item) => acc + calcularSubtotal(item), 0);
+  const subtotal = items.reduce((acc, item) => acc + calcularSubtotal(item), 0);
+  const costoEnvio = metodoEntrega === "envio" ? subtotal * 0.21 : 0;
+  const totalFinal = subtotal + costoEnvio;
 
   const handleFinalizar = () => {
     setShowCheckoutForm(true);
@@ -84,8 +86,8 @@ const Carrito: React.FC = () => {
       return;
     }
 
-    if (!direccion.trim()) {
-      toast.error("La dirección de entrega es obligatoria.");
+    if (metodoEntrega === "envio" && !direccion.trim()) {
+      toast.error("La dirección de entrega es obligatoria para envíos a domicilio.");
       return;
     }
 
@@ -98,7 +100,11 @@ const Carrito: React.FC = () => {
           nombre: nombre.trim(),
           telefono: telefono.trim(),
           gmail: gmail.trim(),
-          direccion: direccion.trim(),
+          direccion:
+            metodoEntrega === "retiro"
+              ? "Retiro en sucursal (Ferretería Casa Mario)"
+              : direccion.trim(),
+          metodo_entrega: metodoEntrega,
         }),
       });
 
@@ -192,12 +198,24 @@ const Carrito: React.FC = () => {
                   Subtotal (
                   {items.reduce((sum, item) => sum + item.cantidad, 0)} ítems):
                 </span>
-                <span>${total.toFixed(2)}</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
 
+              {metodoEntrega === "envio" ? (
+                <div className="summary-row">
+                  <span>Costo de envío (21%):</span>
+                  <span>${costoEnvio.toFixed(2)}</span>
+                </div>
+              ) : (
+                <div className="summary-row">
+                  <span>Envío:</span>
+                  <span style={{ color: "#16a34a", fontWeight: "bold" }}>Gratis (Retiro en local)</span>
+                </div>
+              )}
+
               <div className="summary-row total-row">
-                <strong>Total (Con envío):</strong>
-                <strong>${(total * 1.21).toFixed(2)}</strong>
+                <strong>{metodoEntrega === "envio" ? "Total (Con envío):" : "Total (Retiro en local):"}</strong>
+                <strong>${totalFinal.toFixed(2)}</strong>
               </div>
 
               {!showCheckoutForm && (
@@ -208,7 +226,54 @@ const Carrito: React.FC = () => {
 
               {showCheckoutForm && (
                 <div className="checkout-form">
-                  <h3>Datos para la entrega y facturación</h3>
+                  <h3>1. Forma de entrega</h3>
+
+                  <div className="metodo-entrega-selector">
+                    <div
+                      className={`metodo-entrega-card ${metodoEntrega === "envio" ? "active" : ""}`}
+                      onClick={() => setMetodoEntrega("envio")}
+                    >
+                      <div className="metodo-entrega-radio">
+                        <span className={`custom-radio-dot ${metodoEntrega === "envio" ? "checked" : ""}`}></span>
+                      </div>
+                      <div className="metodo-entrega-icon">🚚</div>
+                      <div className="metodo-entrega-info">
+                        <h4>Envío a domicilio</h4>
+                        <p>Entrega en tu dirección</p>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`metodo-entrega-card ${metodoEntrega === "retiro" ? "active" : ""}`}
+                      onClick={() => setMetodoEntrega("retiro")}
+                    >
+                      <div className="metodo-entrega-radio">
+                        <span className={`custom-radio-dot ${metodoEntrega === "retiro" ? "checked" : ""}`}></span>
+                      </div>
+                      <div className="metodo-entrega-icon">🏪</div>
+                      <div className="metodo-entrega-info">
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <h4>Retiro en local</h4>
+                          <span className="badge-gratis">Gratis</span>
+                        </div>
+                        <p>Casa Mario</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {metodoEntrega === "retiro" && (
+                    <div className="retiro-info-banner">
+                      <div className="retiro-info-icon">📍</div>
+                      <div>
+                        <strong>Punto de retiro:</strong> Ferretería Casa Mario
+                        <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "#475569" }}>
+                          Una vez acreditado el pago, podés retirar tu pedido en nuestro local comercial con tu DNI y el comprobante que te llegará por Gmail.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <h3 style={{ marginTop: "16px" }}>2. Datos del comprador y facturación</h3>
 
                   <div className="form-group" style={{ marginBottom: "10px" }}>
                     <input
@@ -233,22 +298,25 @@ const Carrito: React.FC = () => {
                   <div className="form-group" style={{ marginBottom: "10px" }}>
                     <input
                       type="email"
-                      placeholder="Correo Gmail *"
+                      placeholder="Correo Gmail (para recibir el comprobante) *"
                       value={gmail}
                       required
                       onChange={(e) => setGmail(e.target.value)}
                     />
                   </div>
 
-                  <div className="form-group" style={{ marginBottom: "14px" }}>
-                    <input
-                      type="text"
-                      placeholder="Dirección de entrega (Obligatorio) *"
-                      value={direccion}
-                      required
-                      onChange={(e) => setDireccion(e.target.value)}
-                    />
-                  </div>
+                  {metodoEntrega === "envio" && (
+                    <div className="form-group" style={{ marginBottom: "14px" }}>
+                      <label className="checkout-label">Dirección de entrega *</label>
+                      <input
+                        type="text"
+                        placeholder="Calle, número, piso/depto, barrio, ciudad..."
+                        value={direccion}
+                        required
+                        onChange={(e) => setDireccion(e.target.value)}
+                      />
+                    </div>
+                  )}
 
                   <button className="checkout-btn" onClick={handleIrAPagar}>
                     Ir a Pagar

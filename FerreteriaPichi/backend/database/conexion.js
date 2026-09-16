@@ -67,6 +67,9 @@ conexion
       ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS direccion VARCHAR(255)
     `);
     await connection.query(`
+      ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS metodo_entrega VARCHAR(50) DEFAULT 'envio'
+    `);
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS pedido_items (
         id SERIAL PRIMARY KEY,
         pedido_id INTEGER REFERENCES pedidos(id) ON DELETE CASCADE,

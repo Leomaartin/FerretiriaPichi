@@ -4,6 +4,8 @@ import "./css/EditarProducto.css";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import notify from "../utils/toastNotifier";
+import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 
 interface Producto {
   id: number;
@@ -40,6 +42,7 @@ const SuperUsuarioProductos: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { confirm } = useConfirm();
 
   // Traer productos
   const fetchProductos = async () => {
@@ -107,12 +110,25 @@ const SuperUsuarioProductos: React.FC = () => {
         precioenoferta: form.precioenoferta ? Number(form.precioenoferta) : 0,
       };
 
+      const nombreProducto = form.nombre || "Producto";
+
       if (editingId) {
+        const confirmed = await confirm({
+          title: "¿Guardar modificaciones?",
+          message: "¿Estás seguro de que querés actualizar este producto con los nuevos datos?",
+          itemName: nombreProducto,
+          confirmText: "Sí, actualizar",
+          cancelText: "Cancelar",
+          type: "info",
+        });
+        if (!confirmed) return;
+
         await axios.put(
           `http://localhost:3334/api/productos/${editingId}`,
           dataToSend,
           { headers: { "Content-Type": "application/json" } }
         );
+        notify.productUpdated(nombreProducto);
       } else {
         const formData = new FormData();
         Object.entries(dataToSend).forEach(([k, v]) =>
@@ -123,16 +139,16 @@ const SuperUsuarioProductos: React.FC = () => {
         await axios.post("http://localhost:3334/api/productos", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+        notify.productCreated(nombreProducto);
       }
 
-      toast.success("Producto guardado correctamente");
       setForm({ mostrar: false, mostrar_inicio: 0, precioenoferta: "" });
       setEditingId(null);
       setIsModalOpen(false);
       fetchProductos();
     } catch (error) {
       console.error("Error al guardar producto:", error);
-      toast.error("Error al guardar producto");
+      notify.error("Error al guardar producto", "Por favor, verificá los datos ingresados e intentá nuevamente.");
     }
   };
 
@@ -147,10 +163,13 @@ const SuperUsuarioProductos: React.FC = () => {
       await axios.put(`http://localhost:3334/api/productos/${id}/mostrar`, {
         mostrar: value,
       });
-      toast.success(value ? "Producto visible en la web" : "Producto oculto de la web");
+      notify.statusChanged(
+        "Visibilidad de Producto",
+        value ? "El producto ahora está visible en la web" : "El producto se ocultó de la web"
+      );
     } catch (error) {
       console.error("Error al actualizar mostrar", error);
-      toast.error("Error al actualizar estado");
+      notify.error("Error al actualizar estado", "No se pudo cambiar la visibilidad.");
       // Revertir si falló
       setProductos((prev) =>
         prev.map((p) => (p.id === id ? { ...p, mostrar: !value } : p))
@@ -169,10 +188,13 @@ const SuperUsuarioProductos: React.FC = () => {
       await axios.put(`http://localhost:3334/api/productos/${id}/mostrar-inicio`, {
         mostrar_inicio: value ? 1 : 0,
       });
-      toast.success(value ? "Producto visible en el Home" : "Producto oculto del Home");
+      notify.statusChanged(
+        "Destacado en Inicio",
+        value ? "El producto ahora se muestra en el Home" : "El producto ya no se muestra en el Home"
+      );
     } catch (error) {
       console.error("Error al actualizar mostrar_inicio", error);
-      toast.error("Error al actualizar estado en el Home");
+      notify.error("Error al actualizar estado", "No se pudo cambiar el estado en el Home.");
       // Revertir si falló
       setProductos((prev) =>
         prev.map((p) => (p.id === id ? { ...p, mostrar_inicio: !value ? 1 : 0 } : p))
@@ -199,15 +221,27 @@ const SuperUsuarioProductos: React.FC = () => {
 
   // Eliminar
   const handleDelete = async (id: number) => {
-    if (!window.confirm("¿Seguro que querés eliminar este producto?")) return;
+    const prod = productos.find((p) => p.id === id);
+    const nombreProd = prod ? prod.nombre : `Producto #${id}`;
+
+    const confirmed = await confirm({
+      title: "¿Eliminar Producto?",
+      message: "¿Estás seguro de que querés eliminar este producto? Esta acción no se puede deshacer.",
+      itemName: nombreProd,
+      confirmText: "Sí, eliminar",
+      cancelText: "Cancelar",
+      type: "danger",
+    });
+
+    if (!confirmed) return;
 
     try {
       await axios.delete(`http://localhost:3334/api/productos/${id}`);
-      toast.success("Producto eliminado correctamente");
+      notify.productDeleted(nombreProd);
       fetchProductos();
     } catch (error) {
       console.error("Error al eliminar:", error);
-      toast.error("Error al eliminar el producto");
+      notify.error("Error al eliminar", "No se pudo eliminar el producto del sistema.");
     }
   };
 
