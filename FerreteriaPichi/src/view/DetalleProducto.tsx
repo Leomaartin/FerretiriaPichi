@@ -1,4 +1,4 @@
-﻿import "./css/DetalleProducto.css";
+import "./css/DetalleProducto.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -6,11 +6,23 @@ import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
 import API_URL from "../config/api";
 
-const buildImageUrl = (imageName) => `../backend/uploads/${imageName}`;
+interface Producto {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  precio: number | string;
+  precioenoferta?: number | string;
+  marca?: string;
+  modelo?: string;
+  imagenes?: string[];
+  stock?: number;
+}
+
+const buildImageUrl = (imageName: string) => `../backend/uploads/${imageName}`;
 
 function DetalleProducto() {
   const { id } = useParams();
-  const [producto, setProducto] = useState(null);
+  const [producto, setProducto] = useState<Producto | null>(null);
   const [mainImage, setMainImage] = useState("");
   const navigate = useNavigate();
 
@@ -37,7 +49,7 @@ function DetalleProducto() {
     fetchProducto();
   }, [id]);
 
-  const handleThumbnailClick = (imageName) => {
+  const handleThumbnailClick = (imageName: string) => {
     setMainImage(buildImageUrl(imageName));
   };
 
@@ -114,7 +126,7 @@ function DetalleProducto() {
             <img src={mainImage} alt={producto.nombre} />
           </div>
 
-          {producto.imagenes?.length > 1 && (
+          {producto.imagenes && producto.imagenes.length > 1 && (
             <div className="thumbnail-images">
               {producto.imagenes.map((img, index) => (
                 <img

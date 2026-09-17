@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import "../view/css/Navbar.css";
 import { toast } from "react-hot-toast";
 import API_URL from "../config/api";
@@ -20,7 +19,6 @@ const Navbar: React.FC = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  const location = useLocation();
 
   // Actualizar cantidad de carrito
   const updateCartCount = () => {

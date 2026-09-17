@@ -1,4 +1,3 @@
-import React from "react";
 import toast from "react-hot-toast";
 import { ToastCard } from "../components/Toast/ToastCard";
 import type { ToastActionType } from "../components/Toast/ToastCard";

@@ -2,7 +2,6 @@
 import axios from "axios";
 import "./css/EditarCategoria.css";
 import Navbar from "../components/Navbar";
-import { toast } from "react-hot-toast";
 import notify from "../utils/toastNotifier";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import API_URL from "../config/api";

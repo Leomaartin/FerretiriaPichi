@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import "./css/Sobrenosotros.css";
 import ReviewsComponent from "./Reseñas"

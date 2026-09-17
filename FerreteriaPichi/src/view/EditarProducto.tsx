@@ -3,7 +3,6 @@ import axios from "axios";
 import "./css/EditarProducto.css";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import notify from "../utils/toastNotifier";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import API_URL from "../config/api";
@@ -12,13 +11,13 @@ interface Producto {
   id: number;
   nombre: string;
   descripcion: string;
-  precio: string;
+  precio: string | number;
   id_categoria: number;
   imagen: string | null;
   stock: number;
   mostrar: boolean | number;
   mostrar_inicio: boolean | number;
-  precioenoferta: number;
+  precioenoferta: number | string;
 }
 
 const isChecked = (val: any): boolean =>
@@ -78,19 +77,18 @@ const SuperUsuarioProductos: React.FC = () => {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, type, value, checked } = e.target;
-
-    if (type === "file") {
-      const file = (e.target as HTMLInputElement).files?.[0];
+    if (e.target instanceof HTMLInputElement && e.target.type === "file") {
+      const file = e.target.files?.[0];
       setForm({ ...form, imagenFile: file });
       return;
     }
 
-    if (type === "checkbox") {
-      setForm({ ...form, [name]: checked ? 1 : 0 });
+    if (e.target instanceof HTMLInputElement && e.target.type === "checkbox") {
+      setForm({ ...form, [e.target.name]: e.target.checked ? 1 : 0 });
       return;
     }
 
+    const { name, value } = e.target;
     setForm({
       ...form,
       [name]: value, // 🔹 guardamos como string

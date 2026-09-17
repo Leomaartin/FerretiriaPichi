@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import API_URL from "../config/api";
 
@@ -50,10 +50,6 @@ function SimpleCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const goToNext = () =>
     setActiveIndex((prev) => (prev + 1) % CAROUSEL_ITEMS.length);
-  const goToPrev = () =>
-    setActiveIndex(
-      (prev) => (prev - 1 + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length
-    );
   const goToSlide = (index: number) => setActiveIndex(index);
 
   useEffect(() => {
@@ -94,7 +90,6 @@ function SimpleCarousel() {
 }
 
 function Home() {
-  const [productos, setProductos] = useState<Producto[]>([]);
   const [productosFiltrados, setProductosFiltrados] = useState<Producto[]>([]);
   const [categoria, setCategoria] = useState<Categoria[]>([]);
   const [categoriaStart, setCategoriaStart] = useState(0);
@@ -119,8 +114,6 @@ function Home() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const navigate = useNavigate();
 
   // ============================================
   // AGREGAR AL CARRITO
@@ -166,8 +159,6 @@ function Home() {
         );
 
         console.log(res.data);
-
-        setProductos(visibles);
         setProductosFiltrados(visibles);
       } catch (error) {
         console.error("Error al cargar productos:", error);

@@ -1,5 +1,4 @@
-﻿import React from "react";
-import Navbar from "../../components/Navbar";
+﻿import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";

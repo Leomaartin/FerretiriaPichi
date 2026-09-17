@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useRef, useEffect, type ReactNode } from "react";
 import "./ConfirmModal.css";
 
 export interface ConfirmOptions {

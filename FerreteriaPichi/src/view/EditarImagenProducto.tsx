@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import toast from "react-hot-toast";
 import notify from "../utils/toastNotifier";
+import API_URL from "../config/api";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import Navbar from "../components/Navbar";
 import "./css/EditarProducto.css"; // Usamos el mismo CSS

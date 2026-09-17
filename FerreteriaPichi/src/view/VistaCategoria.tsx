@@ -6,6 +6,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
+import API_URL from "../config/api";
 
 interface Producto {
   id: number;
