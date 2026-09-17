@@ -16,8 +16,7 @@ const PORT = process.env.PORT || 3334;
 //    CONFIGURAR CORS
 // ========================
 const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONT_URL, // URL del frontend en producción (EasyPanel)
+  process.env.FRONT_URL,
 ].filter(Boolean);
 
 app.use(
