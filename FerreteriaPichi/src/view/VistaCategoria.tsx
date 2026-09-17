@@ -143,35 +143,6 @@ function VistaCategoria() {
       <section className="categorias-section">
         <h2 className="categorias-title">Explora Nuestras Categorías</h2>
 
-        {/* Botón volver */}
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            background: "none",
-            border: "2px solid #a3e635",
-            color: "#a3e635",
-            borderRadius: "8px",
-            padding: "8px 18px",
-            cursor: "pointer",
-            fontWeight: 600,
-            fontSize: "0.95rem",
-            marginBottom: "16px",
-            transition: "all 0.2s",
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = "#a3e635";
-            (e.currentTarget as HTMLButtonElement).style.color = "white";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = "none";
-            (e.currentTarget as HTMLButtonElement).style.color = "#a3e635";
-          }}
-        >
-          ← Volver
-        </button>
         <div className="categorias-grid">
           {categoria.map((cat, index) => (
             <Link
@@ -181,7 +152,7 @@ function VistaCategoria() {
             >
               <div className="categoria-circle">
                 <img
-                  src={`../backend/uploads/${cat.imagen}`}
+                  src={`${API_URL}/uploads/${cat.imagen}`}
                   alt={cat.nombre}
                 />
               </div>
@@ -197,7 +168,7 @@ function VistaCategoria() {
             Productos de la categoría -{" "}
             {categoria.find((c: any) => c.id == id)?.nombre || ""}
           </h2>
-            <div className="filtros">
+          <div className="filtros">
             <input
               type="text"
               placeholder="Buscar producto..."
@@ -223,14 +194,14 @@ function VistaCategoria() {
         </div>
 
         <div className="productos-grid">
-           {productosFiltrados.map((producto) => (
+          {productosFiltrados.map((producto) => (
             <Link
               to={`/detalleproducto/${producto.id}`}
               className="producto-card"
               key={producto.id}
             >
               <div className="producto-image-container">
-               <img
+                <img
                   src={
                     producto.imagenes && producto.imagenes.length > 0
                       ? `${API_URL}/uploads/${producto.imagenes[0]}`

@@ -38,7 +38,7 @@ function DetalleProducto() {
 
         const firstImage = prod.imagenes?.length
           ? buildImageUrl(prod.imagenes[0])
-          : "../backend/uploads/default.png";
+          : "${API_URL}/uploads/default.png";
 
         setMainImage(firstImage);
       } catch (error) {
@@ -155,7 +155,7 @@ function DetalleProducto() {
           <div className="precio-container-detalle">
             {Number(producto.precioenoferta) > 0 ? (
               <>
-               
+
                 <p className="precio-tachado">${producto.precio}</p>
                 <p className="precio-oferta">${producto.precioenoferta}</p>
               </>
