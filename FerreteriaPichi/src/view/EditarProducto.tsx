@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/EditarProducto.css";
 import Navbar from "../components/Navbar";
@@ -14,6 +14,7 @@ interface Producto {
   precio: string | number;
   id_categoria: number;
   imagen: string | null;
+  imagenes?: string[];
   stock: number;
   mostrar: boolean | number;
   mostrar_inicio: boolean | number;
@@ -32,6 +33,7 @@ const SuperUsuarioProductos: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoriaFiltro, setCategoriaFiltro] = useState<string>("todas");
 
   const [form, setForm] = useState<Partial<Producto> & { imagenFile?: File }>({
     mostrar: 0,
@@ -244,20 +246,35 @@ const SuperUsuarioProductos: React.FC = () => {
     }
   };
 
-  const productosFiltrados = productos.filter((p) =>
-    p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filtrado de productos por texto y categoría
+  const productosFiltrados = productos.filter((p) => {
+    const term = searchTerm.toLowerCase().trim();
+    const matchBusqueda =
+      term === "" ||
+      p.nombre.toLowerCase().includes(term) ||
+      (p.descripcion && p.descripcion.toLowerCase().includes(term));
+    const matchCategoria =
+      categoriaFiltro === "todas" || String(p.id_categoria) === String(categoriaFiltro);
+    return matchBusqueda && matchCategoria;
+  });
+
+  const totalProductos = productos.length;
+  const totalFiltrados = productosFiltrados.length;
+  const hayFiltrosActivos = searchTerm.trim() !== "" || categoriaFiltro !== "todas";
 
   return (
-    <main style={{marginTop:"8%"}}>
-      
-        <Navbar />
-     
+    <main style={{ marginTop: "8%" }}>
+      <Navbar />
 
-      <div className="superusuario-container" >
+      <div className="superusuario-container">
         <div className="header-admin">
-          <h1>Gestión de Productos</h1>
-          <button 
+          <div>
+            <h1>Gestión de Productos</h1>
+            <p className="admin-section-subtitle">
+              Administrá el catálogo de productos, categorías, visibilidad y fotos
+            </p>
+          </div>
+          <button
             className="btn-nuevo"
             onClick={() => {
               setForm({ mostrar: false, mostrar_inicio: 0, precioenoferta: "" });
@@ -269,13 +286,45 @@ const SuperUsuarioProductos: React.FC = () => {
           </button>
         </div>
 
+        {/* Panel de estadísticas rápidas */}
+        <div className="admin-stats-bar">
+          <div className="stat-card">
+            <span className="stat-label">Total de Productos</span>
+            <span className="stat-value">{totalProductos}</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Categorías</span>
+            <span className="stat-value">{categorias.length}</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Visibles en Web</span>
+            <span className="stat-value">
+              {productos.filter((p) => isChecked(p.mostrar)).length}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Destacados en Home</span>
+            <span className="stat-value">
+              {productos.filter((p) => isChecked(p.mostrar_inicio)).length}
+            </span>
+          </div>
+        </div>
+
         {/* Formulario Modal */}
         {isModalOpen && (
           <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-            <div className="modal-content fadeIn" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="modal-content fadeIn"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="modal-header">
                 <h2>{editingId ? "Editar Producto" : "Agregar Producto"}</h2>
-                <button className="close-btn" onClick={() => setIsModalOpen(false)}>✖</button>
+                <button
+                  className="close-btn"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ✖
+                </button>
               </div>
 
               <div className="form-container modal-body">
@@ -333,7 +382,9 @@ const SuperUsuarioProductos: React.FC = () => {
                 />
 
                 <div className="checkbox-container">
-                  <h3 style={{margin:0, marginRight: '10px'}}>Mostrar en la web / categorías</h3>
+                  <h3 style={{ margin: 0, marginRight: "10px" }}>
+                    Mostrar en la web / categorías
+                  </h3>
                   <input
                     type="checkbox"
                     name="mostrar"
@@ -343,7 +394,9 @@ const SuperUsuarioProductos: React.FC = () => {
                 </div>
 
                 <div className="checkbox-container">
-                  <h3 style={{margin:0, marginRight: '10px'}}>Mostrar al Inicio (Home)</h3>
+                  <h3 style={{ margin: 0, marginRight: "10px" }}>
+                    Mostrar al Inicio (Home)
+                  </h3>
                   <input
                     type="checkbox"
                     name="mostrar_inicio"
@@ -353,7 +406,12 @@ const SuperUsuarioProductos: React.FC = () => {
                 </div>
 
                 <div className="modal-actions">
-                  <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
                   <button
                     onClick={handleSubmit}
                     className="btn-save"
@@ -368,108 +426,251 @@ const SuperUsuarioProductos: React.FC = () => {
         )}
       </div>
 
-      {/* Buscador */}
-      <div
-        className="buscador-container"
-        style={{ width: "20%", marginLeft: "5%" }}
-      >
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* Barra de Filtros y Búsqueda */}
+      <div className="filtros-admin-bar">
+        <div className="filtros-left-group">
+          {/* Buscador */}
+          <div className="buscador-input-wrapper">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="admin-search-input"
+            />
+            {searchTerm && (
+              <button
+                className="btn-clear-search"
+                onClick={() => setSearchTerm("")}
+                title="Limpiar búsqueda"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Filtro por Categoría */}
+          <div className="categoria-filter-wrapper">
+            <label htmlFor="categoria-select" className="filter-label">
+              Categoría:
+            </label>
+            <select
+              id="categoria-select"
+              value={categoriaFiltro}
+              onChange={(e) => setCategoriaFiltro(e.target.value)}
+              className="admin-categoria-select"
+            >
+              <option value="todas">
+                Todas las categorías ({totalProductos})
+              </option>
+              {categorias.map((c) => {
+                const count = productos.filter(
+                  (p) => p.id_categoria === c.id
+                ).length;
+                return (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre} ({count})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          {/* Botón de limpiar filtros si hay alguno activo */}
+          {hayFiltrosActivos && (
+            <button
+              className="btn-reset-filters"
+              onClick={() => {
+                setSearchTerm("");
+                setCategoriaFiltro("todas");
+              }}
+            >
+              Limpiar filtros
+            </button>
+          )}
+        </div>
+
+        {/* Indicador de resultados */}
+        <div className="resultados-count-badge">
+          {hayFiltrosActivos ? (
+            <span>
+              Mostrando <strong>{totalFiltrados}</strong> de{" "}
+              <strong>{totalProductos}</strong> productos
+            </span>
+          ) : (
+            <span>
+              Total: <strong>{totalProductos}</strong> productos
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Tabla */}
-      <table
-        className="productos-table"
-        style={{ marginLeft: "5%", marginBottom: "5%", width: "90%" }}
-      >
-        <thead>
-          <tr>
-            {[
-              "ID",
-              "Nombre",
-              "Descripción",
-              "Precio",
-              "Categoría",
-              "Stock",
-              "Mostrar",
-              "Mostrar al Inicio",
-              "Oferta",
-              "Acciones",
-            ].map((t) => (
-              <th key={t} style={{ backgroundColor: "#a3e635" }}>
-                {t}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {productosFiltrados.map((p) => (
-            <tr key={p.id}>
-              <td>{p.id}</td>
-              <td>{p.nombre}</td>
-              <td>{p.descripcion}</td>
-              <td>{p.precio}</td>
-              <td>
-                {categorias.find((c) => c.id === p.id_categoria)?.nombre ||
-                  p.id_categoria}
-              </td>
-              <td>{p.stock}</td>
-
-              <td>
-                <input
-                  type="checkbox"
-                  style={{ cursor: "pointer", width: "18px", height: "18px" }}
-                  checked={isChecked(p.mostrar)}
-                  onChange={(e) => actualizarMostrar(p.id, e.target.checked)}
-                />
-              </td>
-
-              <td>
-                <input
-                  type="checkbox"
-                  style={{ cursor: "pointer", width: "18px", height: "18px" }}
-                  checked={isChecked(p.mostrar_inicio)}
-                  onChange={(e) => actualizarMostrarInicio(p.id, e.target.checked)}
-                />
-              </td>
-
-              <td>{p.precioenoferta}</td>
-
-              <td>
-                <div className="action-buttons-container">
-                  <button
-                    className="edit-btn"
-                    style={{ backgroundColor: "#a3e635", color: "white" }}
-                    onClick={() => handleEdit(p)}
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    className="edit-btn"
-                    style={{ backgroundColor: "#a3e635", color: "white" }}
-                    onClick={() => navigate(`/editar-imagenes/${p.id}`)}
-                  >
-                    Imágenes
-                  </button>
-
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(p.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </td>
+      {/* Tabla de Productos */}
+      <div className="table-responsive-container">
+        <table className="productos-table">
+          <thead>
+            <tr>
+              {[
+                "Foto",
+                "Nombre",
+                "Descripción",
+                "Precio",
+                "Categoría",
+                "Stock",
+                "Mostrar",
+                "Mostrar al Inicio",
+                "Oferta",
+                "Acciones",
+              ].map((t) => (
+                <th key={t} style={{ backgroundColor: "#a3e635" }}>
+                  {t}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {productosFiltrados.length > 0 ? (
+              productosFiltrados.map((p) => {
+                const primeraImagen =
+                  p.imagenes && p.imagenes.length > 0 && p.imagenes[0]
+                    ? p.imagenes[0]
+                    : p.imagen;
+
+                return (
+                  <tr key={p.id}>
+                    {/* Foto en vez de ID */}
+                    <td style={{ textAlign: "center", width: "75px" }}>
+                      {primeraImagen ? (
+                        <img
+                          src={`${API_URL}/uploads/${primeraImagen}`}
+                          alt={p.nombre}
+                          className="producto-tabla-thumb"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="producto-tabla-thumb-placeholder"
+                          title="Sin imagen"
+                        >
+                          <span>📷</span>
+                        </div>
+                      )}
+                    </td>
+
+                    <td>
+                      <strong className="producto-nombre-cell">{p.nombre}</strong>
+                    </td>
+                    <td>{p.descripcion}</td>
+                    <td>
+                      <strong>${Number(p.precio).toLocaleString("es-AR")}</strong>
+                    </td>
+                    <td>
+                      <span className="categoria-pill">
+                        {categorias.find((c) => c.id === p.id_categoria)?.nombre ||
+                          `Cat. #${p.id_categoria}`}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`stock-badge ${
+                          p.stock <= 0 ? "stock-cero" : p.stock < 5 ? "stock-bajo" : "stock-ok"
+                        }`}
+                      >
+                        {p.stock}
+                      </span>
+                    </td>
+
+                    <td style={{ textAlign: "center" }}>
+                      <input
+                        type="checkbox"
+                        style={{ cursor: "pointer", width: "18px", height: "18px" }}
+                        checked={isChecked(p.mostrar)}
+                        onChange={(e) => actualizarMostrar(p.id, e.target.checked)}
+                        title="Mostrar en la web"
+                      />
+                    </td>
+
+                    <td style={{ textAlign: "center" }}>
+                      <input
+                        type="checkbox"
+                        style={{ cursor: "pointer", width: "18px", height: "18px" }}
+                        checked={isChecked(p.mostrar_inicio)}
+                        onChange={(e) =>
+                          actualizarMostrarInicio(p.id, e.target.checked)
+                        }
+                        title="Destacar en el Home"
+                      />
+                    </td>
+
+                    <td>
+                      {Number(p.precioenoferta) > 0 ? (
+                        <span className="oferta-badge">
+                          ${Number(p.precioenoferta).toLocaleString("es-AR")}
+                        </span>
+                      ) : (
+                        <span className="sin-oferta">-</span>
+                      )}
+                    </td>
+
+                    <td>
+                      <div className="action-buttons-container">
+                        <button
+                          className="edit-btn"
+                          style={{ backgroundColor: "#a3e635", color: "white" }}
+                          onClick={() => handleEdit(p)}
+                        >
+                          Editar
+                        </button>
+
+                        <button
+                          className="edit-btn btn-fotos"
+                          style={{ backgroundColor: "#3b82f6", color: "white" }}
+                          onClick={() => navigate(`/editar-imagenes/${p.id}`)}
+                          title="Gestionar galería de fotos"
+                        >
+                          Fotos
+                        </button>
+
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(p.id)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={10} style={{ textAlign: "center", padding: "2.5rem 1rem" }}>
+                  <div className="empty-state-container">
+                    <p style={{ fontSize: "1.1rem", color: "#666", marginBottom: "0.5rem" }}>
+                      No se encontraron productos con los filtros seleccionados.
+                    </p>
+                    {hayFiltrosActivos && (
+                      <button
+                        className="btn-reset-filters"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setCategoriaFiltro("todas");
+                        }}
+                      >
+                        Quitar filtros
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 };

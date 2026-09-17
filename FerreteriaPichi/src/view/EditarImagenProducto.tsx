@@ -1,4 +1,4 @@
-﻿// EditarImagenesProducto.tsx
+// EditarImagenesProducto.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,29 +6,39 @@ import notify from "../utils/toastNotifier";
 import API_URL from "../config/api";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import Navbar from "../components/Navbar";
-import "./css/EditarProducto.css"; // Usamos el mismo CSS
+import "./css/EditarProducto.css";
 
 const EditarImagenesProducto: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { confirm } = useConfirm();
+  const [productoNombre, setProductoNombre] = useState<string>("");
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [nuevasImagenes, setNuevasImagenes] = useState<File[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Traer imágenes del producto
+  // Traer imágenes y datos del producto
   const fetchImagenes = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         `${API_URL}/api/detalleproducto/${id}`
       );
       const prod = res.data[0];
-      // Asegurarse de manejar la imagen individual (si existe) y el array de imágenes
-      const allImages = (prod.imagenes || []).filter(
-        (img: string) => img && img.trim() !== ""
-      );
-      setImagenes(allImages);
+      if (prod) {
+        if (prod.nombre) {
+          setProductoNombre(prod.nombre);
+        }
+        // Asegurarse de manejar el array de imágenes
+        const allImages = (prod.imagenes || []).filter(
+          (img: string) => img && img.trim() !== ""
+        );
+        setImagenes(allImages);
+      }
     } catch (error) {
       console.error("Error al cargar imágenes:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,7 +48,6 @@ const EditarImagenesProducto: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      // Usar Array.from y luego filter para asegurarse de que solo se añaden archivos
       const files = Array.from(e.target.files);
       setNuevasImagenes([...nuevasImagenes, ...files]);
     }
@@ -52,7 +61,7 @@ const EditarImagenesProducto: React.FC = () => {
   const handleEliminarImagen = async (imagen: string) => {
     const confirmed = await confirm({
       title: "¿Eliminar Imagen?",
-      message: "¿Estás seguro de que querés eliminar esta imagen de la galería del producto?",
+      message: `¿Estás seguro de que querés eliminar esta imagen de la galería de ${productoNombre || "este producto"}?`,
       confirmText: "Sí, eliminar",
       cancelText: "Cancelar",
       type: "danger",
@@ -94,20 +103,33 @@ const EditarImagenesProducto: React.FC = () => {
   };
 
   return (
-    <main style={{marginTop:"8%"}}>
+    <main style={{ marginTop: "8%" }}>
+      <Navbar />
 
-        <Navbar />
-    
       <div className="superusuario-container">
-        <h1>Gestión de Imágenes del Producto #{id}</h1>
+        <div className="header-admin">
+          <div>
+            <h1>
+              {loading ? "Cargando producto..." : productoNombre || "Gestión de Imágenes"}
+            </h1>
+            <p className="admin-section-subtitle">
+              Administrá la galería de fotos de este producto
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/adminproductos")}
+            className="btn-ir-productos"
+            style={{ fontWeight: 600 }}
+          >
+            ← Volver a Productos
+          </button>
+        </div>
 
         <div className="form-container">
           {/* SECCIÓN 1: IMÁGENES ACTUALES */}
-          <h2>Imágenes actuales ({imagenes.length})</h2>
+          <h2>Fotos Actuales ({imagenes.length})</h2>
           {imagenes.length > 0 ? (
             <div className="imagenes-grid">
-              {" "}
-              {/* Usamos grid para la galería */}
               {imagenes.map((img) => (
                 <div key={img} className="imagen-item-card">
                   <img
@@ -117,7 +139,7 @@ const EditarImagenesProducto: React.FC = () => {
                   />
                   <button
                     className="delete-img-btn"
-                    style={{ backgroundColor: "#f30c0cff", color: "white" }}
+                    style={{ backgroundColor: "#dc3545", color: "white" }}
                     onClick={() => handleEliminarImagen(img)}
                   >
                     Eliminar
@@ -127,15 +149,17 @@ const EditarImagenesProducto: React.FC = () => {
             </div>
           ) : (
             <p className="no-images-msg">
-              No hay imágenes actuales para este producto.
+              Este producto aún no tiene fotos cargadas en su galería.
             </p>
           )}
 
           <hr className="separator" />
 
           {/* SECCIÓN 2: AGREGAR NUEVAS IMÁGENES */}
-          <h2>Agregar nuevas imágenes</h2>
-          <p className="hint">Selecciona una o más imágenes a la vez.</p>
+          <h2>Agregar nuevas fotos</h2>
+          <p className="hint">
+            Seleccioná una o más fotos desde tu dispositivo para agregarlas al catálogo.
+          </p>
 
           <input
             type="file"
@@ -148,7 +172,7 @@ const EditarImagenesProducto: React.FC = () => {
           {/* PREVIEW DE NUEVAS IMÁGENES */}
           {nuevasImagenes.length > 0 && (
             <>
-              <h3>Imágenes a subir ({nuevasImagenes.length})</h3>
+              <h3>Fotos a subir ({nuevasImagenes.length})</h3>
               <div className="imagenes-grid preview-nuevas-grid">
                 {nuevasImagenes.map((file, idx) => (
                   <div key={idx} className="imagen-item-card">
@@ -159,7 +183,7 @@ const EditarImagenesProducto: React.FC = () => {
                     />
                     <button
                       className="remove-preview-btn"
-                      style={{ backgroundColor: "#f30c0cff", color: "white" }}
+                      style={{ backgroundColor: "#dc3545", color: "white" }}
                       onClick={() => handleRemoveNewImage(idx)}
                     >
                       Remover
@@ -170,23 +194,23 @@ const EditarImagenesProducto: React.FC = () => {
             </>
           )}
 
-          <button
-            onClick={handleGuardar}
-            style={{ backgroundColor: "#a3e635", color: "white" }}
-            className="guardar-imagenes-btn"
-            disabled={nuevasImagenes.length === 0}
-          >
-            Guardar y Subir{" "}
-            {nuevasImagenes.length > 0 && `(${nuevasImagenes.length} imágenes)`}
-          </button>
+          <div style={{ display: "flex", gap: "10px", marginTop: "1rem", flexWrap: "wrap" }}>
+            <button
+              onClick={handleGuardar}
+              style={{ backgroundColor: "#a3e635", color: "#000", fontWeight: "bold" }}
+              className="guardar-imagenes-btn"
+              disabled={nuevasImagenes.length === 0}
+            >
+              Subir {nuevasImagenes.length > 0 ? `(${nuevasImagenes.length} fotos)` : "Fotos"}
+            </button>
 
-          <button
-            onClick={() => navigate("/adminproductos")}
-            style={{ backgroundColor: "#a3e635", color: "white" }}
-            className="back-btn"
-          >
-            Volver a Productos
-          </button>
+            <button
+              onClick={() => navigate("/adminproductos")}
+              className="back-btn"
+            >
+              Volver a Productos
+            </button>
+          </div>
         </div>
       </div>
     </main>

@@ -1,10 +1,11 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./css/EditarCategoria.css";
 import Navbar from "../components/Navbar";
 import notify from "../utils/toastNotifier";
 import { useConfirm } from "../components/ConfirmModal/ConfirmContext";
 import API_URL from "../config/api";
+import { useNavigate } from "react-router-dom";
 
 interface Categoria {
   id: number;
@@ -12,14 +13,22 @@ interface Categoria {
   imagen: string;
 }
 
+interface ProductoRef {
+  id: number;
+  id_categoria: number;
+}
+
 const SuperUsuarioCategorias: React.FC = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [productos, setProductos] = useState<ProductoRef[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [form, setForm] = useState<Partial<Categoria> & { imagenFile?: File }>(
     {}
   );
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { confirm } = useConfirm();
+  const navigate = useNavigate();
 
   // Traer categorías
   const fetchCategorias = async () => {
@@ -32,8 +41,20 @@ const SuperUsuarioCategorias: React.FC = () => {
     }
   };
 
+  // Traer productos para calcular conteo por categoría
+  const fetchProductos = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/productos`);
+      setProductos(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
+      setProductos([]);
+    }
+  };
+
   useEffect(() => {
     fetchCategorias();
+    fetchProductos();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,10 +125,16 @@ const SuperUsuarioCategorias: React.FC = () => {
   const handleDelete = async (id: number) => {
     const cat = categorias.find((c) => c.id === id);
     const nombreCat = cat ? cat.nombre : `Categoría #${id}`;
+    const cantidadProductos = productos.filter((p) => p.id_categoria === id).length;
+
+    const mensajeAdvertencia =
+      cantidadProductos > 0
+        ? `Esta categoría contiene ${cantidadProductos} producto(s). ¿Estás seguro de que querés eliminarla? Esta acción no se puede deshacer.`
+        : "¿Estás seguro de que querés eliminar esta categoría? Esta acción no se puede deshacer.";
 
     const confirmed = await confirm({
       title: "¿Eliminar Categoría?",
-      message: "¿Estás seguro de que querés eliminar esta categoría? Esta acción no se puede deshacer.",
+      message: mensajeAdvertencia,
       itemName: nombreCat,
       confirmText: "Sí, eliminar",
       cancelText: "Cancelar",
@@ -120,23 +147,30 @@ const SuperUsuarioCategorias: React.FC = () => {
       await axios.delete(`${API_URL}/api/categoria/${id}`);
       notify.categoryDeleted(nombreCat);
       fetchCategorias();
+      fetchProductos();
     } catch (error) {
       console.error("Error al eliminar categoría:", error);
       notify.error("Error al eliminar", "No se pudo eliminar la categoría.");
     }
   };
 
+  const categoriasFiltradas = categorias.filter((c) =>
+    c.nombre.toLowerCase().includes(searchTerm.toLowerCase().trim())
+  );
+
   return (
-    <main
-      style={{marginTop:"8%"}}
-    >
-   
-        <Navbar />
-     
+    <main style={{ marginTop: "8%" }}>
+      <Navbar />
+
       <div className="superusuario-container">
         <div className="header-admin">
-          <h1>Gestión de Categorías</h1>
-          <button 
+          <div>
+            <h1>Gestión de Categorías</h1>
+            <p className="admin-section-subtitle">
+              Administrá las categorías y controlá la cantidad de productos por rubro
+            </p>
+          </div>
+          <button
             className="btn-nuevo"
             onClick={() => {
               setForm({});
@@ -148,13 +182,70 @@ const SuperUsuarioCategorias: React.FC = () => {
           </button>
         </div>
 
+        {/* Panel de estadísticas rápidas */}
+        <div className="admin-cat-stats-bar">
+          <div className="cat-stat-card">
+            <span className="cat-stat-label">Total de Categorías</span>
+            <span className="cat-stat-value">{categorias.length}</span>
+          </div>
+          <div className="cat-stat-card">
+            <span className="cat-stat-label">Total de Productos</span>
+            <span className="cat-stat-value">{productos.length}</span>
+          </div>
+          <div className="cat-stat-card">
+            <span className="cat-stat-label">Promedio de Productos / Cat.</span>
+            <span className="cat-stat-value">
+              {categorias.length > 0
+                ? (productos.length / categorias.length).toFixed(1)
+                : 0}
+            </span>
+          </div>
+        </div>
+
+        {/* Barra de Búsqueda de Categorías */}
+        <div className="cat-search-toolbar">
+          <div className="cat-search-input-wrapper">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Buscar categoría por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="cat-search-input"
+            />
+            {searchTerm && (
+              <button
+                className="btn-clear-search"
+                onClick={() => setSearchTerm("")}
+                title="Limpiar búsqueda"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <button
+            className="btn-ir-productos"
+            onClick={() => navigate("/adminproductos")}
+          >
+            Ir a Gestión de Productos →
+          </button>
+        </div>
+
         {/* Formulario Modal */}
         {isModalOpen && (
           <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-            <div className="modal-content fadeIn" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="modal-content fadeIn"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="modal-header">
                 <h2>{editingId ? "Editar Categoría" : "Agregar Categoría"}</h2>
-                <button className="close-btn" onClick={() => setIsModalOpen(false)}>✖</button>
+                <button
+                  className="close-btn"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ✖
+                </button>
               </div>
 
               <div className="form-container modal-body">
@@ -166,12 +257,22 @@ const SuperUsuarioCategorias: React.FC = () => {
                   value={form.nombre || ""}
                   onChange={handleChange}
                 />
-                
+
                 <h3>Imagen de la Categoría</h3>
-                <input className="file-input-modern" type="file" name="imagen" onChange={handleChange} />
+                <input
+                  className="file-input-modern"
+                  type="file"
+                  name="imagen"
+                  onChange={handleChange}
+                />
 
                 <div className="modal-actions">
-                  <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
                   <button
                     onClick={handleSubmit}
                     className="btn-save"
@@ -184,62 +285,95 @@ const SuperUsuarioCategorias: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
 
-      {/* Tabla */}
-      <table
-        className="categorias-table"
-        style={{ width: "50%", marginLeft: "25%" }}
-      >
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Imagen</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categorias.length > 0 ? (
-            categorias.map((c) => (
-              <tr key={c.id}>
-                <td>{c.id}</td>
-                <td>{c.nombre}</td>
-                <td>
-                  {c.imagen && (
-                    <img
-                      src={`${API_URL}/uploads/${c.imagen}`}
-                      alt={c.nombre}
-                      className="categoria-img"
-                    />
-                  )}
-                </td>
-                <td>
-                  <button
-                    className="edit-btn"
-                    onClick={() => handleEdit(c)}
-                    style={{ backgroundColor: "#a3e635", color: "white" }}
-                  >
-                    Cambiar
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(c.id)}
-                  >
-                    Eliminar
-                  </button>
-                </td>
+        {/* Tabla de Categorías */}
+        <div className="categorias-table-wrapper">
+          <table className="categorias-table">
+            <thead>
+              <tr>
+                <th style={{ width: "80px", textAlign: "center" }}>Imagen</th>
+                <th>Nombre de Categoría</th>
+                <th style={{ width: "180px", textAlign: "center" }}>
+                  Cantidad de Productos
+                </th>
+                <th style={{ width: "160px", textAlign: "center" }}>Acciones</th>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={4} style={{ textAlign: "center" }}>
-                No hay categorías
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {categoriasFiltradas.length > 0 ? (
+                categoriasFiltradas.map((c) => {
+                  const cantidad = productos.filter(
+                    (p) => p.id_categoria === c.id
+                  ).length;
+
+                  return (
+                    <tr key={c.id}>
+                      <td style={{ textAlign: "center" }}>
+                        {c.imagen ? (
+                          <img
+                            src={`${API_URL}/uploads/${c.imagen}`}
+                            alt={c.nombre}
+                            className="categoria-img"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className="categoria-img-placeholder"
+                            title="Sin imagen"
+                          >
+                            📁
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <strong className="categoria-nombre-text">
+                          {c.nombre}
+                        </strong>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <span
+                          className={`cat-count-badge ${
+                            cantidad === 0 ? "cat-count-zero" : "cat-count-has"
+                          }`}
+                        >
+                          {cantidad} {cantidad === 1 ? "producto" : "productos"}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <div className="cat-action-buttons">
+                          <button
+                            className="edit-btn"
+                            onClick={() => handleEdit(c)}
+                            style={{ backgroundColor: "#a3e635", color: "white" }}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="delete-btn"
+                            onClick={() => handleDelete(c.id)}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", padding: "2rem" }}>
+                    {searchTerm
+                      ? `No se encontraron categorías que coincidan con "${searchTerm}".`
+                      : "No hay categorías registradas."}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </main>
   );
 };
