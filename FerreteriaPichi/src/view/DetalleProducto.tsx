@@ -18,7 +18,15 @@ interface Producto {
   stock?: number;
 }
 
-const buildImageUrl = (imageName: string) => `../backend/uploads/${imageName}`;
+const buildImageUrl = (imageName: string) => {
+  if (!imageName || imageName.trim() === "") {
+    return `${API_URL}/uploads/default.png`;
+  }
+  if (imageName.startsWith("http://") || imageName.startsWith("https://")) {
+    return imageName;
+  }
+  return `${API_URL}/uploads/${imageName.trim()}`;
+};
 
 function DetalleProducto() {
   const { id } = useParams();
@@ -36,8 +44,12 @@ function DetalleProducto() {
 
         setProducto(prod);
 
-        const firstImage = prod.imagenes?.length
-          ? buildImageUrl(prod.imagenes[0])
+        const validImages = (prod?.imagenes || []).filter(
+          (img: string) => img && img.trim() !== ""
+        );
+
+        const firstImage = validImages.length > 0
+          ? buildImageUrl(validImages[0])
           : `${API_URL}/uploads/default.png`;
 
         setMainImage(firstImage);
@@ -53,25 +65,30 @@ function DetalleProducto() {
     setMainImage(buildImageUrl(imageName));
   };
 
-  const handleSubmitCarrito = (producto: any) => {
+  const handleSubmitCarrito = (prod: any) => {
     try {
       const precioFinal =
-        Number(producto.precioenoferta) > 0
-          ? Number(producto.precioenoferta)
-          : Number(producto.precio);
+        Number(prod.precioenoferta) > 0
+          ? Number(prod.precioenoferta)
+          : Number(prod.precio);
 
       const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-      const index = carrito.findIndex((item: any) => item.id === producto.id);
+      const index = carrito.findIndex((item: any) => item.id === prod.id);
 
-      if (index !== -1) carrito[index].cantidad += 1;
-      else
+      if (index !== -1) {
+        carrito[index].cantidad += 1;
+      } else {
+        const validImgs = (prod.imagenes || []).filter(
+          (img: string) => img && img.trim() !== ""
+        );
         carrito.push({
-          id: producto.id,
-          nombre: producto.nombre,
+          id: prod.id,
+          nombre: prod.nombre,
           precio: precioFinal,
           cantidad: 1,
-          imagen: producto.imagenes?.[0] ?? "default.png",
+          imagen: validImgs.length > 0 ? validImgs[0] : "default.png",
         });
+      }
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
       window.dispatchEvent(new Event("cartUpdated"));
@@ -81,25 +98,30 @@ function DetalleProducto() {
     }
   };
 
-  const handleSubmitCompraAhora = (producto: any) => {
+  const handleSubmitCompraAhora = (prod: any) => {
     try {
       const precioFinal =
-        Number(producto.precioenoferta) > 0
-          ? Number(producto.precioenoferta)
-          : Number(producto.precio);
+        Number(prod.precioenoferta) > 0
+          ? Number(prod.precioenoferta)
+          : Number(prod.precio);
 
       const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-      const index = carrito.findIndex((item: any) => item.id === producto.id);
+      const index = carrito.findIndex((item: any) => item.id === prod.id);
 
-      if (index !== -1) carrito[index].cantidad += 1;
-      else
+      if (index !== -1) {
+        carrito[index].cantidad += 1;
+      } else {
+        const validImgs = (prod.imagenes || []).filter(
+          (img: string) => img && img.trim() !== ""
+        );
         carrito.push({
-          id: producto.id,
-          nombre: producto.nombre,
+          id: prod.id,
+          nombre: prod.nombre,
           precio: precioFinal,
           cantidad: 1,
-          imagen: producto.imagenes?.[0] ?? "default.png",
+          imagen: validImgs.length > 0 ? validImgs[0] : "default.png",
         });
+      }
 
       localStorage.setItem("carrito", JSON.stringify(carrito));
       window.dispatchEvent(new Event("cartUpdated"));
@@ -109,34 +131,59 @@ function DetalleProducto() {
     }
   };
 
-  if (!producto) return <h2>Cargando...</h2>;
+  if (!producto) {
+    return (
+      <main className="product-detail-page">
+        <Navbar />
+        <div style={{ textAlign: "center", padding: "10rem 1rem" }}>
+          <h2>Cargando producto...</h2>
+        </div>
+      </main>
+    );
+  }
+
+  const validImages = (producto.imagenes || []).filter(
+    (img: string) => img && img.trim() !== ""
+  );
 
   return (
-    <main className="product-detail-page" >
+    <main className="product-detail-page">
       <header className="product-detail-header">
         <Navbar />
       </header>
 
       <section
         className="product-detail-container"
-        style={{ marginTop: "10%" }}
+        style={{ marginTop: "8%" }}
       >
         <div className="product-images">
           <div className="main-image">
-            <img src={mainImage} alt={producto.nombre} />
+            <img
+              src={mainImage || `${API_URL}/uploads/default.png`}
+              alt={producto.nombre}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = `${API_URL}/uploads/default.png`;
+              }}
+            />
           </div>
 
-          {producto.imagenes && producto.imagenes.length > 1 && (
+          {validImages.length > 1 && (
             <div className="thumbnail-images">
-              {producto.imagenes.map((img, index) => (
-                <img
-                  key={index}
-                  src={buildImageUrl(img)}
-                  alt={`${producto.nombre} ${index}`}
-                  className={mainImage === buildImageUrl(img) ? "selected" : ""}
-                  onClick={() => handleThumbnailClick(img)}
-                />
-              ))}
+              {validImages.map((img, index) => {
+                const fullImgUrl = buildImageUrl(img);
+                return (
+                  <img
+                    key={index}
+                    src={fullImgUrl}
+                    alt={`${producto.nombre} miniatura ${index + 1}`}
+                    className={mainImage === fullImgUrl ? "selected" : ""}
+                    onClick={() => handleThumbnailClick(img)}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `${API_URL}/uploads/default.png`;
+                    }}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -155,12 +202,17 @@ function DetalleProducto() {
           <div className="precio-container-detalle">
             {Number(producto.precioenoferta) > 0 ? (
               <>
-
-                <p className="precio-tachado">${producto.precio}</p>
-                <p className="precio-oferta">${producto.precioenoferta}</p>
+                <p className="precio-tachado">
+                  ${Number(producto.precio).toLocaleString("es-AR")}
+                </p>
+                <p className="precio-oferta">
+                  ${Number(producto.precioenoferta).toLocaleString("es-AR")}
+                </p>
               </>
             ) : (
-              <p className="product-price-detail">${producto.precio}</p>
+              <p className="product-price-detail">
+                ${Number(producto.precio).toLocaleString("es-AR")}
+              </p>
             )}
           </div>
 
@@ -192,13 +244,13 @@ function DetalleProducto() {
 
           <div className="product-description-detail">
             <h2>Descripción</h2>
-            <p>{producto.descripcion}</p>
+            <p>{producto.descripcion || "Sin descripción disponible."}</p>
           </div>
         </div>
       </section>
 
       <footer className="product-detail-footer">
-        <p>© 2023 El Tornillo Feliz. Todos los derechos reservados.</p>
+        <p>© {new Date().getFullYear()} Ferretería Casa Mario. Todos los derechos reservados.</p>
       </footer>
     </main>
   );

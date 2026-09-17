@@ -1,4 +1,4 @@
-﻿// src/views/VistaCategoria.jsx
+// src/views/VistaCategoria.jsx
 import "./css/Home.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -218,7 +218,7 @@ function VistaCategoria() {
                   <>
                     <span className="precio-tachado">${producto.precio}</span>
                     <img
-                      src="../backend/uploads/oferta1.png"
+                      src={`${API_URL}/uploads/oferta1.png`}
                       className="badge-oferta"
                       alt="Oferta"
                     />
