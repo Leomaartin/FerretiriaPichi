@@ -38,7 +38,7 @@ function DetalleProducto() {
 
         const firstImage = prod.imagenes?.length
           ? buildImageUrl(prod.imagenes[0])
-          : "${API_URL}/uploads/default.png";
+          : `${API_URL}/uploads/default.png`;
 
         setMainImage(firstImage);
       } catch (error) {
@@ -96,7 +96,7 @@ function DetalleProducto() {
         carrito.push({
           id: producto.id,
           nombre: producto.nombre,
-          precio: precioFinal, // 👈 precio final
+          precio: precioFinal,
           cantidad: 1,
           imagen: producto.imagenes?.[0] ?? "default.png",
         });
