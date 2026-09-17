@@ -16,7 +16,7 @@ const handleSubmitGoogle = async (googleUser: GoogleUser) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        google_id: googleUser.email, // o decoded.sub si lo tenés
+        google_id: googleUser.email,
         nombre: googleUser.name,
         email: googleUser.email,
         foto: googleUser.picture
@@ -34,30 +34,30 @@ function Login() {
   const navigate = useNavigate();
 
   const onGoogleSuccess = async (response: any) => {
-  try {
-    if (!response.credential) throw new Error("No se recibió credential");
+    try {
+      if (!response.credential) throw new Error("No se recibió credential");
 
-    const decoded: any = jwt_decode(response.credential);
+      const decoded: any = jwt_decode(response.credential);
 
-    const user: GoogleUser = {
-      name: decoded.name || "Usuario",
-      email: decoded.email || "sin-email@example.com",
-      picture: decoded.picture || "/default-user.png",
-    };
+      const user: GoogleUser = {
+        name: decoded.name || "Usuario",
+        email: decoded.email || "sin-email@example.com",
+        picture: decoded.picture || "/default-user.png",
+      };
 
-    // Guardar en localStorage
-    localStorage.setItem("user", JSON.stringify(user));
+      // Guardar en localStorage
+      localStorage.setItem("user", JSON.stringify(user));
 
-    // Guardar o verificar en backend
-    await handleSubmitGoogle(user);
+      // Guardar o verificar en backend
+      await handleSubmitGoogle(user);
 
-    toast.success("¡Login con Google exitoso!");
-    navigate("/");
-  } catch (error) {
-    console.error("Error decodificando JWT:", error);
-    toast.error("Error procesando los datos de Google");
-  }
-};
+      toast.success("¡Login con Google exitoso!");
+      navigate("/");
+    } catch (error) {
+      console.error("Error decodificando JWT:", error);
+      toast.error("Error procesando los datos de Google");
+    }
+  };
   const onGoogleError = () => {
     console.log("Algo salió mal con Google");
     toast.error("Error en login con Google");
