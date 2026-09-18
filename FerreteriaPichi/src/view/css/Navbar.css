@@ -68,8 +68,8 @@
   flex-shrink: 0 !important;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #a3e635;
-  background: #000;
+  border: none;
+  background: transparent;
   user-select: none;
 }
 
