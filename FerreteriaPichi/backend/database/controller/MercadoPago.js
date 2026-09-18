@@ -485,6 +485,7 @@ export default function registrarMercadoPago(app, db) {
       return res.json({
         init_point: response.init_point,
         sandbox_init_point: response.sandbox_init_point,
+        preference_id: response.id,
         pedido_id: pedidoId,
       });
     } catch (error) {
