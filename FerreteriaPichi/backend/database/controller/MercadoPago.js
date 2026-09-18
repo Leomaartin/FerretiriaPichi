@@ -473,15 +473,6 @@ export default function registrarMercadoPago(app, db) {
         auto_return: "approved",
 
         notification_url: notificationUrl,
-
-        // Habilitar pago con saldo de la billetera MP
-        payment_methods: {
-          default_payment_method_id: "account_money",
-          excluded_payment_types: [],
-        },
-
-        // Priorizar billetera cuando se abre desde la app de MP
-        purpose: "wallet_purchase",
       };
 
       const response = await preference.create({ body });
