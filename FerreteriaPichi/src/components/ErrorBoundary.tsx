@@ -79,6 +79,25 @@ class ErrorBoundary extends Component<Props, State> {
               Ocurrió un inconveniente inesperado al mostrar esta sección. Podés
               intentar recargar la página o reiniciar tu carrito.
             </p>
+            {this.state.error?.message && (
+              <div
+                style={{
+                  marginTop: "16px",
+                  marginBottom: "16px",
+                  padding: "10px",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                  borderRadius: "8px",
+                  textAlign: "left",
+                  fontSize: "0.8rem",
+                  color: "#991b1b",
+                  wordBreak: "break-word",
+                  fontFamily: "monospace",
+                }}
+              >
+                <strong>Detalle técnico:</strong> {this.state.error.message}
+              </div>
+            )}
             <div
               style={{
                 display: "flex",
