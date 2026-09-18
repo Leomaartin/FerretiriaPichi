@@ -71,21 +71,31 @@ function DetalleProducto() {
       const precioFinal =
         Number(prod.precioenoferta) > 0
           ? Number(prod.precioenoferta)
-          : Number(prod.precio);
+          : Number(prod.precio) || 0;
 
-      const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-      const index = carrito.findIndex((item: any) => item.id === prod.id);
+      const storedCart = localStorage.getItem("carrito");
+      let carrito: any[] = [];
+      try {
+        if (storedCart) carrito = JSON.parse(storedCart);
+      } catch (e) {
+        carrito = [];
+      }
+
+      if (!Array.isArray(carrito)) carrito = [];
+
+      const index = carrito.findIndex((item: any) => item && item.id === prod.id);
 
       if (index !== -1) {
-        carrito[index].cantidad += 1;
+        carrito[index].cantidad = Math.max(1, (Number(carrito[index].cantidad) || 1) + 1);
+        carrito[index].precio = Number(carrito[index].precio) || precioFinal;
       } else {
         const validImgs = (prod.imagenes || []).filter(
           (img: string) => img && img.trim() !== ""
         );
         carrito.push({
-          id: prod.id,
-          nombre: prod.nombre,
-          precio: precioFinal,
+          id: Number(prod.id) || Date.now(),
+          nombre: String(prod.nombre || "Producto"),
+          precio: Number(precioFinal) || 0,
           cantidad: 1,
           imagen: validImgs.length > 0 ? validImgs[0] : "default.png",
         });
@@ -104,21 +114,31 @@ function DetalleProducto() {
       const precioFinal =
         Number(prod.precioenoferta) > 0
           ? Number(prod.precioenoferta)
-          : Number(prod.precio);
+          : Number(prod.precio) || 0;
 
-      const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-      const index = carrito.findIndex((item: any) => item.id === prod.id);
+      const storedCart = localStorage.getItem("carrito");
+      let carrito: any[] = [];
+      try {
+        if (storedCart) carrito = JSON.parse(storedCart);
+      } catch (e) {
+        carrito = [];
+      }
+
+      if (!Array.isArray(carrito)) carrito = [];
+
+      const index = carrito.findIndex((item: any) => item && item.id === prod.id);
 
       if (index !== -1) {
-        carrito[index].cantidad += 1;
+        carrito[index].cantidad = Math.max(1, (Number(carrito[index].cantidad) || 1) + 1);
+        carrito[index].precio = Number(carrito[index].precio) || precioFinal;
       } else {
         const validImgs = (prod.imagenes || []).filter(
           (img: string) => img && img.trim() !== ""
         );
         carrito.push({
-          id: prod.id,
-          nombre: prod.nombre,
-          precio: precioFinal,
+          id: Number(prod.id) || Date.now(),
+          nombre: String(prod.nombre || "Producto"),
+          precio: Number(precioFinal) || 0,
           cantidad: 1,
           imagen: validImgs.length > 0 ? validImgs[0] : "default.png",
         });

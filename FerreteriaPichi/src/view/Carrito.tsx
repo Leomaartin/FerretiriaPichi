@@ -25,19 +25,39 @@ const Carrito: React.FC = () => {
 
   // Cargar carrito desde localStorage
   useEffect(() => {
-    const stored = localStorage.getItem("carrito");
-    if (stored) setItems(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem("carrito");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const sanitized = parsed.filter(Boolean).map((item: any) => ({
+            id: Number(item.id) || Date.now(),
+            nombre: String(item.nombre || "Producto"),
+            precio: Math.max(0, Number(item.precio) || 0),
+            cantidad: Math.max(1, Number(item.cantidad) || 1),
+            imagen: item.imagen ? String(item.imagen) : "default.png",
+          }));
+          setItems(sanitized);
+        }
+      }
+    } catch (e) {
+      console.error("Error cargando carrito desde localStorage:", e);
+    }
   }, []);
 
   // Rellenar Gmail si el usuario está logueado
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      if (user.email) {
-        setGmail(user.email); // ⭐ Rellena Gmail automáticamente
-        setNombre(user.nombre || "");
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user && typeof user === "object") {
+          if (user.email) setGmail(String(user.email));
+          if (user.nombre) setNombre(String(user.nombre));
+        }
       }
+    } catch (e) {
+      console.error("Error cargando usuario desde localStorage:", e);
     }
   }, []);
 
@@ -56,7 +76,7 @@ const Carrito: React.FC = () => {
       prev
         .map((item) =>
           item.id === id
-            ? { ...item, cantidad: Math.max(1, item.cantidad + delta) }
+            ? { ...item, cantidad: Math.max(1, (Number(item.cantidad) || 1) + delta) }
             : item
         )
         .filter((i) => i.cantidad > 0)
@@ -67,7 +87,11 @@ const Carrito: React.FC = () => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const calcularSubtotal = (item: CarritoItem) => item.precio * item.cantidad;
+  const calcularSubtotal = (item: CarritoItem) => {
+    const precio = Number(item.precio) || 0;
+    const cantidad = Number(item.cantidad) || 1;
+    return precio * cantidad;
+  };
   const subtotal = items.reduce((acc, item) => acc + calcularSubtotal(item), 0);
   const costoEnvio = metodoEntrega === "envio" ? subtotal * 0.21 : 0;
   const totalFinal = subtotal + costoEnvio;
@@ -159,7 +183,7 @@ const Carrito: React.FC = () => {
                     <h3 className="item-name">{item.nombre}</h3>
 
                     <p className="item-price">
-                      Precio unitario: ${item.precio.toFixed(2)}
+                      Precio unitario: ${ (Number(item.precio) || 0).toFixed(2) }
                     </p>
 
                     <button
@@ -190,7 +214,7 @@ const Carrito: React.FC = () => {
                   </div>
 
                   <div className="item-subtotal">
-                    ${calcularSubtotal(item).toFixed(2)}
+                    ${ (calcularSubtotal(item) || 0).toFixed(2) }
                   </div>
                 </div>
               ))}
@@ -202,15 +226,15 @@ const Carrito: React.FC = () => {
               <div className="summary-row">
                 <span>
                   Subtotal (
-                  {items.reduce((sum, item) => sum + item.cantidad, 0)} ítems):
+                  {items.reduce((sum, item) => sum + (Number(item.cantidad) || 1), 0)} ítems):
                 </span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>${ (Number(subtotal) || 0).toFixed(2) }</span>
               </div>
 
               {metodoEntrega === "envio" ? (
                 <div className="summary-row">
                   <span>Costo de envío (21%):</span>
-                  <span>${costoEnvio.toFixed(2)}</span>
+                  <span>${ (Number(costoEnvio) || 0).toFixed(2) }</span>
                 </div>
               ) : (
                 <div className="summary-row">
@@ -221,7 +245,7 @@ const Carrito: React.FC = () => {
 
               <div className="summary-row total-row">
                 <strong>{metodoEntrega === "envio" ? "Total (Con envío):" : "Total (Retiro en local):"}</strong>
-                <strong>${totalFinal.toFixed(2)}</strong>
+                <strong>${ (Number(totalFinal) || 0).toFixed(2) }</strong>
               </div>
 
               {!showCheckoutForm && (

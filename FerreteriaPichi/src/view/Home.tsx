@@ -124,18 +124,28 @@ function Home() {
       const precioFinal =
         Number(producto.precioenoferta) > 0
           ? Number(producto.precioenoferta)
-          : Number(producto.precio);
+          : Number(producto.precio) || 0;
 
-      const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-      const index = carrito.findIndex((item: any) => item.id === producto.id);
+      const storedCart = localStorage.getItem("carrito");
+      let carrito: any[] = [];
+      try {
+        if (storedCart) carrito = JSON.parse(storedCart);
+      } catch (e) {
+        carrito = [];
+      }
+
+      if (!Array.isArray(carrito)) carrito = [];
+
+      const index = carrito.findIndex((item: any) => item && item.id === producto.id);
 
       if (index !== -1) {
-        carrito[index].cantidad += 1;
+        carrito[index].cantidad = Math.max(1, (Number(carrito[index].cantidad) || 1) + 1);
+        carrito[index].precio = Number(carrito[index].precio) || precioFinal;
       } else {
         carrito.push({
-          id: producto.id,
-          nombre: producto.nombre,
-          precio: precioFinal,
+          id: Number(producto.id) || Date.now(),
+          nombre: String(producto.nombre || "Producto"),
+          precio: Number(precioFinal) || 0,
           cantidad: 1,
           imagen: producto.imagenes?.[0] ?? "default.png",
         });

@@ -21,13 +21,15 @@ import { Toaster } from "react-hot-toast";
 // ⬇️ AGREGAMOS
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ConfirmProvider } from "./components/ConfirmModal/ConfirmContext";
+import ErrorBoundary from "./components/ErrorBoundary.tsx";
 
 const GOOGLE_CLIENT_ID =
   "466240667276-6tsh08tln35u4i5c80fted614ad0sdb2.apps.googleusercontent.com";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-    <ConfirmProvider>
+  <ErrorBoundary>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <ConfirmProvider>
       <Toaster
         position="bottom-right"
         reverseOrder={false}
@@ -63,4 +65,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </Router>
     </ConfirmProvider>
   </GoogleOAuthProvider>
+</ErrorBoundary>
 );
