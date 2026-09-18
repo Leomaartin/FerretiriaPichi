@@ -205,9 +205,9 @@ const Navbar: React.FC = () => {
 
         {/* FILA SUPERIOR: LOGO A LA IZQUIERDA Y BUSCADOR OCUPANDO TODO EL ESPACIO RESTANTE */}
         <div className="navbar-main-row">
-          {/* LOGO */}
+          {/* LOGO (ESTÁTICO, NO BOTÓN) */}
           <div className="navbar-logo-container">
-            <a href="/" className="navbar-logo">
+            <div className="navbar-logo">
               <img
                 src="/logo.png"
                 className="logo-redondo"
@@ -220,7 +220,7 @@ const Navbar: React.FC = () => {
                 <h1 className="navbar-title">Ferretería Casa Mario</h1>
                 <i className="navbar-subtitle">De Christian Landi</i>
               </div>
-            </a>
+            </div>
           </div>
 
           {/* BUSCADOR PROMINENTE: EN MÓVIL OCUPA TODO EL ESPACIO A LA DERECHA DEL LOGO */}

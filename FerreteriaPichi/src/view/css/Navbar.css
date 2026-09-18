@@ -53,15 +53,24 @@
   align-items: center;
   gap: 0.8rem;
   text-decoration: none !important;
+  flex-shrink: 0 !important;
+  cursor: default;
 }
 
 .logo-redondo {
   width: 52px;
   height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  max-width: 52px;
+  max-height: 52px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0 !important;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #a3e635;
   background: #000;
+  user-select: none;
 }
 
 .navbar-title-container {
@@ -880,6 +889,12 @@
   .logo-redondo {
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 44px;
+    max-height: 44px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0 !important;
   }
 
   .navbar-title-container {

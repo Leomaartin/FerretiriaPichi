@@ -29,11 +29,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <ConfirmProvider>
       <Toaster
-        position="top-right"
+        position="bottom-right"
         reverseOrder={false}
         containerStyle={{
           zIndex: 99999,
-          top: 24,
+          bottom: 24,
           right: 24,
         }}
         toastOptions={{
