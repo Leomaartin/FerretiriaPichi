@@ -13,6 +13,7 @@ import Admin from "./view/AdministradorPichci.tsx";
 import SobreNosotros from "./view/SobreNosotros.tsx";
 import MisCompras from "./view/MisCompras.tsx";
 import PagoResultado from "./view/PagoResultado.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -45,12 +46,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
           <Route path="/detalleproducto/:id" element={<DetalleProducto />} />
           <Route path="/categorias/:id" element={<VistaCategoria />} />
-          <Route path="/adminproductos" element={<AdminProductos />} />
-          <Route path="/admincategorias" element={<AdminCategorias />} />
-          <Route path="/adminvista" element={<Admin />} />
+          <Route path="/adminproductos" element={<AdminRoute><AdminProductos /></AdminRoute>} />
+          <Route path="/admincategorias" element={<AdminRoute><AdminCategorias /></AdminRoute>} />
+          <Route path="/adminvista" element={<AdminRoute><Admin /></AdminRoute>} />
           <Route
             path="/editar-imagenes/:id"
-            element={<EditarImagenesProducto />}
+            element={<AdminRoute><EditarImagenesProducto /></AdminRoute>}
           />
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/miscompras" element={<MisCompras />} />
