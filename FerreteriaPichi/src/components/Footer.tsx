@@ -161,8 +161,7 @@ const Footer: React.FC = () => {
             © {currentYear} <strong>Ferretería Casa Mario</strong>. Todos los derechos reservados.
           </p>
           <p className="dev-credit-line">
-            Programado con <i className="fa-solid fa-heart heart-icon"></i> por{" "}
-            <strong>Leonel Martin</strong> · <em>Técnico en Programación</em>
+            · <em>Técnico en Programación</em>
           </p>
         </div>
       </div>

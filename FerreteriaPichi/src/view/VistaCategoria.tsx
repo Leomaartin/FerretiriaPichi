@@ -156,7 +156,7 @@ function VistaCategoria() {
   }, []);
 
   return (
-    <main style={{ marginTop: "-1%" }}>
+    <main>
       <header>
         <Navbar />
       </header>
