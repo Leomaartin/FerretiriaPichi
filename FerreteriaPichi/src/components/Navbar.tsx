@@ -174,11 +174,28 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // Bloquear scroll de la página cuando el drawer móvil está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
     setShowUserDropdown(false);
+    setIsOpen(false);
     window.location.href = "/";
+  };
+
+  const closeMobileMenu = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -187,7 +204,7 @@ const Navbar: React.FC = () => {
 
         {/* LOGO E IDENTIDAD DE LA FERRETERÍA */}
         <div className="navbar-logo-container">
-          <div className="navbar-logo">
+          <a href="/" className="navbar-logo">
             <img
               src={`${API_URL}/uploads/logo.png`}
               className="logo-redondo"
@@ -197,7 +214,7 @@ const Navbar: React.FC = () => {
               <h1 className="navbar-title">Ferretería Casa Mario</h1>
               <i className="navbar-subtitle">De Christian Landi</i>
             </div>
-          </div>
+          </a>
         </div>
 
         {/* BUSCADOR PROMINENTE EN EL CENTRO */}
@@ -274,31 +291,18 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        {/* BOTÓN MOBILE */}
-        <button
-          className="menu-toggle"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? "✕" : "☰"}
-        </button>
-
-        {/* NAVEGACIÓN Y MENÚ DESPLEGABLE DE PERFIL DE USUARIO */}
-        <div className={`navbar-right-section ${isOpen ? "open" : ""}`}>
+        {/* ACCIONES DE ESCRITORIO (NAV LINKS + PERFIL FLOTANTE + CARRITO) */}
+        <div className="navbar-desktop-section">
           <ul className="navbar-links">
             <li>
-              <a href="/" onClick={() => setIsOpen(false)}>
-                Inicio
-              </a>
+              <a href="/">Inicio</a>
             </li>
             <li>
-              <a href="/sobrenosotros" onClick={() => setIsOpen(false)}>
-                Contacto
-              </a>
+              <a href="/sobrenosotros">Contacto</a>
             </li>
           </ul>
 
-          {/* MENÚ DESPLEGABLE DE PERFIL (FOTO, NOMBRE, MIS COMPRAS Y ADMIN JUNTOS) */}
+          {/* MENÚ DESPLEGABLE DE PERFIL PARA ESCRITORIO */}
           {user ? (
             <div className="navbar-user-dropdown-container" ref={userDropdownRef}>
               <button
@@ -361,13 +365,165 @@ const Navbar: React.FC = () => {
             </a>
           )}
 
-          {/* ÍCONO DE CARRITO */}
+          {/* ÍCONO DE CARRITO ESCRITORIO */}
           <a href="/carrito" className="navbar-cart-link" title="Carrito">
             <i className="fa-solid fa-cart-shopping cart-icon"></i>
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </a>
         </div>
+
+        {/* ACCIONES RÁPIDAS EN BARRA MÓVIL: CARRITO + BOTÓN TOGGLE MENÚ LATERAL */}
+        <div className="navbar-mobile-triggers">
+          <a href="/carrito" className="navbar-cart-link mobile-cart-btn" title="Carrito">
+            <i className="fa-solid fa-cart-shopping cart-icon"></i>
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </a>
+
+          <button
+            className="menu-toggle"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+          </button>
+        </div>
+
       </div>
+
+      {/* ============================================================ */}
+      {/* MENÚ DESPLEGABLE LATERAL (DRAWER) PARA MÓVIL */}
+      {/* ============================================================ */}
+
+      {/* OVERLAY DE FONDO OSCURO CON DESENFOQUE */}
+      <div
+        className={`mobile-drawer-overlay ${isOpen ? "open" : ""}`}
+        onClick={closeMobileMenu}
+      ></div>
+
+      {/* CONTENIDO DEL MENÚ LATERAL */}
+      <aside
+        className={`mobile-drawer ${isOpen ? "open" : ""}`}
+        aria-hidden={!isOpen}
+      >
+        {/* CABECERA DEL MENÚ LATERAL */}
+        <div className="drawer-header">
+          {user ? (
+            <div className="drawer-user-info">
+              <img
+                src={user.foto}
+                alt={user.nombre}
+                className="drawer-user-pic"
+              />
+              <div className="drawer-user-details">
+                <span className="drawer-user-name">{user.nombre}</span>
+                <span className="drawer-user-email">{user.email}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="drawer-guest-info">
+              <div className="drawer-guest-icon">
+                <i className="fa-solid fa-user"></i>
+              </div>
+              <div className="drawer-user-details">
+                <span className="drawer-user-name">Bienvenido</span>
+                <span className="drawer-user-email">Ferretería Casa Mario</span>
+              </div>
+            </div>
+          )}
+
+          <button
+            className="drawer-close-btn"
+            onClick={closeMobileMenu}
+            aria-label="Cerrar menú lateral"
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div className="drawer-divider"></div>
+
+        {/* NAVEGACIÓN PRINCIPAL */}
+        <div className="drawer-nav">
+          <span className="drawer-section-title">Navegación</span>
+          <ul className="drawer-links-list">
+            <li>
+              <a href="/" onClick={closeMobileMenu} className="drawer-link">
+                <i className="fa-solid fa-house drawer-link-icon"></i>
+                <span>Inicio</span>
+              </a>
+            </li>
+            <li>
+              <a href="/sobrenosotros" onClick={closeMobileMenu} className="drawer-link">
+                <i className="fa-solid fa-phone drawer-link-icon"></i>
+                <span>Contacto</span>
+              </a>
+            </li>
+            <li>
+              <a href="/carrito" onClick={closeMobileMenu} className="drawer-link">
+                <i className="fa-solid fa-cart-shopping drawer-link-icon"></i>
+                <span>Mi Carrito</span>
+                {cartCount > 0 && <span className="drawer-cart-badge">{cartCount}</span>}
+              </a>
+            </li>
+          </ul>
+
+          <div className="drawer-divider"></div>
+
+          {/* SECCIÓN DE CUENTA / GESTIÓN DEL USUARIO */}
+          <span className="drawer-section-title">Mi Cuenta</span>
+          <div className="drawer-account-section">
+            {user ? (
+              <>
+                <a
+                  href="/miscompras"
+                  onClick={closeMobileMenu}
+                  className="drawer-link"
+                >
+                  <i className="fa-solid fa-box-archive drawer-link-icon"></i>
+                  <span>Mis Compras</span>
+                </a>
+
+                {user.email === "leomartin9808@gmail.com" && (
+                  <a
+                    href="/adminvista"
+                    onClick={closeMobileMenu}
+                    className="drawer-link admin-drawer-link"
+                  >
+                    <i className="fa-solid fa-sliders drawer-link-icon"></i>
+                    <span>Panel de Administración</span>
+                    <span className="admin-tag">Admin</span>
+                  </a>
+                )}
+
+                <div className="drawer-divider"></div>
+
+                <button
+                  onClick={handleLogout}
+                  className="drawer-link drawer-logout-btn"
+                >
+                  <i className="fa-solid fa-right-from-bracket drawer-link-icon"></i>
+                  <span>Cerrar sesión</span>
+                </button>
+              </>
+            ) : (
+              <a
+                href="/login"
+                onClick={closeMobileMenu}
+                className="drawer-login-action-btn"
+              >
+                <i className="fa-solid fa-arrow-right-to-bracket"></i>
+                <span>Iniciar Sesión</span>
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* PIE DEL DRAWER */}
+        <div className="drawer-footer">
+          <p>© Ferretería Casa Mario</p>
+        </div>
+      </aside>
     </nav>
   );
 };

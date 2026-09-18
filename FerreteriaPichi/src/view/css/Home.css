@@ -367,6 +367,18 @@ header {
   padding: 50px 20px;
   width: 80%;
   margin: 0 auto;
+  scroll-margin-top: 90px;
+}
+
+.categoria-item-activa .categoria-circle {
+  border-color: #a3e635 !important;
+  box-shadow: 0 0 16px rgba(163, 230, 53, 0.45);
+  transform: scale(1.05);
+}
+
+.categoria-item-activa .categoria-name {
+  color: #a3e635 !important;
+  font-weight: 800 !important;
 }
 
 .productos-header {

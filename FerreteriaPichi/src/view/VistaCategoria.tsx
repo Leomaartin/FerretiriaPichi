@@ -1,7 +1,7 @@
 // src/views/VistaCategoria.jsx
 import "./css/Home.css";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -37,6 +37,26 @@ function VistaCategoria() {
   const [categoria, setCategoria] = useState<Categoria[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [orden, setOrden] = useState("az");
+  const productosSectionRef = useRef<HTMLElement>(null);
+
+  const scrollToProductos = () => {
+    if (productosSectionRef.current) {
+      productosSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  // Cuando cambia el id de la categoría, deslizar suavemente la pantalla hacia los productos
+  useEffect(() => {
+    if (id) {
+      const timer = setTimeout(() => {
+        scrollToProductos();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [id]);
 
 
   // ============================================
@@ -144,25 +164,33 @@ function VistaCategoria() {
         <h2 className="categorias-title">Explora Nuestras Categorías</h2>
 
         <div className="categorias-grid">
-          {categoria.map((cat, index) => (
-            <Link
-              key={index}
-              to={`/categorias/${cat.id}`}
-              className="categoria-item"
-            >
-              <div className="categoria-circle">
-                <img
-                  src={`${API_URL}/uploads/${cat.imagen}`}
-                  alt={cat.nombre}
-                />
-              </div>
-              <span className="categoria-name">{cat.nombre}</span>
-            </Link>
-          ))}
+          {categoria.map((cat, index) => {
+            const isSelected = String(cat.id) === String(id);
+            return (
+              <Link
+                key={cat.id || index}
+                to={`/categorias/${cat.id}`}
+                className={`categoria-item ${isSelected ? "categoria-item-activa" : ""}`}
+                onClick={() => {
+                  setTimeout(scrollToProductos, 100);
+                }}
+              >
+                <div className={`categoria-circle ${isSelected ? "circle-activa" : ""}`}>
+                  <img
+                    src={`${API_URL}/uploads/${cat.imagen}`}
+                    alt={cat.nombre}
+                  />
+                </div>
+                <span className={`categoria-name ${isSelected ? "name-activa" : ""}`}>
+                  {cat.nombre}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      <section className="productos-section">
+      <section className="productos-section" ref={productosSectionRef}>
         <div className="productos-header">
           <h2>
             Productos de la categoría -{" "}
