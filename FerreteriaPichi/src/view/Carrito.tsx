@@ -117,27 +117,7 @@ const Carrito: React.FC = () => {
       const data = await response.json();
 
       if (data.init_point) {
-        const userAgent = navigator.userAgent;
-        const isAndroid = /Android/i.test(userAgent);
-        const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
-
-        if (isAndroid && data.preference_id) {
-          // Android: usar Intent URL que Chrome entiende para abrir apps nativas
-          const fallback = encodeURIComponent(data.init_point);
-          const intentUrl = `intent://checkout?preference-id=${data.preference_id}#Intent;scheme=mercadopago;package=com.mercadopago.wallet;S.browser_fallback_url=${fallback};end`;
-          window.location.href = intentUrl;
-        } else if (isIOS && data.preference_id) {
-          // iOS: intentar deep link, con fallback al navegador
-          window.location.href = `mercadopago://checkout?preference-id=${data.preference_id}`;
-          setTimeout(() => {
-            if (!document.hidden) {
-              window.location.href = data.init_point;
-            }
-          }, 1500);
-        } else {
-          // Desktop: abrir directo en el navegador
-          window.location.href = data.init_point;
-        }
+        window.location.href = data.init_point;
       } else {
         toast.error(data.error || "Error iniciando el pago. Intenta nuevamente.");
       }
