@@ -1,32 +1,40 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import "./css/Sobrenosotros.css";
-import ReviewsComponent from "./Reseñas"
+import ReviewsComponent from "./Reseñas";
 import API_URL from "../config/api";
-
-
 
 export default function SobreNosotros() {
   // --- CONFIGURACIÓN DE CONTACTO ---
   const whatsappNumber = "5491100000000"; // Reemplaza con el número real (ej: 5491112345678)
   const contactEmail = "ferreteria.mario@gmail.com"; // Reemplaza con tu email
 
-
-
-
   return (
     <main className="page-container">
 
       <Navbar />
 
-      {/* Hero Section / Título Principal (MANTENIDO) */}
+      {/* Hero Section / Título Principal */}
       <section className="hero-section">
-        <h1 className="hero-title"> Sobre Ferretería Casa Mario</h1>
+        <div className="hero-logo-wrapper">
+          <img
+            src="/logo.png"
+            alt="Ferretería Casa Mario"
+            className="hero-logo-badge"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `${API_URL}/uploads/logo.png`;
+            }}
+          />
+        </div>
+        <h1 className="hero-title">Sobre Ferretería Casa Mario</h1>
+        <i className="hero-motto">De Christian Landi</i>
 
         <p className="hero-subtitle">
           Tu socio de confianza en herramientas, materiales y soluciones para
           cada proyecto.
         </p>
       </section>
+
       <section className="mission-section">
         <p className="mission-text">
           En <strong>Ferretería Casa Mario</strong> somos un equipo apasionado
@@ -36,25 +44,41 @@ export default function SobreNosotros() {
           precios accesibles para todos.
         </p>
       </section>
-      {/* Galería de Imágenes (MANTENIDO) */}
+
+      {/* Galería de Imágenes */}
       <section className="gallery-section">
-        <img
-          src={`${API_URL}/uploads/img/foto1.avif`}
-          alt="Ferretería"
-          className="gallery-image"
-        />
+        <div className="gallery-item-card">
+          <img
+            src="/ferreteirafoto.jpeg"
+            alt="Local Ferretería Casa Mario"
+            className="gallery-image"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `${API_URL}/uploads/ferreteirafoto.jpeg`;
+            }}
+          />
+        </div>
 
-        <img
-          src={`${API_URL}/uploads/img/ferreteirafoto.jpeg`}
-          alt="Herramientas"
-          className="gallery-image"
-        />
+        <div className="gallery-item-card">
+          <img
+            src="/img/banner1.jpg"
+            alt="Herramientas y maquinarias profesionales"
+            className="gallery-image"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `${API_URL}/uploads/img/banner1.jpg`;
+            }}
+          />
+        </div>
 
-        <img
-          src={`${API_URL}/uploads/img/foto3.webp`}
-          alt="Equipo de trabajo"
-          className="gallery-image"
-        />
+        <div className="gallery-item-card">
+          <img
+            src="/img/banner2.webp"
+            alt="Variedad y stock de ferretería"
+            className="gallery-image"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `${API_URL}/uploads/img/banner2.webp`;
+            }}
+          />
+        </div>
       </section>
       {/* Quiénes Somos (MANTENIDO) */}
       <section className="about-us-section">
@@ -128,7 +152,7 @@ export default function SobreNosotros() {
         <ReviewsComponent />
       </section>
 
-
+      <Footer />
     </main>
   );
 }

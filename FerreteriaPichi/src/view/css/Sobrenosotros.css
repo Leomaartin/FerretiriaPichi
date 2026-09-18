@@ -131,12 +131,42 @@
   margin-bottom: 2rem;
 }
 
+.hero-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.hero-logo-badge {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #a3e635;
+  box-shadow: 0 8px 24px rgba(163, 230, 53, 0.3);
+  background: #000;
+  transition: transform 0.3s ease;
+}
+
+.hero-logo-badge:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
 .hero-title {
   font-size: 3rem; /* text-5xl */
   font-weight: 800; /* font-extrabold */
   color: var(--dark-text);
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   letter-spacing: -0.05em; /* tracking-tight */
+}
+
+.hero-motto {
+  display: block;
+  font-size: 1.1rem;
+  color: #4d7c0f;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-style: italic;
 }
 
 .hero-subtitle {

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { toast } from "react-hot-toast";
 import API_URL from "../config/api";
 
@@ -249,9 +250,7 @@ function DetalleProducto() {
         </div>
       </section>
 
-      <footer className="product-detail-footer">
-        <p>© {new Date().getFullYear()} Ferretería Casa Mario. Todos los derechos reservados.</p>
-      </footer>
+      <Footer />
     </main>
   );
 }

@@ -202,190 +202,200 @@ const Navbar: React.FC = () => {
     <nav className="navbar-container fixed-navbar">
       <div className="navbar">
 
-        {/* LOGO E IDENTIDAD DE LA FERRETERÍA */}
-        <div className="navbar-logo-container">
-          <a href="/" className="navbar-logo">
-            <img
-              src={`${API_URL}/uploads/logo.png`}
-              className="logo-redondo"
-              alt="Casa Mario"
-            />
-            <div className="navbar-title-container">
-              <h1 className="navbar-title">Ferretería Casa Mario</h1>
-              <i className="navbar-subtitle">De Christian Landi</i>
-            </div>
-          </a>
-        </div>
-
-        {/* BUSCADOR PROMINENTE EN EL CENTRO */}
-        <div className="navbar-search-wrapper" ref={searchRef}>
-          <div className="navbar-search-box">
-            <i className="fa-solid fa-magnifying-glass search-input-icon"></i>
-            <input
-              type="text"
-              className="navbar-search-input"
-              placeholder="Buscar productos por nombre..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => {
-                if (searchTerm.trim()) setShowSearchDropdown(true);
-              }}
-            />
-            {searchTerm && (
-              <button
-                className="navbar-search-clear"
-                onClick={() => {
-                  setSearchTerm("");
-                  setShowSearchDropdown(false);
+        {/* FILA SUPERIOR: LOGO A LA IZQUIERDA Y BUSCADOR OCUPANDO TODO EL ESPACIO RESTANTE */}
+        <div className="navbar-main-row">
+          {/* LOGO */}
+          <div className="navbar-logo-container">
+            <a href="/" className="navbar-logo">
+              <img
+                src="/logo.png"
+                className="logo-redondo"
+                alt="Casa Mario"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `${API_URL}/uploads/logo.png`;
                 }}
-              >
-                ✕
-              </button>
+              />
+              <div className="navbar-title-container">
+                <h1 className="navbar-title">Ferretería Casa Mario</h1>
+                <i className="navbar-subtitle">De Christian Landi</i>
+              </div>
+            </a>
+          </div>
+
+          {/* BUSCADOR PROMINENTE: EN MÓVIL OCUPA TODO EL ESPACIO A LA DERECHA DEL LOGO */}
+          <div className="navbar-search-wrapper" ref={searchRef}>
+            <div className="navbar-search-box">
+              <i className="fa-solid fa-magnifying-glass search-input-icon"></i>
+              <input
+                type="text"
+                className="navbar-search-input"
+                placeholder="Buscar productos por nombre..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => {
+                  if (searchTerm.trim()) setShowSearchDropdown(true);
+                }}
+              />
+              {searchTerm && (
+                <button
+                  className="navbar-search-clear"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setShowSearchDropdown(false);
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* DESPLEGABLE DE RESULTADOS DE BÚSQUEDA */}
+            {showSearchDropdown && (
+              <div className="navbar-search-dropdown">
+                {searchResults.length > 0 ? (
+                  searchResults.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className="navbar-search-item"
+                      onClick={() => {
+                        setShowSearchDropdown(false);
+                        setSearchTerm("");
+                        window.location.href = `/detalleproducto/${prod.id}`;
+                      }}
+                    >
+                      <img
+                        src={
+                          prod.imagenes?.[0]
+                            ? `${API_URL}/uploads/${prod.imagenes[0]}`
+                            : `${API_URL}/uploads/default.png`
+                        }
+                        alt={prod.nombre}
+                        className="search-item-img"
+                      />
+                      <div className="search-item-info">
+                        <span className="search-item-name">{prod.nombre}</span>
+                        <span className="search-item-price">
+                          ${Number(prod.precioenoferta || prod.precio).toFixed(2)}
+                        </span>
+                      </div>
+                      <button
+                        className="search-item-add-btn"
+                        onClick={(e) => handleAddToCart(e, prod)}
+                        title="Agregar al carrito"
+                      >
+                        <i className="fa-solid fa-cart-plus"></i>
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="navbar-search-empty">
+                    No se encontraron productos para "<strong>{searchTerm}</strong>"
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
-          {/* DESPLEGABLE DE RESULTADOS DE BÚSQUEDA */}
-          {showSearchDropdown && (
-            <div className="navbar-search-dropdown">
-              {searchResults.length > 0 ? (
-                searchResults.map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="navbar-search-item"
-                    onClick={() => {
-                      setShowSearchDropdown(false);
-                      setSearchTerm("");
-                      window.location.href = `/detalleproducto/${prod.id}`;
-                    }}
-                  >
-                    <img
-                      src={
-                        prod.imagenes?.[0]
-                          ? `${API_URL}/uploads/${prod.imagenes[0]}`
-                          : `${API_URL}/uploads/default.png`
-                      }
-                      alt={prod.nombre}
-                      className="search-item-img"
-                    />
-                    <div className="search-item-info">
-                      <span className="search-item-name">{prod.nombre}</span>
-                      <span className="search-item-price">
-                        ${Number(prod.precioenoferta || prod.precio).toFixed(2)}
-                      </span>
+          {/* ACCIONES DE ESCRITORIO (NAV LINKS + PERFIL FLOTANTE + CARRITO) */}
+          <div className="navbar-desktop-section">
+            <ul className="navbar-links">
+              <li>
+                <a href="/">Inicio</a>
+              </li>
+              <li>
+                <a href="/sobrenosotros">Contacto</a>
+              </li>
+            </ul>
+
+            {/* MENÚ DESPLEGABLE DE PERFIL PARA ESCRITORIO */}
+            {user ? (
+              <div className="navbar-user-dropdown-container" ref={userDropdownRef}>
+                <button
+                  className="navbar-user-trigger"
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  aria-label="Menú de usuario"
+                >
+                  <img
+                    src={user.foto}
+                    alt={user.nombre}
+                    className="navbar-user-pic"
+                  />
+                  <span className="navbar-username">{user.nombre}</span>
+                  <span className={`dropdown-arrow ${showUserDropdown ? "active" : ""}`}>
+                    ▼
+                  </span>
+                </button>
+
+                {showUserDropdown && (
+                  <div className="navbar-user-dropdown-menu">
+                    <div className="dropdown-user-header">
+                      <strong>{user.nombre}</strong>
+                      <small>{user.email}</small>
                     </div>
-                    <button
-                      className="search-item-add-btn"
-                      onClick={(e) => handleAddToCart(e, prod)}
-                      title="Agregar al carrito"
-                    >
-                      <i className="fa-solid fa-cart-plus"></i>
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="navbar-search-empty">
-                  No se encontraron productos para "<strong>{searchTerm}</strong>"
-                </div>
-              )}
-            </div>
-          )}
-        </div>
 
-        {/* ACCIONES DE ESCRITORIO (NAV LINKS + PERFIL FLOTANTE + CARRITO) */}
-        <div className="navbar-desktop-section">
-          <ul className="navbar-links">
-            <li>
-              <a href="/">Inicio</a>
-            </li>
-            <li>
-              <a href="/sobrenosotros">Contacto</a>
-            </li>
-          </ul>
+                    <div className="dropdown-divider"></div>
 
-          {/* MENÚ DESPLEGABLE DE PERFIL PARA ESCRITORIO */}
-          {user ? (
-            <div className="navbar-user-dropdown-container" ref={userDropdownRef}>
-              <button
-                className="navbar-user-trigger"
-                onClick={() => setShowUserDropdown(!showUserDropdown)}
-                aria-label="Menú de usuario"
-              >
-                <img
-                  src={user.foto}
-                  alt={user.nombre}
-                  className="navbar-user-pic"
-                />
-                <span className="navbar-username">{user.nombre}</span>
-                <span className={`dropdown-arrow ${showUserDropdown ? "active" : ""}`}>
-                  ▼
-                </span>
-              </button>
-
-              {showUserDropdown && (
-                <div className="navbar-user-dropdown-menu">
-                  <div className="dropdown-user-header">
-                    <strong>{user.nombre}</strong>
-                    <small>{user.email}</small>
-                  </div>
-
-                  <div className="dropdown-divider"></div>
-
-                  <a
-                    href="/miscompras"
-                    className="dropdown-item"
-                    onClick={() => setShowUserDropdown(false)}
-                  >
-                    <i className="fa-solid fa-box-archive dropdown-icon"></i> Mis Compras
-                  </a>
-
-                  {user.email === "leomartin9808@gmail.com" && (
                     <a
-                      href="/adminvista"
-                      className="dropdown-item admin-item"
+                      href="/miscompras"
+                      className="dropdown-item"
                       onClick={() => setShowUserDropdown(false)}
                     >
-                      <i className="fa-solid fa-sliders dropdown-icon"></i> Panel Admin
+                      <i className="fa-solid fa-box-archive dropdown-icon"></i> Mis Compras
                     </a>
-                  )}
 
-                  <div className="dropdown-divider"></div>
+                    {user.email === "leomartin9808@gmail.com" && (
+                      <a
+                        href="/adminvista"
+                        className="dropdown-item admin-item"
+                        onClick={() => setShowUserDropdown(false)}
+                      >
+                        <i className="fa-solid fa-sliders dropdown-icon"></i> Panel Admin
+                      </a>
+                    )}
 
-                  <button
-                    onClick={handleLogout}
-                    className="dropdown-item logout-item"
-                  >
-                    <i className="fa-solid fa-right-from-bracket dropdown-icon"></i> Cerrar sesión
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <a href="/login" className="navbar-login-btn">
-              Iniciar Sesión
+                    <div className="dropdown-divider"></div>
+
+                    <button
+                      onClick={handleLogout}
+                      className="dropdown-item logout-item"
+                    >
+                      <i className="fa-solid fa-right-from-bracket dropdown-icon"></i> Cerrar sesión
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a href="/login" className="navbar-login-btn">
+                Iniciar Sesión
+              </a>
+            )}
+
+            {/* ÍCONO DE CARRITO ESCRITORIO */}
+            <a href="/carrito" className="navbar-cart-link" title="Carrito">
+              <i className="fa-solid fa-cart-shopping cart-icon"></i>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </a>
-          )}
-
-          {/* ÍCONO DE CARRITO ESCRITORIO */}
-          <a href="/carrito" className="navbar-cart-link" title="Carrito">
-            <i className="fa-solid fa-cart-shopping cart-icon"></i>
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </a>
+          </div>
         </div>
 
-        {/* ACCIONES RÁPIDAS EN BARRA MÓVIL: CARRITO + BOTÓN TOGGLE MENÚ LATERAL */}
-        <div className="navbar-mobile-triggers">
-          <a href="/carrito" className="navbar-cart-link mobile-cart-btn" title="Carrito">
-            <i className="fa-solid fa-cart-shopping cart-icon"></i>
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+        {/* FILA INFERIOR EN CELULAR: ABAJO EL CARRITO Y PARA ABRIR MENÚ LATERAL */}
+        <div className="navbar-mobile-bottom-row">
+          <a href="/carrito" className="mobile-bottom-btn mobile-cart-btn" title="Ver Carrito">
+            <div className="mobile-btn-icon-wrapper">
+              <i className="fa-solid fa-cart-shopping"></i>
+              {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
+            </div>
+            <span>Mi Carrito</span>
           </a>
 
           <button
-            className="menu-toggle"
-            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            className="mobile-bottom-btn mobile-menu-btn"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú lateral"}
             aria-expanded={isOpen}
             onClick={() => setIsOpen(!isOpen)}
           >
             <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+            <span>Menú Lateral</span>
           </button>
         </div>
 

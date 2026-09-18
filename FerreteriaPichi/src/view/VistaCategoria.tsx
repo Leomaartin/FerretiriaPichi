@@ -6,6 +6,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import API_URL from "../config/api";
 
 interface Producto {
@@ -275,9 +276,7 @@ function VistaCategoria() {
         </div>
       </section>
 
-      <footer>
-        <p>&copy; 2023 El Tornillo Feliz. Todos los derechos reservados.</p>
-      </footer>
+      <Footer />
     </main>
   );
 }

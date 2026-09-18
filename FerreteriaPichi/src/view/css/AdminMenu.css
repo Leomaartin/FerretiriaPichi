@@ -303,6 +303,34 @@
   margin-top: 4px;
 }
 
+.btn-generar-factura {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: #15803d;
+  color: #ffffff !important;
+  border: 1px solid #166534;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.25);
+  white-space: nowrap;
+}
+
+.btn-generar-factura:hover {
+  background-color: #166534;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(21, 128, 61, 0.35);
+}
+
+.btn-generar-factura i {
+  font-size: 14px;
+  color: #a3e635;
+}
+
 .btn-ver-items {
   padding: 6px 14px;
   background: #f1f5f9;
@@ -313,6 +341,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-ver-items:hover {

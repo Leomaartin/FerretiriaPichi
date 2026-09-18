@@ -1,7 +1,8 @@
-﻿import "./css/Home.css";
+import "./css/Home.css";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import API_URL from "../config/api";
@@ -336,9 +337,7 @@ function Home() {
           </div>
         </section>
 
-        <footer>
-          <p>&copy; 2023 Ferretería Casa Mario. Todos los derechos reservados.</p>
-        </footer>
+        <Footer />
       </main>
     </>
   );
