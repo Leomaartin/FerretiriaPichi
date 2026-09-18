@@ -255,18 +255,18 @@ function VistaCategoria() {
 
                 {Number(producto.precioenoferta) > 0 ? (
                   <>
-                    <span className="precio-tachado">${producto.precio}</span>
+                    <span className="precio-tachado">${(Number(producto.precio) || 0).toFixed(2)}</span>
                     <img
                       src={`${API_URL}/uploads/oferta1.png`}
                       className="badge-oferta"
                       alt="Oferta"
                     />
                     <span className="precio-oferta">
-                      ${Number(producto.precioenoferta)}
+                      ${(Number(producto.precioenoferta) || 0).toFixed(2)}
                     </span>
                   </>
                 ) : (
-                  <span className="precio-normal">${producto.precio}</span>
+                  <span className="precio-normal">${(Number(producto.precio) || 0).toFixed(2)}</span>
                 )}
 
                 <button

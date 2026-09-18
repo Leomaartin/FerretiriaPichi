@@ -20,7 +20,7 @@ interface Producto {
 }
 
 const buildImageUrl = (imageName: string) => {
-  if (!imageName || imageName.trim() === "") {
+  if (!imageName || typeof imageName !== "string" || imageName.trim() === "") {
     return `${API_URL}/uploads/default.png`;
   }
   if (imageName.startsWith("http://") || imageName.startsWith("https://")) {
