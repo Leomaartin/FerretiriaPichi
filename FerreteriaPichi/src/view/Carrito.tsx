@@ -1,5 +1,5 @@
 import "./css/Carrito.css";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import API_URL from "../config/api";
@@ -14,6 +14,7 @@ interface CarritoItem {
 
 const Carrito: React.FC = () => {
   const [items, setItems] = useState<CarritoItem[]>([]);
+  const mounted = React.useRef(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
 
   const [nombre, setNombre] = useState("");
@@ -40,8 +41,12 @@ const Carrito: React.FC = () => {
     }
   }, []);
 
-  // Guardar carrito cuando cambien los items
+  // Guardar carrito cuando cambien los items (no en el primer render)
   useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
     localStorage.setItem("carrito", JSON.stringify(items));
     window.dispatchEvent(new Event("cartUpdated"));
   }, [items]);

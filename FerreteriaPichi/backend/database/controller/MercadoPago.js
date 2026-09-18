@@ -81,8 +81,8 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
           </p>
           <p style="margin:0;font-size:14px;color:#334155;line-height:1.4;">
             ${esRetiro
-              ? 'El cliente retirará personalmente este pedido en la sucursal de la ferretería.'
-              : `<strong>Dirección de destino:</strong> ${direccionEntrega}`}
+      ? 'El cliente retirará personalmente este pedido en la sucursal de la ferretería.'
+      : `<strong>Dirección de destino:</strong> ${direccionEntrega}`}
           </p>
         </div>
 
@@ -98,9 +98,9 @@ async function emailDueno(pago, items, pedidoId, pedidoBD) {
         </table>
         <div style="text-align:right;margin-top:16px;">
           <p style="margin:2px 0;font-size:14px;color:#555;">Subtotal: $${subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-          ${costoEnvio > 0 
-            ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` 
-            : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
+          ${costoEnvio > 0
+      ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`
+      : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
           <p style="margin:6px 0 0;font-size:20px;font-weight:bold;color:#1a1a2e;">
             Total Pagado: $${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -185,8 +185,8 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
           </p>
           <p style="margin:0;font-size:14px;color:#334155;line-height:1.5;">
             ${esRetiro
-              ? `Podés retirar tu pedido en nuestro local comercial una vez preparado. Presentate con tu DNI y tu número de pedido: <strong>#${pedidoId}</strong>.`
-              : `Estaremos despachando tu paquete a la brevedad a la siguiente dirección:<br/><strong>${direccionEntrega}</strong>`}
+      ? `Podés retirar tu pedido en nuestro local comercial una vez preparado. Presentate con tu DNI y tu número de pedido: <strong>#${pedidoId}</strong>.`
+      : `Estaremos despachando tu paquete a la brevedad a la siguiente dirección:<br/><strong>${direccionEntrega}</strong>`}
           </p>
         </div>
 
@@ -202,9 +202,9 @@ async function emailCliente(emailDestino, nombreCliente, items, pedidoId, pedido
         </table>
         <div style="text-align:right;margin-top:16px;">
           <p style="margin:2px 0;font-size:14px;color:#555;">Subtotal: $${subtotal.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-          ${costoEnvio > 0 
-            ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` 
-            : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
+          ${costoEnvio > 0
+      ? `<p style="margin:2px 0;font-size:14px;color:#047857;">Costo de envío (21%): $${costoEnvio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>`
+      : `<p style="margin:2px 0;font-size:14px;color:#0284c7;">Envío: Gratis (Retiro en local)</p>`}
           <p style="margin:6px 0 0;font-size:20px;font-weight:bold;color:#1a1a2e;">
             Total: $${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -261,8 +261,8 @@ async function procesarPagoAprobado(db, paymentId, externalRefPedidoId) {
     const pedidoId = externalRefPedidoId
       ? Number(externalRefPedidoId)
       : pago?.external_reference
-      ? Number(pago.external_reference)
-      : null;
+        ? Number(pago.external_reference)
+        : null;
 
     if (!pedidoId) {
       console.warn("⚠️ No se encontró pedidoId asociado al pago:", paymentId);
@@ -474,7 +474,14 @@ export default function registrarMercadoPago(app, db) {
 
         notification_url: notificationUrl,
 
-        binary_mode: true,
+        // Habilitar pago con saldo de la billetera MP
+        payment_methods: {
+          default_payment_method_id: "account_money",
+          excluded_payment_types: [],
+        },
+
+        // Priorizar billetera cuando se abre desde la app de MP
+        purpose: "wallet_purchase",
       };
 
       const response = await preference.create({ body });
