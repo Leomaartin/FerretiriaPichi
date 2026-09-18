@@ -77,6 +77,13 @@ conexion
     `);
     console.log("✅ Tablas pedidos y pedido_items verificadas/creadas");
 
+    // Crear columna admin en usuarios si no existe
+    await connection.query(`
+      ALTER TABLE usuarios
+      ADD COLUMN IF NOT EXISTS admin BOOLEAN DEFAULT FALSE
+    `);
+    console.log("✅ Columna admin en usuarios verificada/creada");
+
     connection.release();
   })
   .catch((err) => {
@@ -1063,13 +1070,20 @@ export default function registrarEndpoints(app) {
             resultados.rows[0]
           );
 
+          const existingUser = resultados.rows[0];
           return res.status(200).json({
 
             message:
               "Usuario ya registrado",
 
-            user:
-              resultados.rows[0]
+            user: {
+              id: existingUser.id,
+              google_id: existingUser.google_id,
+              nombre: existingUser.nombre,
+              email: existingUser.email,
+              foto: existingUser.foto,
+              admin: existingUser.admin || false
+            }
 
           });
         }
@@ -1124,7 +1138,8 @@ export default function registrarEndpoints(app) {
             google_id,
             nombre,
             email,
-            foto
+            foto,
+            admin: false
           }
 
         });
@@ -1170,7 +1185,8 @@ export default function registrarEndpoints(app) {
         SELECT
           nombre,
           email,
-          foto
+          foto,
+          admin
         FROM usuarios
         WHERE email = $1
         LIMIT 1

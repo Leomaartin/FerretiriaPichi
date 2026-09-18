@@ -89,7 +89,8 @@ const Navbar: React.FC = () => {
               const fixedUser = {
                 nombre: data.user.nombre,
                 email: data.user.email,
-                foto: backendFoto
+                foto: backendFoto,
+                admin: data.user.admin || false
               };
 
               setUser(fixedUser);
@@ -343,7 +344,7 @@ const Navbar: React.FC = () => {
                       <i className="fa-solid fa-box-archive dropdown-icon"></i> Mis Compras
                     </a>
 
-                    {user.email === "leomartin9808@gmail.com" && (
+                    {user.admin && (
                       <a
                         href="/adminvista"
                         className="dropdown-item admin-item"
@@ -494,7 +495,7 @@ const Navbar: React.FC = () => {
                   <span>Mis Compras</span>
                 </a>
 
-                {user.email === "leomartin9808@gmail.com" && (
+                {user.admin && (
                   <a
                     href="/adminvista"
                     onClick={closeMobileMenu}

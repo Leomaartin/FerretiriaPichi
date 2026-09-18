@@ -160,9 +160,7 @@ const Footer: React.FC = () => {
           <p className="copyright-text">
             © {currentYear} <strong>Ferretería Casa Mario</strong>. Todos los derechos reservados.
           </p>
-          <p className="dev-credit-line">
-            · <em>Técnico en Programación</em>
-          </p>
+
         </div>
       </div>
     </footer>

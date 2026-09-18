@@ -1,4 +1,4 @@
-﻿import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
@@ -25,8 +25,10 @@ const handleSubmitGoogle = async (googleUser: GoogleUser) => {
 
     const data = await response.json();
     console.log("Usuario guardado/recuperado:", data);
+    return data;
   } catch (error) {
     console.error("Error al guardar info del usuario:", error);
+    return null;
   }
 };
 
@@ -45,11 +47,17 @@ function Login() {
         picture: decoded.picture || "/default-user.png",
       };
 
-      // Guardar en localStorage
-      localStorage.setItem("user", JSON.stringify(user));
-
       // Guardar o verificar en backend
-      await handleSubmitGoogle(user);
+      const backendRes = await handleSubmitGoogle(user);
+
+      // Guardar en localStorage con el campo admin del backend
+      const userToStore = {
+        nombre: user.name,
+        email: user.email,
+        foto: user.picture,
+        admin: backendRes?.user?.admin || false,
+      };
+      localStorage.setItem("user", JSON.stringify(userToStore));
 
       toast.success("¡Login con Google exitoso!");
       navigate("/");
