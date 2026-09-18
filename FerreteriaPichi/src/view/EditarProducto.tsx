@@ -73,6 +73,18 @@ const SuperUsuarioProductos: React.FC = () => {
     fetchCategorias();
   }, []);
 
+  // Bloquear scroll de la página de fondo cuando el modal está abierto
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isModalOpen]);
+
   // Manejo inputs
   const handleChange = (
     e: React.ChangeEvent<
@@ -274,16 +286,24 @@ const SuperUsuarioProductos: React.FC = () => {
               Administrá el catálogo de productos, categorías, visibilidad y fotos
             </p>
           </div>
-          <button
-            className="btn-nuevo"
-            onClick={() => {
-              setForm({ mostrar: false, mostrar_inicio: 0, precioenoferta: "" });
-              setEditingId(null);
-              setIsModalOpen(true);
-            }}
-          >
-            + Nuevo Producto
-          </button>
+          <div className="admin-header-actions">
+            <button
+              className="btn-ir-categorias"
+              onClick={() => navigate("/admincategorias")}
+            >
+              <i className="fa-solid fa-folder-tree"></i> Administrar Categorías →
+            </button>
+            <button
+              className="btn-nuevo"
+              onClick={() => {
+                setForm({ mostrar: 1, mostrar_inicio: 0, precioenoferta: "" });
+                setEditingId(null);
+                setIsModalOpen(true);
+              }}
+            >
+              <i className="fa-solid fa-plus"></i> Nuevo Producto
+            </button>
+          </div>
         </div>
 
         {/* Panel de estadísticas rápidas */}
@@ -310,116 +330,205 @@ const SuperUsuarioProductos: React.FC = () => {
           </div>
         </div>
 
-        {/* Formulario Modal */}
+        {/* Formulario Modal Amigable y Scrolleable */}
         {isModalOpen && (
           <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
             <div
               className="modal-content fadeIn"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* CABECERA FIJA */}
               <div className="modal-header">
-                <h2>{editingId ? "Editar Producto" : "Agregar Producto"}</h2>
+                <div className="modal-header-title">
+                  <div className="modal-icon-badge">
+                    <i className={`fa-solid ${editingId ? "fa-pen-to-square" : "fa-boxes-stacked"}`}></i>
+                  </div>
+                  <div>
+                    <h2>{editingId ? "Editar Producto" : "Nuevo Producto"}</h2>
+                    <p className="modal-subtitle">
+                      {editingId
+                        ? "Actualizá la información, precios y disponibilidad"
+                        : "Completá los datos del nuevo producto"}
+                    </p>
+                  </div>
+                </div>
                 <button
                   className="close-btn"
                   onClick={() => setIsModalOpen(false)}
+                  title="Cerrar ventana"
+                  type="button"
                 >
-                  ✖
+                  ✕
                 </button>
               </div>
 
-              <div className="form-container modal-body">
-                <h3>Nombre</h3>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={form.nombre || ""}
-                  onChange={handleChange}
-                />
+              {/* CUERPO DEL MODAL CON SCROLL FLUIDO */}
+              <div className="modal-body-scrollable">
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <i className="fa-solid fa-tag form-label-icon"></i> Nombre del Producto
+                  </label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    className="form-input"
+                    placeholder="Ej: Taladro Percutor 650W"
+                    value={form.nombre || ""}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-                <h3>Descripción</h3>
-                <textarea
-                  name="descripcion"
-                  value={form.descripcion || ""}
-                  onChange={handleChange}
-                />
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label className="form-label">
+                      <i className="fa-solid fa-folder form-label-icon"></i> Categoría
+                    </label>
+                    <select
+                      name="id_categoria"
+                      className="form-select"
+                      value={form.id_categoria || ""}
+                      onChange={handleChange}
+                    >
+                      <option value="">Seleccione una categoría</option>
+                      {categorias.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <h3>Precio</h3>
-                <input
-                  type="text"
-                  name="precio"
-                  value={form.precio || ""}
-                  onChange={handleChange}
-                />
+                  <div className="form-group">
+                    <label className="form-label">
+                      <i className="fa-solid fa-cubes form-label-icon"></i> Stock Disponible
+                    </label>
+                    <input
+                      type="number"
+                      name="stock"
+                      className="form-input"
+                      min="0"
+                      placeholder="0"
+                      value={form.stock ?? 0}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
 
-                <h3>Precio Oferta</h3>
-                <input
-                  type="number"
-                  name="precioenoferta"
-                  value={form.precioenoferta || ""}
-                  onChange={handleChange}
-                />
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label className="form-label">
+                      <i className="fa-solid fa-dollar-sign form-label-icon"></i> Precio Regular ($)
+                    </label>
+                    <input
+                      type="number"
+                      name="precio"
+                      className="form-input"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={form.precio || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-                <h3>Categoría</h3>
-                <select
-                  name="id_categoria"
-                  value={form.id_categoria || ""}
-                  onChange={handleChange}
+                  <div className="form-group">
+                    <label className="form-label">
+                      <i className="fa-solid fa-fire form-label-icon fire-icon"></i> Precio en Oferta ($) <small>(Opcional)</small>
+                    </label>
+                    <input
+                      type="number"
+                      name="precioenoferta"
+                      className="form-input"
+                      step="0.01"
+                      min="0"
+                      placeholder="Dejar vacío si no está en oferta"
+                      value={form.precioenoferta || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <i className="fa-solid fa-align-left form-label-icon"></i> Descripción
+                  </label>
+                  <textarea
+                    name="descripcion"
+                    className="form-textarea"
+                    rows={3}
+                    placeholder="Detalles del producto, especificaciones, características..."
+                    value={form.descripcion || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {!editingId && (
+                  <div className="form-group full-width">
+                    <label className="form-label">
+                      <i className="fa-solid fa-image form-label-icon"></i> Imagen principal <small>(Opcional)</small>
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      name="imagen"
+                      className="file-input-modern"
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
+
+                <div className="form-toggles-container">
+                  <label className="toggle-card">
+                    <div className="toggle-info">
+                      <span className="toggle-title">
+                        <i className="fa-solid fa-eye form-label-icon"></i> Visible en Web / Catálogo
+                      </span>
+                      <span className="toggle-desc">Disponible para los clientes en la tienda</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      name="mostrar"
+                      className="toggle-checkbox-switch"
+                      checked={isChecked(form.mostrar)}
+                      onChange={handleChange}
+                    />
+                  </label>
+
+                  <label className="toggle-card">
+                    <div className="toggle-info">
+                      <span className="toggle-title">
+                        <i className="fa-solid fa-star form-label-icon star-icon"></i> Destacar en Inicio (Home)
+                      </span>
+                      <span className="toggle-desc">Se mostrará en la sección de ofertas o destacados</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      name="mostrar_inicio"
+                      className="toggle-checkbox-switch"
+                      checked={isChecked(form.mostrar_inicio)}
+                      onChange={handleChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* PIE FIJO CON BOTONES VISIBLES SIEMPRE */}
+              <div className="modal-actions-footer">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setIsModalOpen(false)}
                 >
-                  <option value="">Seleccione categoría</option>
-                  {categorias.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombre}
-                    </option>
-                  ))}
-                </select>
-
-                <h3>Stock</h3>
-                <input
-                  type="number"
-                  name="stock"
-                  value={form.stock ?? 0}
-                  onChange={handleChange}
-                />
-
-                <div className="checkbox-container">
-                  <h3 style={{ margin: 0, marginRight: "10px" }}>
-                    Mostrar en la web / categorías
-                  </h3>
-                  <input
-                    type="checkbox"
-                    name="mostrar"
-                    checked={isChecked(form.mostrar)}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="checkbox-container">
-                  <h3 style={{ margin: 0, marginRight: "10px" }}>
-                    Mostrar al Inicio (Home)
-                  </h3>
-                  <input
-                    type="checkbox"
-                    name="mostrar_inicio"
-                    checked={isChecked(form.mostrar_inicio)}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="modal-actions">
-                  <button
-                    className="btn-cancel"
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className="btn-save"
-                    style={{ backgroundColor: "#a3e635", color: "white" }}
-                  >
-                    {editingId ? "Actualizar" : "Agregar"}
-                  </button>
-                </div>
+                  ✕ Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="btn-modal-submit"
+                >
+                  <i className="fa-solid fa-check"></i> {editingId ? "Actualizar Producto" : "Agregar Producto"}
+                </button>
               </div>
             </div>
           </div>

@@ -23,8 +23,6 @@ import { ConfirmProvider } from "./components/ConfirmModal/ConfirmContext";
 
 const GOOGLE_CLIENT_ID =
   "466240667276-6tsh08tln35u4i5c80fted614ad0sdb2.apps.googleusercontent.com";
-// ejemplo:
-// const GOOGLE_CLIENT_ID = "1092381290381-kajshdkajshdk.apps.googleusercontent.com";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>

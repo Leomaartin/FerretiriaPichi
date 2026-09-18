@@ -57,6 +57,18 @@ const SuperUsuarioCategorias: React.FC = () => {
     fetchProductos();
   }, []);
 
+  // Bloquear scroll de la página de fondo cuando el modal está abierto
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isModalOpen]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.type === "file") {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -231,56 +243,96 @@ const SuperUsuarioCategorias: React.FC = () => {
           </button>
         </div>
 
-        {/* Formulario Modal */}
+        {/* Formulario Modal Amigable y Scrolleable */}
         {isModalOpen && (
           <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
             <div
               className="modal-content fadeIn"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* CABECERA FIJA */}
               <div className="modal-header">
-                <h2>{editingId ? "Editar Categoría" : "Agregar Categoría"}</h2>
+                <div className="modal-header-title">
+                  <div className="modal-icon-badge">
+                    <i className={`fa-solid ${editingId ? "fa-pen-to-square" : "fa-folder-plus"}`}></i>
+                  </div>
+                  <div>
+                    <h2>{editingId ? "Editar Categoría" : "Nueva Categoría"}</h2>
+                    <p className="modal-subtitle">
+                      {editingId
+                        ? "Modificá el nombre o la imagen de la categoría"
+                        : "Ingresá los datos para registrar la categoría"}
+                    </p>
+                  </div>
+                </div>
                 <button
                   className="close-btn"
                   onClick={() => setIsModalOpen(false)}
+                  title="Cerrar ventana"
+                  type="button"
                 >
-                  ✖
+                  ✕
                 </button>
               </div>
 
-              <div className="form-container modal-body">
-                <h3>Nombre</h3>
-                <input
-                  type="text"
-                  name="nombre"
-                  placeholder="Nombre de la categoría"
-                  value={form.nombre || ""}
-                  onChange={handleChange}
-                />
-
-                <h3>Imagen de la Categoría</h3>
-                <input
-                  className="file-input-modern"
-                  type="file"
-                  name="imagen"
-                  onChange={handleChange}
-                />
-
-                <div className="modal-actions">
-                  <button
-                    className="btn-cancel"
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className="btn-save"
-                    style={{ backgroundColor: "#a3e635", color: "white" }}
-                  >
-                    {editingId ? "Actualizar" : "Agregar"}
-                  </button>
+              {/* CUERPO DEL MODAL CON SCROLL FLUIDO */}
+              <div className="modal-body-scrollable">
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <i className="fa-solid fa-tag form-label-icon"></i> Nombre de la Categoría
+                  </label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    className="form-input"
+                    placeholder="Ej: Herramientas Eléctricas"
+                    value={form.nombre || ""}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
+
+                <div className="form-group full-width">
+                  <label className="form-label">
+                    <i className="fa-solid fa-image form-label-icon"></i> Imagen de la Categoría
+                  </label>
+                  <input
+                    className="file-input-modern"
+                    type="file"
+                    accept="image/*"
+                    name="imagen"
+                    onChange={handleChange}
+                  />
+
+                  {editingId && form.imagen && typeof form.imagen === "string" && (
+                    <div className="modal-image-preview-wrapper">
+                      <span className="preview-label">Imagen actual:</span>
+                      <img
+                        src={`${API_URL}/uploads/${form.imagen}`}
+                        alt="Vista previa de categoría"
+                        className="modal-image-preview"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* PIE FIJO CON BOTONES VISIBLES SIEMPRE */}
+              <div className="modal-actions-footer">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ✕ Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="btn-modal-submit"
+                >
+                  <i className="fa-solid fa-check"></i> {editingId ? "Actualizar Categoría" : "Crear Categoría"}
+                </button>
               </div>
             </div>
           </div>

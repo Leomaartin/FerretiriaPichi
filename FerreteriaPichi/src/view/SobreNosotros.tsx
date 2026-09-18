@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import "./css/Sobrenosotros.css";
 import ReviewsComponent from "./Reseñas"
+import API_URL from "../config/api";
 
 
 
@@ -14,9 +15,9 @@ export default function SobreNosotros() {
 
   return (
     <main className="page-container">
-   
-        <Navbar />
-  
+
+      <Navbar />
+
       {/* Hero Section / Título Principal (MANTENIDO) */}
       <section className="hero-section">
         <h1 className="hero-title"> Sobre Ferretería Casa Mario</h1>
@@ -38,19 +39,19 @@ export default function SobreNosotros() {
       {/* Galería de Imágenes (MANTENIDO) */}
       <section className="gallery-section">
         <img
-          src="./backend/uploads/img/foto1.avif"
+          src={`${API_URL}/uploads/img/foto1.avif`}
           alt="Ferretería"
           className="gallery-image"
         />
 
         <img
-          src="./backend/uploads/img/foto2.jpg"
+          src={`${API_URL}/uploads/img/ferreteirafoto.jpeg`}
           alt="Herramientas"
           className="gallery-image"
         />
 
         <img
-          src="./backend/uploads/img/foto3.webp"
+          src={`${API_URL}/uploads/img/foto3.webp`}
           alt="Equipo de trabajo"
           className="gallery-image"
         />
@@ -71,7 +72,7 @@ export default function SobreNosotros() {
           </p>
         </div>
       </section>
-      
+
       {/* 📞 NUEVA SECCIÓN: CONTÁCTANOS */}
       <section className="contact-section" id="contactanos">
         <h2 className="contact-title">Contáctanos</h2>
@@ -97,7 +98,7 @@ export default function SobreNosotros() {
           </a>
         </div>
       </section>
-      
+
       {/* Ubicación con Mapa (MANTENIDO) */}
       <section className="location-section">
         <h2 className="location-title">Visítanos</h2>
@@ -120,14 +121,14 @@ export default function SobreNosotros() {
         </p>
       </section>
 
- {/* Sección de Reseñas */}
-<section className="reviews-section">
-  <h2 className="reviews-title">Reseñas de Nuestros Clientes</h2>
+      {/* Sección de Reseñas */}
+      <section className="reviews-section">
+        <h2 className="reviews-title">Reseñas de Nuestros Clientes</h2>
 
-  <ReviewsComponent />
-</section>
-   
-  
+        <ReviewsComponent />
+      </section>
+
+
     </main>
   );
 }
