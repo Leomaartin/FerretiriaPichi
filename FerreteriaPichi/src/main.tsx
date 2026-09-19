@@ -1,3 +1,31 @@
+// 🛡️ Parche defensivo para evitar crashes de React causados por traductores de navegador (Google Translate) o extensiones
+if (typeof window !== "undefined") {
+  const originalRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function <T extends Node>(child: T): T {
+    if (child.parentNode !== this) {
+      if (console) {
+        console.warn("removeChild seguro: el nodo a eliminar ya no es hijo directo.", this, child);
+      }
+      return (child.parentNode?.removeChild(child) as T) || child;
+    }
+    return originalRemoveChild.apply(this, [child]) as T;
+  };
+
+  const originalInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function <T extends Node>(newNode: T, referenceNode: Node | null): T {
+    if (referenceNode && referenceNode.parentNode !== this) {
+      if (console) {
+        console.warn("insertBefore seguro: el nodo de referencia no es hijo directo.", this, referenceNode);
+      }
+      if (referenceNode.parentNode) {
+        return referenceNode.parentNode.insertBefore(newNode, referenceNode) as T;
+      }
+      return newNode;
+    }
+    return originalInsertBefore.apply(this, [newNode, referenceNode]) as T;
+  };
+}
+
 import ReactDOM from "react-dom/client";
 import Home from "./view/Home.tsx";
 import DetalleProducto from "./view/DetalleProducto.tsx";

@@ -224,20 +224,17 @@ const Carrito: React.FC = () => {
               <h2>Resumen del Pedido</h2>
 
               <div className="summary-row">
-                <span>
-                  Subtotal (
-                  {items.reduce((sum, item) => sum + (Number(item.cantidad) || 1), 0)} ítems):
-                </span>
-                <span>${ (Number(subtotal) || 0).toFixed(2) }</span>
+                <span>{`Subtotal (${items.reduce((sum, item) => sum + (Number(item.cantidad) || 1), 0)} ítems):`}</span>
+                <span>{`$${(Number(subtotal) || 0).toFixed(2)}`}</span>
               </div>
 
               {metodoEntrega === "envio" ? (
-                <div className="summary-row">
+                <div key="summary-row-envio" className="summary-row">
                   <span>Costo de envío (21%):</span>
-                  <span>${ (Number(costoEnvio) || 0).toFixed(2) }</span>
+                  <span>{`$${(Number(costoEnvio) || 0).toFixed(2)}`}</span>
                 </div>
               ) : (
-                <div className="summary-row">
+                <div key="summary-row-retiro" className="summary-row">
                   <span>Envío:</span>
                   <span style={{ color: "#16a34a", fontWeight: "bold" }}>Gratis (Retiro en local)</span>
                 </div>
@@ -245,7 +242,7 @@ const Carrito: React.FC = () => {
 
               <div className="summary-row total-row">
                 <strong>{metodoEntrega === "envio" ? "Total (Con envío):" : "Total (Retiro en local):"}</strong>
-                <strong>${ (Number(totalFinal) || 0).toFixed(2) }</strong>
+                <strong>{`$${(Number(totalFinal) || 0).toFixed(2)}`}</strong>
               </div>
 
               {!showCheckoutForm && (
@@ -292,10 +289,11 @@ const Carrito: React.FC = () => {
                   </div>
 
                   {metodoEntrega === "retiro" && (
-                    <div className="retiro-info-banner">
+                    <div key="retiro-info-banner" className="retiro-info-banner">
                       <div className="retiro-info-icon">📍</div>
                       <div>
-                        <strong>Punto de retiro:</strong> Ferretería Casa Mario
+                        <strong>Punto de retiro: </strong>
+                        <span>Ferretería Casa Mario</span>
                         <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "#475569" }}>
                           Una vez acreditado el pago, podés retirar tu pedido en nuestro local comercial con tu DNI y el comprobante que te llegará por Gmail.
                         </p>
@@ -336,7 +334,7 @@ const Carrito: React.FC = () => {
                   </div>
 
                   {metodoEntrega === "envio" && (
-                    <div className="form-group" style={{ marginBottom: "14px" }}>
+                    <div key="form-group-direccion" className="form-group" style={{ marginBottom: "14px" }}>
                       <label className="checkout-label">Dirección de entrega *</label>
                       <input
                         type="text"
