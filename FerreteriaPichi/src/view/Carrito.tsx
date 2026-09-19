@@ -236,7 +236,7 @@ const Carrito: React.FC = () => {
               ) : (
                 <div key="summary-row-retiro" className="summary-row">
                   <span>Envío:</span>
-                  <span style={{ color: "#16a34a", fontWeight: "bold" }}>Gratis (Retiro en local)</span>
+                  <span className="free">Gratis (Retiro en local)</span>
                 </div>
               )}
 
